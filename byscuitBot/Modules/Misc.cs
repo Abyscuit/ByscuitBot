@@ -1609,11 +1609,12 @@ namespace byscuitBot.Modules
         #region Server Config
 
 
-        string[] configCMDs = { "prefix", "color", "footer", "servername", "timestamp", "afkchannel", "afktimeout", "cmdblacklist", "memeblacklist", "miningwhitelist" };
+        string[] configCMDs = { "prefix", "color", "footer", "servername", "timestamp", "afkchannel", "afktimeout", "cmdblacklist", "memeblacklist", "miningwhitelist",
+        "verifyrole"};
         string[] configDesc = { "Set the Prefix for the bot", "Set the color of the embed message using 0-255. Usage: color <r> <g> <b>", "Set the footer text of the embed message",
         "Change the server's name", "Enable or disable timestamp on the embed messages", "Set the afk channel for the server",
             "Set the time in minutes (1, 5, 15, 30, 60) of inactivity for users to be moved to the AFK channel", "Add a channel to the blacklist for the bot commands", "Add a channel to the meme blacklist",
-        "Add a channel to the mining whitelist"};
+        "Add a channel to the mining whitelist", "Set the default role for verified members | Usage: verifyrole @role"};
 
         [Command("prefix")]
         [RequireUserPermission(GuildPermission.Administrator)]
@@ -1745,11 +1746,33 @@ namespace byscuitBot.Modules
             config.AFKTimeout = time;
             await Context.Guild.ModifyAsync(m => { m.AfkTimeout = time; });
             ServerConfigs.UpdateServerConfig(Context.Guild, config);
-            await PrintEmbedMessage("AFK Timeout Set", string.Format("Users will be sent to {0} after **{1} minutes** of no activity!",config.AFKChannelName, config.AFKTimeout / 60), iconUrl: config.IconURL);
+            await PrintEmbedMessage("AFK Timeout Set", string.Format("Users will be sent to {0} after **{1} minutes** of no activity!", config.AFKChannelName, config.AFKTimeout / 60), iconUrl: config.IconURL);
+        }
+
+        [Command("verifyrole")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        [RequireBotPermission(GuildPermission.Administrator)]
+        public async Task VerifyRole(SocketRole role)
+        {
+            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
+            config.VerificationRoleID = role.Id;
+            ServerConfigs.UpdateServerConfig(Context.Guild, config);
+            await PrintEmbedMessage("Verification Role Set", string.Format("Users will be added to the **{0}** role after verification!", role.Name), iconUrl: config.IconURL);
+        }
+
+        [Command("verification")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        [RequireBotPermission(GuildPermission.Administrator)]
+        public async Task Verification(bool b)
+        {
+            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
+            config.RequiresVerification = b;
+            ServerConfigs.UpdateServerConfig(Context.Guild, config);
+            await PrintEmbedMessage("Verification Set", string.Format("Verification set to {0}!", b), iconUrl: config.IconURL);
         }
 
         #endregion
-        
+
         #region CryptoCurrency
         public static string[] miningCmds = { "nanopool", "linketh", "ethbal", "topcrypto", "calceth", "ethtokens", "crypto" };
         string[] miningDesc = { "Get NanoPool general account info | Usage: nanopool <optional:address>", "Link an ETH address to your discord account | Usage: linketh <address>",
@@ -2164,7 +2187,18 @@ namespace byscuitBot.Modules
         [Command("verify")]
         public async Task Verify([Remainder]string captcha = null)
         {
-            await Context.Channel.SendMessageAsync("User Verified!");
+            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
+            SocketGuildUser user = (SocketGuildUser)Context.User;
+            SocketRole role = Context.Guild.GetRole(config.VerificationRoleID);
+            if (user.Roles.Contains(role))
+            {
+                await Context.Channel.SendMessageAsync(Context.User.Mention + " is already verified!");
+                await Context.Message.DeleteAsync();
+                return;
+            }
+            await user.AddRoleAsync(role);
+            await Context.Channel.SendMessageAsync(Context.User.Mention + " Verified!");
+            await Context.Message.DeleteAsync();
         }
 
         #endregion

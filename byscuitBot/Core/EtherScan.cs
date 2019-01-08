@@ -12,7 +12,6 @@ namespace byscuitBot.Core
 {
     public class EtherScan
     {
-        //string mine = "0xE4a555DAF0c71aBeF7b2d725EEFAe41deaD4D8dD";
         public static string GetBalance(string address)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Global.etherscanBalance + address);

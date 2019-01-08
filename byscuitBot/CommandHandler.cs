@@ -60,7 +60,11 @@ namespace byscuitBot
                 updated.Add(context.Guild);
             }
 
-            
+            if(config.RequiresVerification)
+            {
+                if (GetTChannel(context.Guild.TextChannels, "verification") == null)
+                    await context.Guild.CreateTextChannelAsync("verification");
+            }
             //Mute Check
             var userAccount = UserAccounts.GetAccount(context.User);
             var spamAccount = Antispam.GetAccount(context.User);
@@ -447,6 +451,14 @@ namespace byscuitBot
             if (user.Id != BotID)
                 await channel.SendMessageAsync("", false, embed.Build());   //Welcomes the new user
             Console.WriteLine(DateTime.Now.ToLocalTime() + " | " + user.Username + " joined " + channel.Guild.Name);
+
+            if (config.RequiresVerification)
+            {
+                if (GetTChannel(user.Guild.TextChannels, "verification") == null)
+                    await user.Guild.CreateTextChannelAsync("verification");
+
+                await GetTChannel(user.Guild.TextChannels, "verification").SendMessageAsync("Type " + config.Prefix + "verify to verify your account.");
+            }
         }
 
         public static ulong GetCurrentGuild(SocketTextChannel channel)
