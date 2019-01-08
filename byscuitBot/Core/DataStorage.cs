@@ -105,6 +105,19 @@ namespace byscuitBot.Core
             return JsonConvert.DeserializeObject<List<Meme>>(json);
         }
 
+
+        public static void SaveSpamAccounts(IEnumerable<Antispam.SpamAccount> memes, string filePath)
+        {
+            string json = JsonConvert.SerializeObject(memes, Formatting.Indented);
+            File.WriteAllText(filePath, json);
+        }
+
+        public static IEnumerable<Antispam.SpamAccount> LoadSpamAccounts(string filePath)
+        {
+            if (!File.Exists(filePath)) return null;
+            string json = File.ReadAllText(filePath);
+            return JsonConvert.DeserializeObject<List<Antispam.SpamAccount>>(json);
+        }
         public static bool SaveExists(string filePath)
         {
             return File.Exists(filePath);

@@ -96,7 +96,8 @@ namespace byscuitBot.Core.Server_Data
                 RequiresVerification = false,
                 AntiSpamThreshold = 5,
                 AntiSpamTime = 10,
-                AntiSpamWarn = 3
+                AntiSpamWarn = 3,
+                VerificationRoleID = 0
             };
 
             configs.Add(newConfig);

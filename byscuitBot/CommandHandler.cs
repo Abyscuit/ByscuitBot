@@ -52,6 +52,7 @@ namespace byscuitBot
             ServerConfigs.LoadServerConfigs();
             NanoPool.LoadAccounts();
             MemeLoader.LoadMemes();
+            Antispam.LoadSpamAccount();
             ServerConfig config = ServerConfigs.GetConfig(context.Guild);
             if (!updated.Contains(context.Guild))
             {
@@ -62,6 +63,7 @@ namespace byscuitBot
             
             //Mute Check
             var userAccount = UserAccounts.GetAccount(context.User);
+            var spamAccount = Antispam.GetAccount(context.User);
 
             if (userAccount.IsMuted)
             {
@@ -78,7 +80,59 @@ namespace byscuitBot
             //Bot Check
             if (!context.User.IsBot)
             {
-
+                spamAccount.LastMessages.Add(DateTime.Now);
+                if(spamAccount.BanAmount > 0)
+                {
+                    if(Math.Abs(spamAccount.LastBan.Subtract(DateTime.Now).Days) > 10)
+                    {
+                        spamAccount.BanAmount = 0;
+                    }
+                }
+                if (spamAccount.LastMessages.Count > 3)
+                {
+                    DateTime d1 = spamAccount.LastMessages[0];
+                    DateTime d2 = spamAccount.LastMessages[1];
+                    DateTime d3 = spamAccount.LastMessages[2];
+                    DateTime d4 = spamAccount.LastMessages[3];
+                    TimeSpan t1 = new TimeSpan();
+                    TimeSpan t2 = new TimeSpan();
+                    TimeSpan t3 = new TimeSpan();
+                    t1 = d1.Subtract(d2);
+                    t2 = d2.Subtract(d3);
+                    t3 = d3.Subtract(d4);
+                    int mil1 = Math.Abs(t1.Milliseconds);
+                    int mil2 = Math.Abs(t2.Milliseconds);
+                    int mil3 = Math.Abs(t3.Milliseconds);
+                    if (mil1 <= Antispam.millisecondThreshold && 
+                        mil2 <= Antispam.millisecondThreshold &&
+                        mil3 <= Antispam.millisecondThreshold)
+                    {
+                        spamAccount.BanAmount++;
+                        string message = "";
+                        DateTime banTime = DateTime.Now;
+                        if (spamAccount.BanAmount < 3)
+                        {
+                            message = "\nPlease stop spamming you have been muted for 30 seconds!";
+                            banTime = DateTime.Now.AddSeconds(30);
+                        }
+                        if (spamAccount.BanAmount >= 3)
+                        {
+                            message = "\nYou have been muted for 10 Minutes! " + context.Guild.Owner.Mention;
+                            banTime = DateTime.Now.AddMinutes(10);
+                        }
+                        spamAccount.BanTime = banTime;
+                        spamAccount.LastBan = DateTime.Now;
+                        await context.Channel.SendMessageAsync(context.User.Mention + message);
+                        spamAccount.LastMessages.Clear();
+                        Antispam.UpdateAccount(context.User, spamAccount);
+                        Antispam.SaveAccounts();
+                        userAccount.IsMuted = true;
+                        UserAccounts.SaveAccounts();
+                        return;
+                    }
+                    spamAccount.LastMessages.Clear();
+                }
+                Antispam.SaveAccounts();
                 //If stat channels dont exist
                 await CreateStatChannels(context.Guild);
                     

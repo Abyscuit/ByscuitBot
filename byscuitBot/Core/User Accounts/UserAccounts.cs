@@ -42,6 +42,11 @@ namespace byscuitBot.Core.User_Accounts
             return GetOrCreateAcount(user.Id);
         }
 
+        public static UserAccount GetAccount(ulong id)
+        {
+            return GetOrCreateAcount(id);
+        }
+
         private static UserAccount GetOrCreateAcount(ulong id)
         {
             IEnumerable<UserAccount> result = from a in accounts

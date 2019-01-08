@@ -54,7 +54,19 @@ namespace byscuitBot.Core
                     giveAway = false;
                 }
             }
-            minutes -= 5f / 60f;
+
+            foreach(Antispam.SpamAccount spamAccount in Antispam.spamAccounts)
+            {
+                User_Accounts.UserAccount account = User_Accounts.UserAccounts.GetAccount(spamAccount.DiscordID);
+                if (account.IsMuted)
+                {
+                    if (DateTime.Compare(spamAccount.BanTime, DateTime.Now) < 0)
+                    {
+                        account.IsMuted = false;
+                        User_Accounts.UserAccounts.SaveAccounts();
+                    }
+                }
+            }
         }
     }
 }

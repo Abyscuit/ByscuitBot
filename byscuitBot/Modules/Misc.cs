@@ -47,6 +47,7 @@ namespace byscuitBot.Modules
         string[] shop = { "Colin's Bitches", "Well-Reknown Byscuit", "Seasoned Byscuit", "Professional Byscuit", "BUTTERED UP BYSCUIT", "DaCrew", "Moderator" };
         int[] price = { 200, 400, 800, 1600, 3200, 6000, 6500 };
 
+       
         #region users
 
 
@@ -522,7 +523,7 @@ namespace byscuitBot.Modules
             await PrintEmbedMessage("Unbanned " + user.Username, msg, iconUrl: user.GetAvatarUrl());
         }
 
-        [Command("invLink")]
+        [Command("invlink")]
         [RequireUserPermission(GuildPermission.CreateInstantInvite)]
         [RequireBotPermission(GuildPermission.CreateInstantInvite)]
         public async Task InviteLink()
@@ -2155,6 +2156,15 @@ namespace byscuitBot.Modules
             {
                 await PrintEmbedMessage("Twitch Followers for " + User.display_name, split[i], iconUrl: User.profile_image_url);
             }
+        }
+
+        #endregion
+
+        #region Verification
+        [Command("verify")]
+        public async Task Verify([Remainder]string captcha = null)
+        {
+            await Context.Channel.SendMessageAsync("User Verified!");
         }
 
         #endregion
