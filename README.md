@@ -30,7 +30,6 @@
   <li>Verification System</li>
   <li>Captcha?</li>
 </ul>
-
-<br><br>
+<br>
 <h4>Setup:</h4>
 Put token and Command prefix in the Resources/config.json
