@@ -1,21 +1,24 @@
 # ByscuitBot
-Simple Discord Bot
+<h2>Simple Discord Bot</h2>
 
-Features:
-•Antispam
-•Meme Generator
-•Point Shop
-•Multiple Server Configuration
-•Search YouTube
-•Leveling System
-•Steam API Calls
-•Coin Market Cap API Calls
-•EtherScan API Calls
-•NanoPool API Calls
-•Twitch API Calls
-•Welcome/Bye Messages
-•User/Bot/Member Count
+<h4>Features</h4>
+<ul>
+  <li>Antispam</li>
+  <li>Meme Generator</li>
+  <li>Multiple Server Configuration</li>
+  <li>Search YouTube</li>
+  <li>Leveling System</li>
+  <li>Steam API Calls</li>
+  <li>Coin Market Cap API Calls</li>
+  <li>EtherScan API Calls</li>
+  <li>NanoPool API Calls</li>
+  <li>Twitch API Calls</li>
+  <li>Welcome/Bye Messages</li>
+  <li>User/Bot/Member Count</li>
+</ul>
 
-More Features coming:
-•Verification System
-•Captcha?
+<h4>More Features coming</h4>
+<ul>
+  <li>Verification System</li>
+  <li>Captcha?</li>
+</ul>
