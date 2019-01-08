@@ -23,12 +23,12 @@
   <li>Change Nicknames</li>
   <li>Get Invite Link</li>
   <li>Customize Embed</li>
+  <li>Verification System</li>
 </ul>
 
 <h4>More Features coming</h4>
 <ul>
-  <li>Verification System</li>
-  <li>Captcha?</li>
+  <li>Captcha</li>
 </ul>
 <br>
 <h4>Setup:</h4>
