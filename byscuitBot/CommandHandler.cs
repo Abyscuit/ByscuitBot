@@ -36,8 +36,9 @@ namespace byscuitBot
         public static ulong memberChannel = 512515705036472320;
         //ulong welcomeChannel = 0;
         ulong general = 246718514214338560; //replace with default welcome
-        //ulong test = 512047865917603852;
+                                            //ulong test = 512047865917603852;
 
+        List<SocketGuild> updated = new List<SocketGuild>();
         private async Task Client_MessageReceived(SocketMessage s)
         {
             var msg = s as SocketUserMessage;
@@ -51,7 +52,14 @@ namespace byscuitBot
             ServerConfigs.LoadServerConfigs();
             NanoPool.LoadAccounts();
             MemeLoader.LoadMemes();
+            ServerConfig config = ServerConfigs.GetConfig(context.Guild);
+            if (!updated.Contains(context.Guild))
+            {
+                ServerConfigs.UpdateServerConfig(context.Guild, config);
+                updated.Add(context.Guild);
+            }
 
+            
             //Mute Check
             var userAccount = UserAccounts.GetAccount(context.User);
 
@@ -70,6 +78,7 @@ namespace byscuitBot
             //Bot Check
             if (!context.User.IsBot)
             {
+
                 //If stat channels dont exist
                 await CreateStatChannels(context.Guild);
                     
@@ -123,7 +132,8 @@ namespace byscuitBot
             UserAccounts.SaveAccounts();
 
             int argPos = 0;
-            ServerConfig config = ServerConfigs.GetConfig(context.Guild);
+
+
             if (msg.HasStringPrefix("" + config.Prefix, ref argPos)
                 || msg.HasMentionPrefix(client.CurrentUser, ref argPos))
             {

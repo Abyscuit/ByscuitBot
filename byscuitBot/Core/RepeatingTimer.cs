@@ -12,53 +12,40 @@ namespace byscuitBot.Core
     internal class RepeatingTimer
     {
         private static Timer loopingTimer;
-        private static SocketTextChannel channel;
+        public static SocketTextChannel channel;
         private static bool giveAway = false;
+        public static float minutes = 0;
+        public static DateTime timeToStop = DateTime.Now;
+        public static bool startTimer = false;
 
         internal static Task StartTimer()
         {
-            if (Global.Guild != null)
+            loopingTimer = new Timer()
             {
-                var result = from a in Global.Client.Guilds
-                             where a.Id == Global.Guild.Id
-                             select a;
-
-                SocketGuild guild = result.FirstOrDefault();
-
-                var result2 = from a in guild.TextChannels
-                              where a.Name == "general"
-                              select a;
-
-
-                SocketTextChannel txtChan = result2.FirstOrDefault();
-
-                channel = txtChan;
-
-            }
-                loopingTimer = new Timer()
-                {
-                    Interval = 5000,
-                    AutoReset = true,
-                    Enabled = true
-                };
-                loopingTimer.Elapsed += OnTimerTicked;
+                Interval = 5000,
+                AutoReset = true,
+                Enabled = true
+            };
+            loopingTimer.Elapsed += OnTimerTicked;
+            loopingTimer.Start();
             return Task.CompletedTask;
         }
 
         private static async void OnTimerTicked(object sender, ElapsedEventArgs e)
         {
-            if (Global.giveaway != giveAway && channel != null)
+            //if (Global.giveaway != giveAway)
+            if(DateTime.Compare(timeToStop, DateTime.Now) < 0 && startTimer)
             {
                 var embed = new EmbedBuilder();
-                embed.WithTitle("Giveaway ended!");
-                embed.WithDescription("Congrats to ");
+                embed.WithTitle("Timer Ended");
+                embed.WithDescription("");
                 embed.WithColor(100, 150, 255);
                 embed.WithFooter("Created by Abyscuit");
 
                 
                 await channel.SendMessageAsync("", false, embed.Build());
-
-                Global.giveaway = giveAway;
+                startTimer = !startTimer;
+                //Global.giveaway = giveAway;
             }
             if (Global.giveaway == true)
             {
@@ -67,7 +54,7 @@ namespace byscuitBot.Core
                     giveAway = false;
                 }
             }
-
+            minutes -= 5f / 60f;
         }
     }
 }

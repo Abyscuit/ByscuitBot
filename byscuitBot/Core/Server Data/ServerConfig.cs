@@ -28,5 +28,8 @@ namespace byscuitBot.Core.Server_Data
         public ulong[] WhiteListNSFW { get; set; }
         public ulong[] BlackListCMDs { get; set; }
         public bool RequiresVerification { get; set; }
+        public int AntiSpamThreshold { get; set; }
+        public double AntiSpamTime { get; set; }
+        public int AntiSpamWarn { get; set; }
     }
 }

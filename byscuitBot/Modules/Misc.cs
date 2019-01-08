@@ -93,11 +93,32 @@ namespace byscuitBot.Modules
             embed.WithDescription(msg + "\nReact with " + Global.emojies[Global.selectedEmoji]);
             embed.WithColor(100, 150, 255);
             embed.WithFooter("Created by Abyscuit");
-            
+
 
 
             RestUserMessage message = await Context.Channel.SendMessageAsync("", false, embed.Build());
             Global.MessageIdToTrack = message.Id;
+        }
+
+        [Command("timer")]
+        public async Task Timer(int minutes)
+        {
+            await Context.Message.DeleteAsync();
+
+            var embed = new EmbedBuilder();
+            DateTime time = DateTime.Now;
+            time = time.AddMinutes(minutes);
+            RepeatingTimer.minutes = minutes;
+            RepeatingTimer.channel = (SocketTextChannel)Context.Channel;
+            RepeatingTimer.timeToStop = time;
+            RepeatingTimer.startTimer = true;
+            embed.WithTitle("Timer Ends " + time.ToShortDateString() + " " +time.ToShortTimeString() + "!");
+            embed.WithColor(100, 150, 255);
+            embed.WithFooter("Created by Abyscuit");
+
+
+
+            await Context.Channel.SendMessageAsync("", false, embed.Build());
         }
 
         [Command("react")]

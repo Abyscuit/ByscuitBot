@@ -93,7 +93,10 @@ namespace byscuitBot.Core.Server_Data
                 WhiteListNSFW = null,
                 BlackListCMDs = null,
                 BlackListMeme = null,
-                RequiresVerification = false
+                RequiresVerification = false,
+                AntiSpamThreshold = 5,
+                AntiSpamTime = 10,
+                AntiSpamWarn = 3
             };
 
             configs.Add(newConfig);
