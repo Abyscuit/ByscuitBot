@@ -61,6 +61,7 @@ invite: Get an Invite Link for the server<br>
 youtube: Search YouTube for a keyword<br>
 select: Select an option displayed<br>
 meme: Post a random or specific meme | Usage: meme <optional> keyword<br>
+upload: Upload a meme or image to Memes folder | Usage: upload <optional:title> <optional:tag,tag><br>
 creatememe: Create a meme using a members avatar | Usage: creatememe @user <top text,bottom text><br>
 <br>
 <b><i>Steam Commands</i></b><br>
@@ -88,6 +89,7 @@ memeblacklist: Add a channel to the meme blacklist<br>
 miningwhitelist: Add a channel to the mining whitelist<br>
 verifyrole: Set the default role for verified members | Usage: verifyrole <@role><br>
 verification: Enable/Disable Verification when a user joins | Usage: verification <true|false><br>
+data: Display Data Pairs Count | Usage: data<br>
 <br>
 <b><i>Cryptocurrency Commands</b></i><br>
 nanopool: Get NanoPool general account info | Usage: nanopool <optional:address><br>
