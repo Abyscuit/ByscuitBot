@@ -76,7 +76,13 @@ namespace byscuitBot.Core
                         embed.WithCurrentTimestamp();
                     
                     await message.ModifyAsync(m => { m.Embed = embed.Build(); });
-                    await textChannel.SendMessageAsync("**Giveaway Ended for " + giveaway.Item + "**\nWinner is " + user.Mention);
+                    embed.WithTitle(giveaway.Item);
+                    embed.WithDescription("**Winner is " + user.Mention + "**");
+                    embed.WithFooter(config.FooterText);
+                    embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
+                    if (config.TimeStamp)
+                        embed.WithCurrentTimestamp();
+                    await textChannel.SendMessageAsync("🎉**GIVEAWAY ENDED**🎉", false, embed.Build());
                     GiveawayManager.DeleteGiveaway(message);
                     GiveawayManager.Save();
                 }

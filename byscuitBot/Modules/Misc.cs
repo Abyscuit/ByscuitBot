@@ -80,6 +80,7 @@ namespace byscuitBot.Modules
             await PrintEmbedMessage("Stats for " + username, msg, iconUrl: user.GetAvatarUrl());
         }
 
+        //giveaway <time> <winners> <Item>
         [Command("giveaway")]
         public async Task Giveaway([Remainder]string text)
         {
