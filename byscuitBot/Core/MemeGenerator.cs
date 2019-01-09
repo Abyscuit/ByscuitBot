@@ -25,6 +25,7 @@ namespace byscuitBot.Core
             int offset = 5;
             float large = 150;
             int fontSize = (int)large;
+            int minSize = 45;
             float width = 1024;
             float height = 1024;
             float scale = Math.Min(width / bitmap.Width, height / bitmap.Height);
@@ -47,7 +48,24 @@ namespace byscuitBot.Core
             SizeF topSize = graph.MeasureString(topTxt, memeFont);
             while(topSize.Width >= width - 40)
             {
-                fontSize--;
+                if (fontSize > minSize)
+                    fontSize--;
+                else
+                {
+                    string[] words = topTxt.Split(' ');
+                    topTxt = "";
+                    bool split = false;
+                    for(int i =0;i<words.Length;i++)
+                    {
+                        topTxt += words[i] + " ";
+                        if(i > words.Length / 2 && !split)
+                        {
+                            topTxt += Environment.NewLine;
+                            split = true;
+                        }
+                    }
+                    fontSize = (int)large;
+                }
                 memeFont = new Font("Impact", fontSize, FontStyle.Bold, GraphicsUnit.Point);
                 topSize = graph.MeasureString(topTxt, memeFont);
             }
@@ -56,7 +74,24 @@ namespace byscuitBot.Core
             fontSize = (int)large;
             while (botSize.Width >= width - 40)
             {
-                fontSize--;
+                if (fontSize > minSize)
+                    fontSize--;
+                else
+                {
+                    string[] words = botTxt.Split(' ');
+                    botTxt = "";
+                    bool split = false;
+                    for (int i = 0; i < words.Length; i++)
+                    {
+                        botTxt += words[i] + " ";
+                        if (i > words.Length / 2 && !split)
+                        {
+                            botTxt += Environment.NewLine;
+                            split = true;
+                        }
+                    }
+                    fontSize = (int)large;
+                }
                 memeFontBot = new Font("Impact", fontSize, FontStyle.Bold, GraphicsUnit.Point);
                 botSize = graph.MeasureString(botTxt, memeFontBot);
             }
