@@ -61,24 +61,31 @@ namespace byscuitBot
 
         private async Task Client_ReactionAdded(Discord.Cacheable<Discord.IUserMessage, ulong> cache, ISocketMessageChannel channel, SocketReaction reaction)
         {
+            foreach(Giveaway giveaway in GiveawayManager.Giveaways)
+            {
+                if(giveaway.MessageID == reaction.MessageId)
+                {
+                    if (reaction.Emote.Name == "🎉")
+                    {
+                        giveaway.UsersID.Add(reaction.UserId);
+                        GiveawayManager.Save();
+                        //await channel.SendMessageAsync("Successfully entered giveaway!");
+                    }
+                }
+            }
             if(reaction.MessageId == Global.MessageIdToTrack)
             {
 
-                string[] emojies = new string[Global.emojies.Length];
-               // string emoji = Global.emojies[Global.selectedEmoji];
-                for (int i = 0; i < emojies.Length; i++)
+                //string[] emojies = new string[Global.emojies.Length];
+                // string emoji = Global.emojies[Global.selectedEmoji];
+                //for (int i = 0; i < emojies.Length; i++)
                 {
-                    emojies[i] = Global.emojies[i];
-                    if (reaction.Emote.Name == emojies[i])
+                    //emojies[i] = Global.emojies[i];
+                    //if (reaction.Emote.Name == emojies[i])
                     {
-                        string message = "__" + reaction.User.Value.Username + "__ reacted with " + emojies[i];
-                        var embed = new EmbedBuilder();
-                        embed.WithTitle("Reacted");
-                        embed.WithDescription(message);
-                        embed.WithColor(100, 150, 255);
-                        embed.WithFooter("Created by Abyscuit");
+                        string message = "__" + reaction.User.Value.Username + "__ reacted with " + reaction.Emote;
 
-                        await channel.SendMessageAsync("", false, embed.Build());
+                        await channel.SendMessageAsync(message);
                        // break;
                     }
                 }

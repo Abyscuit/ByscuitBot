@@ -205,6 +205,7 @@
     <Compile Include="Core\DataStorage.cs" />
     <Compile Include="Core\ESEA.cs" />
     <Compile Include="Core\EtherScan.cs" />
+    <Compile Include="Core\Giveaway.cs" />
     <Compile Include="Core\MemeGenerator.cs" />
     <Compile Include="Core\NanoPool.cs" />
     <Compile Include="Core\RepeatingTimer.cs" />

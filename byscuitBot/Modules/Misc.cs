@@ -27,14 +27,15 @@ namespace byscuitBot.Modules
     public class Misc : ModuleBase<SocketCommandContext>
     {
         string[] cmds = { "-------------Server Stuff-------------" ,"roles", "kick", "ban", "unban", "addrole", "addroles", "removerole", "removeallroles",
-            "mute", "unmute", "move", "stats", "level", "addxp","subxp", "warn", "pointshop", "serverstats", "invlink", "nickname", "invite", "\n\n------------Media Stuff--------------",
+            "mute", "unmute", "move", "stats", "level", "addxp","subxp", "warn", "pointshop", "serverstats", "invlink", "nickname", "invite", "giveaway", "\n\n------------Media Stuff--------------",
             "youtube", "select", "meme", "creatememe", "\n\n--------Steam Commands-----------",
         "resolve", "steaminfo", "steambans", "steamgames", "linksteam", "steamaccts", "csgostats", "csgolastmatch", "csgolastmatches", "csgowepstats"};
         string[] desc = { "", "Displays your roles or others roles with @username", "Kick @username 'reason'", "ban @username days 'reason'", "unban @username",
             "adds a role to a user | addrole @username role_name", "adds roles to a user | addrole @username role_name, role_name, role_name", "remove a role from a user", "removes all roles from a user",
             "Mutes a user", "Unmute a user", "Move a user to a Voice Channel", "Get stats of a user", "Get account level of user", "Add XP to a user",
             "Remove XP to a user", "Warn a user", "Lists all the items in the pointshop", "Displays server the servers currents stats", "Get the invite link",
-            "Change nickname of a user", "Get an Invite Link for the server", "", "Search YouTube for a keyword", "Select an option displayed", "Post a random or specific meme | Usage: meme <optional> keyword",
+            "Change nickname of a user", "Get an Invite Link for the server", "Create a giveaway | Usage: giveaway <9d23h59m,Item to give>", "", "Search YouTube for a keyword", "Select an option displayed",
+            "Post a random or specific meme | Usage: meme <optional> keyword",
             "Create a meme using a members avatar | Usage: creatememe @user <top text,bottom text>", "", "Resolve steam URL or username to SteamID64",
             "Get Account Summary of your linked account or a steam user", "Get steam account bans (VAC, community, economy)", "Get All steam games or time played for a specific game",
             "Link steam account to Discord Account", "Get all steam accounts linked to Discord users", "Get relevant CS:GO stats (totals, last match)",
@@ -80,25 +81,69 @@ namespace byscuitBot.Modules
         }
 
         [Command("giveaway")]
-        public async Task Giveaway(int minutes, [Remainder]string msg)
+        public async Task Giveaway([Remainder]string text)
         {
             await Context.Message.DeleteAsync();
-
+            string[] split = text.Split(',');
+            string time = split[0];
+            string item = split[1];
+            DateTime endTime = DateTime.Now;
+            bool timeChk = false;
+            if(time.ToLower().Contains("d"))
+            {
+                string[] spl = time.ToLower().Split('d');
+                int days = int.Parse(spl[0]);
+                endTime = endTime.AddDays(days);
+                if (time.ToLower().Contains("h"))
+                {
+                    string[] spl2 = spl[1].Split('h');
+                    string hrs = spl2[0];
+                    int hours = int.Parse(hrs);
+                    endTime = endTime.AddHours(hours);
+                    if (time.ToLower().Contains("m"))
+                    {
+                        string min = spl2[1].Split('m')[0];
+                        int mins = int.Parse(min);
+                        endTime = endTime.AddMinutes(mins);
+                    }
+                }
+                timeChk = true;
+            }
+            if (time.ToLower().Contains("h") && !timeChk)
+            {
+                string[] spl2 = time.Split('h');
+                string hrs = spl2[0];
+                int hours = int.Parse(hrs);
+                endTime = endTime.AddHours(hours);
+                if (time.ToLower().Contains("m"))
+                {
+                    string min = spl2[1].Split('m')[0];
+                    int mins = int.Parse(min);
+                    endTime = endTime.AddMinutes(mins);
+                }
+                timeChk = true;
+            }
+            if (time.ToLower().Contains("m") && !timeChk)
+            {
+                string min = time.Split('m')[0];
+                int mins = int.Parse(min);
+                endTime = endTime.AddMinutes(mins);
+            }
             var embed = new EmbedBuilder();
-            DateTime time = DateTime.Now;
-            time = time.AddMinutes(minutes);
-            Global.giveaway = true;
-            Global.giveawayTime = time;
-            Global.Guild = Context.Guild;
-            embed.WithTitle("Giveaway ends " + time.ToString("dd:hh:mm:ss") + "!");
-            embed.WithDescription(msg + "\nReact with " + Global.emojies[Global.selectedEmoji]);
-            embed.WithColor(100, 150, 255);
-            embed.WithFooter("Created by Abyscuit");
+            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
+            embed.WithTitle(item);
+            embed.WithDescription("React with 🎉 to enter!\n**Giveaway Ends at: "+endTime.ToShortDateString() + " " + endTime.ToShortTimeString() + "**");
+            embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
+            if (config.TimeStamp)
+                embed.WithCurrentTimestamp();
+            embed.WithFooter(config.FooterText);
 
 
 
+            RepeatingTimer.channel = (SocketTextChannel)Context.Channel;
             RestUserMessage message = await Context.Channel.SendMessageAsync("", false, embed.Build());
-            Global.MessageIdToTrack = message.Id;
+            GiveawayManager.MakeGiveaway(Context.User, item, message, endTime);
+            //Global.MessageIdToTrack = message.Id;
         }
 
         [Command("timer")]
@@ -131,15 +176,20 @@ namespace byscuitBot.Modules
             var embed = new EmbedBuilder();
             string[] emojies = new string[Global.emojies.Length];
             IReadOnlyCollection<GuildEmote> emotes = Context.Guild.Emotes;
+            
             string emojiesTxt = "";
-            for(int i =0;i < emojies.Length;i++)
+            foreach(GuildEmote emote in emotes)
             {
-                emojiesTxt += Global.emojies[i]+ " ";
+                emojiesTxt += emote +" ";
             }
+
+            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
             embed.WithTitle("React");
             embed.WithDescription(msg + "\nReact with " + emojiesTxt);
-            embed.WithColor(100, 150, 255);
-            embed.WithFooter("Created by Abyscuit");
+            embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
+            if (config.TimeStamp)
+                embed.WithCurrentTimestamp();
+            embed.WithFooter(config.FooterText);
             
 
 

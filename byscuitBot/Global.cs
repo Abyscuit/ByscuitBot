@@ -20,7 +20,7 @@ namespace byscuitBot
         internal static string[] emojies = { "👌", "💩", ":pepe:", "💯" };
         internal static int selectedEmoji = 0;
 
-        
+        internal static Random rand = new Random();
 
         
 

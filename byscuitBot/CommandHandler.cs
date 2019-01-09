@@ -53,6 +53,7 @@ namespace byscuitBot
             NanoPool.LoadAccounts();
             MemeLoader.LoadMemes();
             Antispam.LoadSpamAccount();
+            GiveawayManager.LoadGiveaways();
             ServerConfig config = ServerConfigs.GetConfig(context.Guild);
             if (!updated.Contains(context.Guild))
             {

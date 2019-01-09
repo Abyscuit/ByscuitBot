@@ -1,4 +1,6 @@
-﻿using Discord;
+﻿using byscuitBot.Core.Server_Data;
+using Discord;
+using Discord.Rest;
 using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
@@ -54,8 +56,33 @@ namespace byscuitBot.Core
                     giveAway = false;
                 }
             }
+            foreach (Giveaway giveaway in GiveawayManager.Giveaways)
+            {
+                if (giveaway.EndTime.CompareTo(DateTime.Now) < 0)
+                {
+                    int win = Global.rand.Next(0, giveaway.UsersID.Count - 1);
+                    ulong winner = giveaway.UsersID[win];
+                    giveaway.WinnerID = winner;
+                    SocketUser user = channel.Guild.GetUser(winner);
+                    SocketTextChannel textChannel = channel.Guild.GetTextChannel(giveaway.ChannelID);
+                    RestUserMessage message = (RestUserMessage)await textChannel.GetMessageAsync(giveaway.MessageID);
+                    ServerConfig config = ServerConfigs.GetConfig(channel.Guild);
+                    EmbedBuilder embed = new EmbedBuilder();
+                    embed.WithTitle(giveaway.Item);
+                    embed.WithDescription("**Giveaway Ended " + giveaway.EndTime.ToShortDateString() + " " + giveaway.EndTime.ToShortTimeString() +"!**\nWinner is " + user.Mention+"");
+                    embed.WithFooter(config.FooterText);
+                    embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
+                    if (config.TimeStamp)
+                        embed.WithCurrentTimestamp();
+                    
+                    await message.ModifyAsync(m => { m.Embed = embed.Build(); });
+                    await textChannel.SendMessageAsync("**Giveaway Ended for " + giveaway.Item + "**\nWinner is " + user.Mention);
+                    GiveawayManager.DeleteGiveaway(message);
+                    GiveawayManager.Save();
+                }
+            }
 
-            foreach(Antispam.SpamAccount spamAccount in Antispam.spamAccounts)
+            foreach (Antispam.SpamAccount spamAccount in Antispam.spamAccounts)
             {
                 User_Accounts.UserAccount account = User_Accounts.UserAccounts.GetAccount(spamAccount.DiscordID);
                 if (account.IsMuted)
