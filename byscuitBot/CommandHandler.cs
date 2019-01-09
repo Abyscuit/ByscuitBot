@@ -116,15 +116,23 @@ namespace byscuitBot
                         spamAccount.BanAmount++;
                         string message = "";
                         DateTime banTime = DateTime.Now;
-                        if (spamAccount.BanAmount < 3)
+                        if (spamAccount.BanAmount < config.AntiSpamWarn)
                         {
                             message = "\nPlease stop spamming you have been muted for 30 seconds!";
                             banTime = DateTime.Now.AddSeconds(30);
                         }
-                        if (spamAccount.BanAmount >= 3)
+                        if (spamAccount.BanAmount >= config.AntiSpamWarn && spamAccount.BanAmount < config.AntiSpamThreshold)
                         {
-                            message = "\nYou have been muted for 10 Minutes! " + context.Guild.Owner.Mention;
-                            banTime = DateTime.Now.AddMinutes(10);
+                            int time = (int)config.AntiSpamTime;
+                            message = "\nYou have been muted for " +time+ " Minutes! " + context.Guild.Owner.Mention;
+                            banTime = DateTime.Now.AddMinutes(time);
+                        }
+                        if(spamAccount.BanAmount > config.AntiSpamThreshold)
+                        {
+                            SocketGuildUser user = (SocketGuildUser)context.User;
+                            await user.BanAsync(1,"Spamming");
+                            await context.Channel.SendMessageAsync(context.User.Username + " was banned for 1 day for spamming!");
+                            return;
                         }
                         spamAccount.BanTime = banTime;
                         spamAccount.LastBan = DateTime.Now;

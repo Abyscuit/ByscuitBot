@@ -15,7 +15,6 @@ namespace byscuitBot.Core
     {
         private static Timer loopingTimer;
         public static SocketTextChannel channel;
-        private static bool giveAway = false;
         public static float minutes = 0;
         public static DateTime timeToStop = DateTime.Now;
         public static bool startTimer = false;
@@ -48,13 +47,6 @@ namespace byscuitBot.Core
                 await channel.SendMessageAsync("", false, embed.Build());
                 startTimer = !startTimer;
                 //Global.giveaway = giveAway;
-            }
-            if (Global.giveaway == true)
-            {
-                if(DateTime.Compare(DateTime.Now, Global.giveawayTime) <= 0)
-                {
-                    giveAway = false;
-                }
             }
             foreach (Giveaway giveaway in GiveawayManager.Giveaways)
             {

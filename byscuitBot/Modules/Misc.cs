@@ -1657,11 +1657,12 @@ namespace byscuitBot.Modules
 
 
         string[] configCMDs = { "prefix", "color", "footer", "servername", "timestamp", "afkchannel", "afktimeout", "cmdblacklist", "memeblacklist", "miningwhitelist",
-        "verifyrole", "verification"};
+        "verifyrole", "verification", "spamthreshold", "spamwarnamt", "spammutetime"};
         string[] configDesc = { "Set the Prefix for the bot", "Set the color of the embed message using 0-255. Usage: color <r> <g> <b>", "Set the footer text of the embed message",
         "Change the server's name", "Enable or disable timestamp on the embed messages", "Set the afk channel for the server",
             "Set the time in minutes (1, 5, 15, 30, 60) of inactivity for users to be moved to the AFK channel", "Add a channel to the blacklist for the bot commands", "Add a channel to the meme blacklist",
-        "Add a channel to the mining whitelist", "Set the default role for verified members | Usage: verifyrole <@role>", "Enable/Disable Verification when a user joins | Usage: verification <true|false>"};
+        "Add a channel to the mining whitelist", "Set the default role for verified members | Usage: verifyrole <@role>", "Enable/Disable Verification when a user joins | Usage: verification <true|false>",
+        "Spam warnings before being banned | Usage: spamthreshold 5", "Amount of spam to be muted | Usage: spamwarnamt 3", "Spam beginning mute time in mins, scales by 2 | Usage: spammutetime 5"};
 
         [Command("prefix")]
         [RequireUserPermission(GuildPermission.Administrator)]
@@ -1816,6 +1817,36 @@ namespace byscuitBot.Modules
             config.RequiresVerification = b;
             ServerConfigs.UpdateServerConfig(Context.Guild, config);
             await PrintEmbedMessage("Verification Set", string.Format("Verification set to {0}!", b), iconUrl: config.IconURL);
+        }
+        [Command("spamthreshold")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        [RequireBotPermission(GuildPermission.Administrator)]
+        public async Task SpamThreshold(int amt)
+        {
+            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
+            config.AntiSpamThreshold = amt;
+            ServerConfigs.UpdateServerConfig(Context.Guild, config);
+            await PrintEmbedMessage("Spam Threshold Set", string.Format("Threshold set to {0}!", amt), iconUrl: config.IconURL);
+        }
+        [Command("spamwarnamt")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        [RequireBotPermission(GuildPermission.Administrator)]
+        public async Task SpamWarnAmt(int amt)
+        {
+            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
+            config.AntiSpamWarn = amt;
+            ServerConfigs.UpdateServerConfig(Context.Guild, config);
+            await PrintEmbedMessage("Spam Warn Set", string.Format("Spam warnings set to {0}!", amt), iconUrl: config.IconURL);
+        }
+        [Command("spammutetime")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        [RequireBotPermission(GuildPermission.Administrator)]
+        public async Task SpamMuteTime(int mins)
+        {
+            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
+            config.AntiSpamTime = mins;
+            ServerConfigs.UpdateServerConfig(Context.Guild, config);
+            await PrintEmbedMessage("Spam Mute Time Set", string.Format("Spam mute time set to {0}!", mins), iconUrl: config.IconURL);
         }
 
         #endregion
