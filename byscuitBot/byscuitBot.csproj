@@ -51,6 +51,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="Discord.Net.Commands, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Discord.Net.Commands.2.0.1\lib\net46\Discord.Net.Commands.dll</HintPath>
@@ -248,7 +249,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="byscuitBot_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="SystemLang\alerts.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

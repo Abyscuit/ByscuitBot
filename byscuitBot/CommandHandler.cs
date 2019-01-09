@@ -106,9 +106,9 @@ namespace byscuitBot
                     t1 = d1.Subtract(d2);
                     t2 = d2.Subtract(d3);
                     t3 = d3.Subtract(d4);
-                    int mil1 = Math.Abs(t1.Milliseconds);
-                    int mil2 = Math.Abs(t2.Milliseconds);
-                    int mil3 = Math.Abs(t3.Milliseconds);
+                    double mil1 = Math.Abs(t1.TotalMilliseconds);
+                    double mil2 = Math.Abs(t2.TotalMilliseconds);
+                    double mil3 = Math.Abs(t3.TotalMilliseconds);
                     Console.WriteLine(mil1 + "\n" + mil2 + "\n" + mil3);
                     if (mil1 <= Antispam.millisecondThreshold && 
                         mil2 <= Antispam.millisecondThreshold &&
