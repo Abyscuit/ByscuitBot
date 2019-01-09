@@ -59,7 +59,7 @@ warn: Warn a user<br>
 serverstats: Displays server the servers currents stats<br>
 nickname: Change nickname of a user<br>
 invite: Get an Invite Link for the server<br>
-giveaway: Create a giveaway | Usage: giveaway <9d23h59m,Item to give>
+giveaway: Create a giveaway | Usage: giveaway <9d23h59m,Item to give><br>
 <br>
 <b><i>Media Stuff</i></b><br>
 youtube: Search YouTube for a keyword<br>
@@ -94,6 +94,9 @@ miningwhitelist: Add a channel to the mining whitelist<br>
 verifyrole: Set the default role for verified members | Usage: verifyrole <@role><br>
 verification: Enable/Disable Verification when a user joins | Usage: verification <true|false><br>
 data: Display Data Pairs Count | Usage: data<br>
+  spamthreshold: Spam warnings before being banned | Usage: spamthreshold 5<br>
+spamwarnamt: Amount of spam to be muted | Usage: spamwarnamt 3<br>
+spammutetime: Spam beginning mute time in mins, scales by 2 | Usage: spammutetime 5<br>
 <br>
 <b><i>Cryptocurrency Commands</b></i><br>
 nanopool: Get NanoPool general account info | Usage: nanopool <optional:address><br>
