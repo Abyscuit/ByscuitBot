@@ -24,6 +24,7 @@
   <li>Get Invite Link</li>
   <li>Customize Embed</li>
   <li>Verification System</li>
+  <li>String Encryption</li>
 </ul>
 
 <h4>More Features coming</h4>
@@ -103,3 +104,12 @@ crypto: Get basic price info of one or more coins use commas to separate | Usage
 <b><i>Twitch Commands</b></i><br>
 twitchuser: Get Twitch user details by user name | Usage: twitchuser <username><br>
 twitchfollowers: Get followers from a Twitch user by ID | Usage: twitchfollowers <id><br>
+  <br>
+  <b><i>String Encryption</i></b><br>
+urlencode<br>
+base64encode<br>
+  base64decode<br>
+  md5<br>
+  sha512<br>
+  sha256<br>
+sha1<br>
