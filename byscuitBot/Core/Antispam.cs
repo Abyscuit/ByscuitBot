@@ -9,7 +9,7 @@ namespace byscuitBot.Core
 {
     public class Antispam
     {
-        public static float millisecondThreshold = 200;
+        public static float millisecondThreshold = 150;
 
 
 
