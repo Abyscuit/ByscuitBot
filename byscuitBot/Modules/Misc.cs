@@ -130,6 +130,7 @@ namespace byscuitBot.Modules
             Global.Guild = Context.Guild;
             var embed = new EmbedBuilder();
             string[] emojies = new string[Global.emojies.Length];
+            IReadOnlyCollection<GuildEmote> emotes = Context.Guild.Emotes;
             string emojiesTxt = "";
             for(int i =0;i < emojies.Length;i++)
             {
@@ -173,7 +174,17 @@ namespace byscuitBot.Modules
             string name = Context.Guild.Name;
             string owner = Context.Guild.Owner.Username;
 
-            string msg = "Server Name: **" + name + "**\nOwner: **"+ owner + "**\nMember Count: **" + memberCount + "**\nDate Created: **" + date.ToString("MM/dd/yyyy hh:mm:ss") +
+            ServerConfig serverConfig = ServerConfigs.GetConfig(Context.Guild);
+            bool reqV = serverConfig.RequiresVerification;
+            string verification = string.Format("\nRequires Verification: **{0}**", reqV);
+            if(reqV)
+            {
+                SocketRole vRole = Context.Guild.GetRole(serverConfig.VerificationRoleID);
+                verification += string.Format("\nVerified Role: **{0}**", vRole.Name);
+            }
+            string configs = "\nBot Prefix: **"+ serverConfig.Prefix +"**" + verification + "\nAFK Channel: **" +Context.Guild.GetVoiceChannel(serverConfig.AFKChannelID).Name +
+                "**\nAFK Timeout: **" + serverConfig.AFKTimeout + "**\nAntispam Mute Time: **"+serverConfig.AntiSpamTime+"**\nAntispam Warn Ban: **"+serverConfig.AntiSpamWarn;
+            string msg = "Server Name: **" + name + "**\nOwner: **"+ owner + "**\nMember Count: **" + memberCount + "**\nDate Created: **" + date.ToString("MM/dd/yyyy hh:mm:ss") +"**"+ configs +
                 "**\n\n__Roles__\n**" + getAllRoles((SocketGuildUser)Context.User)+"**";
             
 
@@ -196,15 +207,12 @@ namespace byscuitBot.Modules
         {
             UserAccount account;
             string username = "";
-                account = UserAccounts.GetAccount(Context.User);
-                username = Context.User.Username;
 
-            if (user != null)
-            {
+            if (user == null)
+                user = (SocketGuildUser)Context.User;
+
                 account = UserAccounts.GetAccount(user);
                 username = user.Username;
-            }else
-            user = (SocketGuildUser)Context.User;
 
             account.XP += amount;
             UserAccounts.SaveAccounts();
@@ -220,17 +228,10 @@ namespace byscuitBot.Modules
         {
             UserAccount account;
             string username = "";
-            if (user != null)
-            {
-                account = UserAccounts.GetAccount(user);
-                username = user.Username;
-            }
-            else
-            {
-                account = UserAccounts.GetAccount(Context.User);
-                username = Context.User.Username;
+            if (user == null)
                 user = (SocketGuildUser)Context.User;
-            }
+            account = UserAccounts.GetAccount(user);
+            username = user.Username;
             if (account.XP <= amount)
                 account.XP = 0;
             else
@@ -238,8 +239,8 @@ namespace byscuitBot.Modules
             UserAccounts.SaveAccounts();
             string msg = "Subtracted **" + amount + "XP** from **" + username +
                 "**\nTotal XP:**" + account.XP + "**";
-            
-            await PrintEmbedMessage("XP Subtracted " + username, msg, iconUrl:user.GetAvatarUrl());
+
+            await PrintEmbedMessage("XP Subtracted " + username, msg, iconUrl: user.GetAvatarUrl());
         }
 
         /*
@@ -1610,11 +1611,11 @@ namespace byscuitBot.Modules
 
 
         string[] configCMDs = { "prefix", "color", "footer", "servername", "timestamp", "afkchannel", "afktimeout", "cmdblacklist", "memeblacklist", "miningwhitelist",
-        "verifyrole"};
+        "verifyrole", "verification"};
         string[] configDesc = { "Set the Prefix for the bot", "Set the color of the embed message using 0-255. Usage: color <r> <g> <b>", "Set the footer text of the embed message",
         "Change the server's name", "Enable or disable timestamp on the embed messages", "Set the afk channel for the server",
             "Set the time in minutes (1, 5, 15, 30, 60) of inactivity for users to be moved to the AFK channel", "Add a channel to the blacklist for the bot commands", "Add a channel to the meme blacklist",
-        "Add a channel to the mining whitelist", "Set the default role for verified members | Usage: verifyrole @role"};
+        "Add a channel to the mining whitelist", "Set the default role for verified members | Usage: verifyrole <@role>", "Enable/Disable Verification when a user joins | Usage: verification <true|false>"};
 
         [Command("prefix")]
         [RequireUserPermission(GuildPermission.Administrator)]
@@ -2184,6 +2185,7 @@ namespace byscuitBot.Modules
         #endregion
 
         #region Verification
+
         [Command("verify")]
         public async Task Verify([Remainder]string captcha = null)
         {
