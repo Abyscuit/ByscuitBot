@@ -761,11 +761,6 @@ namespace byscuitBot.Modules
             }
         }
 
-        public async Task UpdateCount()
-        {
-            
-        }
-
         public bool IsAuthorized(SocketGuildUser user)
         {
             string roleName = "Fresh Byscuit";

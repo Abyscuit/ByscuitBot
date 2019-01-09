@@ -67,8 +67,11 @@ namespace byscuitBot
                 {
                     if (reaction.Emote.Name == "🎉")
                     {
-                        giveaway.UsersID.Add(reaction.UserId);
-                        GiveawayManager.Save();
+                        if (!giveaway.UsersID.Contains(reaction.UserId) && giveaway.CreatorID != reaction.UserId)
+                        {
+                            giveaway.UsersID.Add(reaction.UserId);
+                            GiveawayManager.Save();
+                        }
                         //await channel.SendMessageAsync("Successfully entered giveaway!");
                     }
                 }

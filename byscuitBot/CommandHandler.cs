@@ -55,6 +55,7 @@ namespace byscuitBot
             Antispam.LoadSpamAccount();
             GiveawayManager.LoadGiveaways();
             ServerConfig config = ServerConfigs.GetConfig(context.Guild);
+            RepeatingTimer.channel = (SocketTextChannel)context.Channel;
             if (!updated.Contains(context.Guild))
             {
                 ServerConfigs.UpdateServerConfig(context.Guild, config);

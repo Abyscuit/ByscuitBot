@@ -60,29 +60,53 @@ namespace byscuitBot.Core
             {
                 if (giveaway.EndTime.CompareTo(DateTime.Now) < 0)
                 {
-                    int win = Global.rand.Next(0, giveaway.UsersID.Count - 1);
-                    ulong winner = giveaway.UsersID[win];
-                    giveaway.WinnerID = winner;
-                    SocketUser user = channel.Guild.GetUser(winner);
-                    SocketTextChannel textChannel = channel.Guild.GetTextChannel(giveaway.ChannelID);
-                    RestUserMessage message = (RestUserMessage)await textChannel.GetMessageAsync(giveaway.MessageID);
-                    ServerConfig config = ServerConfigs.GetConfig(channel.Guild);
-                    EmbedBuilder embed = new EmbedBuilder();
-                    embed.WithTitle(giveaway.Item);
-                    embed.WithDescription("**Giveaway Ended " + giveaway.EndTime.ToShortDateString() + " " + giveaway.EndTime.ToShortTimeString() +"!**\nWinner is " + user.Mention+"");
-                    embed.WithFooter(config.FooterText);
-                    embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
-                    if (config.TimeStamp)
-                        embed.WithCurrentTimestamp();
-                    
-                    await message.ModifyAsync(m => { m.Embed = embed.Build(); });
-                    embed.WithTitle(giveaway.Item);
-                    embed.WithDescription("**Winner is " + user.Mention + "**");
-                    embed.WithFooter(config.FooterText);
-                    embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
-                    if (config.TimeStamp)
-                        embed.WithCurrentTimestamp();
-                    await textChannel.SendMessageAsync("🎉**GIVEAWAY ENDED**🎉", false, embed.Build());
+                        SocketTextChannel textChannel = channel.Guild.GetTextChannel(giveaway.ChannelID);
+                        RestUserMessage message = (RestUserMessage)await textChannel.GetMessageAsync(giveaway.MessageID);
+                        ServerConfig config = ServerConfigs.GetConfig(channel.Guild);
+                    if (giveaway.UsersID.Count > 0)
+                    {
+                        int win = Global.rand.Next(0, giveaway.UsersID.Count - 1);
+                        ulong winner = giveaway.UsersID[win];
+                        giveaway.WinnerID = winner;
+                        SocketUser user = channel.Guild.GetUser(winner);
+                        EmbedBuilder embed = new EmbedBuilder();
+                        embed.WithTitle(giveaway.Item);
+                        embed.WithDescription("**Giveaway Ended " + giveaway.EndTime.ToShortDateString() + " " + giveaway.EndTime.ToShortTimeString() + "!**\nWinner is " + user.Mention + "");
+                        embed.WithFooter(config.FooterText);
+                        embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
+                        if (config.TimeStamp)
+                            embed.WithCurrentTimestamp();
+
+                        await message.ModifyAsync(m => { m.Embed = embed.Build(); });
+                        embed.WithTitle(giveaway.Item);
+                        embed.WithDescription("**Winner is " + user.Mention + "**");
+                        embed.WithFooter(config.FooterText);
+                        embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
+                        if (config.TimeStamp)
+                            embed.WithCurrentTimestamp();
+                        await textChannel.SendMessageAsync("🎉**GIVEAWAY ENDED**🎉", false, embed.Build());
+                    }
+                    else
+                    {
+                        EmbedBuilder embed = new EmbedBuilder();
+                        SocketUser user = channel.Guild.GetUser(giveaway.CreatorID);
+                        embed.WithTitle(giveaway.Item);
+                        embed.WithDescription("**Giveaway Ended " + giveaway.EndTime.ToShortDateString() + " " + giveaway.EndTime.ToShortTimeString() + "!**\nNo one entered!\n" + user.Mention + 
+                            " may start a new one.");
+                        embed.WithFooter(config.FooterText);
+                        embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
+                        if (config.TimeStamp)
+                            embed.WithCurrentTimestamp();
+                        await message.ModifyAsync(m => { m.Embed = embed.Build(); });
+
+                        embed.WithTitle(giveaway.Item);
+                        embed.WithDescription("**No one entered!**\nYou may start another giveaway " + user.Mention);
+                        embed.WithFooter(config.FooterText);
+                        embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
+                        if (config.TimeStamp)
+                            embed.WithCurrentTimestamp();
+                        await textChannel.SendMessageAsync("🎉**GIVEAWAY ENDED**🎉", false, embed.Build());
+                    }
                     GiveawayManager.DeleteGiveaway(message);
                     GiveawayManager.Save();
                 }
