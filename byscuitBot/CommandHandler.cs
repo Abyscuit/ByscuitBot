@@ -331,7 +331,7 @@ namespace byscuitBot
             //else currchar = general;
 
             var role = from r in user.Guild.TextChannels
-                       where r.Name.ToLower().Contains("welcome")
+                       where r.Name.ToLower().Contains("general")
                        select r;
             var result = role.FirstOrDefault();
             SocketTextChannel chanResult = null;
@@ -373,7 +373,7 @@ namespace byscuitBot
             GetTChannel(user.Guild.TextChannels, chanResult.Name);
 
 
-            var channel = client.GetChannel(result.Id)  as SocketTextChannel; // Gets the channel to send the message in
+            var channel = client.GetChannel(chanResult.Id)  as SocketTextChannel; // Gets the channel to send the message in
 
             await CreateStatChannels(user.Guild);
             await updMemberChan(user.Guild);
@@ -441,7 +441,7 @@ namespace byscuitBot
             if (chanResult == null)
                 chanResult = result;
             GetTChannel(user.Guild.TextChannels, chanResult.Name);
-            var channel = client.GetChannel(result.Id) as SocketTextChannel; // Gets the channel to send the message in
+            var channel = client.GetChannel(chanResult.Id) as SocketTextChannel; // Gets the channel to send the message in
 
             await CreateStatChannels(user.Guild);
             await updMemberChan(user.Guild);

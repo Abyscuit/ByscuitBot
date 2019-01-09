@@ -951,8 +951,8 @@ namespace byscuitBot.Modules
         }
         
         [Command("upload")]
-        [RequireUserPermission(GuildPermission.AttachFiles)]
-        [RequireBotPermission(GuildPermission.AttachFiles)]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        [RequireBotPermission(GuildPermission.Administrator)]
         public async Task Upload(string name = "", [Remainder]string tags = "")
         {
             IReadOnlyCollection<Attachment> attachments = Context.Message.Attachments;
