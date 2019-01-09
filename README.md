@@ -116,3 +116,6 @@ base64encode<br>
   sha512<br>
   sha256<br>
 sha1<br>
+<br>
+  <h1>Testing</h1>
+  If you would like to help test new features please join my test server https://discord.gg/cPDxJpP
