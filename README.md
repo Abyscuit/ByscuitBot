@@ -25,16 +25,18 @@
   <li>Customize Embed</li>
   <li>Verification System</li>
   <li>String Encryption</li>
+  <li>Giveaway Function</li>
 </ul>
 
 <h4>More Features coming</h4>
 <ul>
   <li>Captcha</li>
+  <li>Mute for set time</li>
 </ul>
 <br>
 <h4>Setup:</h4>
-Put token and Command prefix in the Resources/config.json
-
+Put token and Command prefix in the Resources/config.json<br>
+Build in VS and run EXE<br>
 
 <h4>Commands</h4>
 <b><i>Server Stuff</i></b><br>
@@ -57,6 +59,7 @@ warn: Warn a user<br>
 serverstats: Displays server the servers currents stats<br>
 nickname: Change nickname of a user<br>
 invite: Get an Invite Link for the server<br>
+giveaway: Create a giveaway | Usage: giveaway <9d23h59m,Item to give>
 <br>
 <b><i>Media Stuff</i></b><br>
 youtube: Search YouTube for a keyword<br>
