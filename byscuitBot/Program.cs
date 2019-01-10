@@ -8,7 +8,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace byscuitBot
 {
@@ -17,11 +19,25 @@ namespace byscuitBot
         public static DiscordSocketClient client;
         CommandHandler handler;
         private IServiceProvider services;
-
         public static string OutputFolder = $"{Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar}videos"; // Output folder for songs
 
         static void Main(string[] args)
             => new Program().StartAsync().GetAwaiter().GetResult();
+        static Form1 form;
+        public static Thread t = new Thread(m => 
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            form = new Form1();
+            form.FormClosing += Form_FormClosing;
+            Application.Run(form);
+        });
+
+        private static void Form_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Console.WriteLine("GUI cannot be closed while bot is running!");
+            e.Cancel = true;
+        }
 
         public async Task StartAsync()
         {
@@ -45,8 +61,6 @@ namespace byscuitBot
             services = serviceCollection.BuildServiceProvider();
 
             //services.GetService<SongService>().AudioPlaybackService = services.GetService<AudioPlaybackService>();
-
-
             handler = new CommandHandler();
             await handler.InitializeAsync(client);
             await Task.Delay(-1);

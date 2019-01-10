@@ -22,6 +22,7 @@ namespace byscuitBot.Core
 
         internal static Task StartTimer()
         {
+            Program.t.Start();
             loopingTimer = new Timer()
             {
                 Interval = 5000,

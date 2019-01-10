@@ -1684,7 +1684,7 @@ namespace byscuitBot.Modules
             "Set the time in minutes (1, 5, 15, 30, 60) of inactivity for users to be moved to the AFK channel", "Add a channel to the blacklist for the bot commands", "Add a channel to the meme blacklist",
         "Add a channel to the mining whitelist", "Set the default role for verified members | Usage: verifyrole <@role>", "Enable/Disable Verification when a user joins | Usage: verification <true|false>",
         "Spam warnings before being banned | Usage: spamthreshold 5", "Amount of spam to be muted | Usage: spamwarnamt 3", "Spam beginning mute time in mins, scales by 2 | Usage: spammutetime 5",
-        "Allow users to @everyone with discord link | Usage: allowads <true|false>"};
+        "Allow users to @ everyone with discord link | Usage: allowads <true|false>"};
 
         [Command("prefix")]
         [RequireUserPermission(GuildPermission.Administrator)]
