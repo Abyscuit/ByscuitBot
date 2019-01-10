@@ -4,6 +4,7 @@
 <h4>Features</h4>
 <ul>
   <li>Antispam</li>
+  <li>User-Interface</li>
   <li>Meme Generator</li>
   <li>Multiple Server Configuration</li>
   <li>Search YouTube</li>
@@ -28,10 +29,13 @@
   <li>Giveaway Function</li>
 </ul>
 
-<h4>More Features coming</h4>
+<h4>More Features Coming</h4>
 <ul>
   <li>Captcha</li>
-  <li>Mute for set time</li>
+  <li>Mute Timer</li>
+  <li>Better UI</li>
+  <li>Better Verification</li>
+  <li>Better Security</li>
 </ul>
 <br>
 <h4>Setup:</h4>
@@ -60,6 +64,7 @@ serverstats: Displays server the servers currents stats<br>
 nickname: Change nickname of a user<br>
 invite: Get an Invite Link for the server<br>
 giveaway: Create a giveaway | Usage: giveaway <9d23h59m,Item to give><br>
+clear: Clear messages in bulk | Usage: clear <number><br>
 <br>
 <b><i>Media Stuff</i></b><br>
 youtube: Search YouTube for a keyword<br>
@@ -97,6 +102,7 @@ data: Display Data Pairs Count | Usage: data<br>
   spamthreshold: Spam warnings before being banned | Usage: spamthreshold 5<br>
 spamwarnamt: Amount of spam to be muted | Usage: spamwarnamt 3<br>
 spammutetime: Spam beginning mute time in mins, scales by 2 | Usage: spammutetime 5<br>
+  allowads: Allow users to @ everyone with discord link | Usage: allowads <true|false><br>
 <br>
 <b><i>Cryptocurrency Commands</b></i><br>
 nanopool: Get NanoPool general account info | Usage: nanopool <optional:address><br>
