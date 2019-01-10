@@ -1657,12 +1657,13 @@ namespace byscuitBot.Modules
 
 
         string[] configCMDs = { "prefix", "color", "footer", "servername", "timestamp", "afkchannel", "afktimeout", "cmdblacklist", "memeblacklist", "miningwhitelist",
-        "verifyrole", "verification", "spamthreshold", "spamwarnamt", "spammutetime"};
+        "verifyrole", "verification", "spamthreshold", "spamwarnamt", "spammutetime", "allowads"};
         string[] configDesc = { "Set the Prefix for the bot", "Set the color of the embed message using 0-255. Usage: color <r> <g> <b>", "Set the footer text of the embed message",
         "Change the server's name", "Enable or disable timestamp on the embed messages", "Set the afk channel for the server",
             "Set the time in minutes (1, 5, 15, 30, 60) of inactivity for users to be moved to the AFK channel", "Add a channel to the blacklist for the bot commands", "Add a channel to the meme blacklist",
         "Add a channel to the mining whitelist", "Set the default role for verified members | Usage: verifyrole <@role>", "Enable/Disable Verification when a user joins | Usage: verification <true|false>",
-        "Spam warnings before being banned | Usage: spamthreshold 5", "Amount of spam to be muted | Usage: spamwarnamt 3", "Spam beginning mute time in mins, scales by 2 | Usage: spammutetime 5"};
+        "Spam warnings before being banned | Usage: spamthreshold 5", "Amount of spam to be muted | Usage: spamwarnamt 3", "Spam beginning mute time in mins, scales by 2 | Usage: spammutetime 5",
+        "Allow users to @everyone with discord link | Usage: allowads <true|false>"};
 
         [Command("prefix")]
         [RequireUserPermission(GuildPermission.Administrator)]
@@ -1847,6 +1848,17 @@ namespace byscuitBot.Modules
             config.AntiSpamTime = mins;
             ServerConfigs.UpdateServerConfig(Context.Guild, config);
             await PrintEmbedMessage("Spam Mute Time Set", string.Format("Spam mute time set to {0}!", mins), iconUrl: config.IconURL);
+        }
+
+        [Command("allowads")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        [RequireBotPermission(GuildPermission.Administrator)]
+        public async Task AllowAds(bool b)
+        {
+            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
+            config.AllowAdvertising = b;
+            ServerConfigs.UpdateServerConfig(Context.Guild, config);
+            await PrintEmbedMessage("Advertising Set", string.Format("Advertising set to {0}!", b), iconUrl: config.IconURL);
         }
 
         #endregion

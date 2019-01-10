@@ -76,7 +76,7 @@ namespace byscuitBot
                 await context.Message.DeleteAsync();
                 return;
             }
-
+            
             //Get Guild ID
             var guildID = context.Guild.Id;
             DataStorage.AddPairToStorage(context.Guild.Name + "ID", guildID.ToString());
@@ -86,10 +86,20 @@ namespace byscuitBot
             //Bot Check
             if (!context.User.IsBot)
             {
+                if (!config.AllowAdvertising)
+                {
+                    if (context.Message.Content.Contains(context.Guild.EveryoneRole.ToString()) &&
+                        context.Message.Content.Contains("https://discord.gg/"))
+                    {
+                        await context.Message.DeleteAsync();
+                        await context.Channel.SendMessageAsync(context.User.Mention + " Advertising discord servers is not allowed here.");
+                        return;
+                    }
+                }
                 spamAccount.LastMessages.Add(DateTime.Now);
                 if(spamAccount.BanAmount > 0)
                 {
-                    if(Math.Abs(spamAccount.LastBan.Subtract(DateTime.Now).Days) > 10)
+                    if(Math.Abs(spamAccount.LastBan.Subtract(DateTime.Now).Days) > 10)          //Reset ban amount after 10 days
                     {
                         spamAccount.BanAmount = 0;
                     }

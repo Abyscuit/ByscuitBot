@@ -15,7 +15,7 @@ namespace byscuitBot.Core
         static string GetStreamsUrl = "https://api.twitch.tv/helix/streams";
         static string GetUsersUrl = "https://api.twitch.tv/helix/users";
         static string GetFollowsUrl = "https://api.twitch.tv/helix/users/follows";
-        static string clientID = "paptmlgaq7jnlqcxud338nweebp70e";
+        static string clientID = "";
         public class TwitchUser
         {
             public string broadcaster_type;

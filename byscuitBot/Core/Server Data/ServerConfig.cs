@@ -32,5 +32,6 @@ namespace byscuitBot.Core.Server_Data
         public int AntiSpamThreshold { get; set; }
         public double AntiSpamTime { get; set; }
         public int AntiSpamWarn { get; set; }
+        public bool AllowAdvertising { get; set; }
     }
 }
