@@ -27,14 +27,15 @@ namespace byscuitBot.Modules
     public class Misc : ModuleBase<SocketCommandContext>
     {
         string[] cmds = { "-------------Server Stuff-------------" ,"roles", "kick", "ban", "unban", "addrole", "addroles", "removerole", "removeallroles",
-            "mute", "unmute", "move", "stats", "level", "addxp","subxp", "warn", "pointshop", "serverstats", "invlink", "nickname", "invite", "giveaway", "\n\n------------Media Stuff--------------",
-            "youtube", "select", "meme", "creatememe", "\n\n--------Steam Commands-----------",
+            "mute", "unmute", "move", "stats", "level", "addxp","subxp", "warn", "pointshop", "serverstats", "invlink", "nickname", "invite", "giveaway", "clear",
+            "\n\n------------Media Stuff--------------", "youtube", "select", "meme", "creatememe", "\n\n--------Steam Commands-----------",
         "resolve", "steaminfo", "steambans", "steamgames", "linksteam", "steamaccts", "csgostats", "csgolastmatch", "csgolastmatches", "csgowepstats"};
         string[] desc = { "", "Displays your roles or others roles with @username", "Kick @username 'reason'", "ban @username days 'reason'", "unban @username",
             "adds a role to a user | addrole @username role_name", "adds roles to a user | addrole @username role_name, role_name, role_name", "remove a role from a user", "removes all roles from a user",
             "Mutes a user", "Unmute a user", "Move a user to a Voice Channel", "Get stats of a user", "Get account level of user", "Add XP to a user",
             "Remove XP to a user", "Warn a user", "Lists all the items in the pointshop", "Displays server the servers currents stats", "Get the invite link",
-            "Change nickname of a user", "Get an Invite Link for the server", "Create a giveaway | Usage: giveaway <9d23h59m,Item to give>", "", "Search YouTube for a keyword", "Select an option displayed",
+            "Change nickname of a user", "Get an Invite Link for the server", "Create a giveaway | Usage: giveaway <9d23h59m,Item to give>", "Clear messages in bulk | Usage: clear <number>",
+            "", "Search YouTube for a keyword", "Select an option displayed",
             "Post a random or specific meme | Usage: meme <optional> keyword",
             "Create a meme using a members avatar | Usage: creatememe @user <top text,bottom text>", "", "Resolve steam URL or username to SteamID64",
             "Get Account Summary of your linked account or a steam user", "Get steam account bans (VAC, community, economy)", "Get All steam games or time played for a specific game",
@@ -822,16 +823,16 @@ namespace byscuitBot.Modules
             RestInviteMetadata inv = null;
             foreach (RestInviteMetadata invite in x)
             {
-                if(!invite.IsTemporary && !invite.IsRevoked)
+                if (!invite.IsTemporary && !invite.IsRevoked)
                 {
-                    if(invite.MaxUses == 0 && invite.MaxAge == null)
+                    if (invite.MaxUses == 0 && invite.MaxAge == null)
                     {
                         inv = invite;
                         break;
                     }
                 }
             }
-            if(inv == null)
+            if (inv == null)
             {
                 foreach (RestInviteMetadata invite in x)
                 {
@@ -841,6 +842,26 @@ namespace byscuitBot.Modules
             }
             string msg = inv.Url;
             await Context.Channel.SendMessageAsync(msg);
+        }
+
+        [Command("clear")]
+        public async Task Clear(int num)
+        {
+            await Context.Message.DeleteAsync();
+            IAsyncEnumerable<IReadOnlyCollection<IMessage>> x =  Context.Channel.GetMessagesAsync((num));
+            IAsyncEnumerator<IReadOnlyCollection<IMessage>> index = x.GetEnumerator();
+            while(await index.MoveNext())
+            {
+                foreach(IMessage msg in index.Current)
+                {
+                    await msg.DeleteAsync();
+                }
+            }
+            RepeatingTimer.channel = (SocketTextChannel)Context.Channel;
+            RepeatingTimer.clrMsg = true;
+            RepeatingTimer.clrMsgTime = DateTime.Now.AddSeconds(5);
+            RestUserMessage m = await Context.Channel.SendMessageAsync("Cleared "+ num +" messages!");
+            Global.MessageIdToTrack = m.Id;
         }
 
         #endregion

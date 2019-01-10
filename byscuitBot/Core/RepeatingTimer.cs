@@ -17,7 +17,8 @@ namespace byscuitBot.Core
         public static SocketTextChannel channel;
         public static float minutes = 0;
         public static DateTime timeToStop = DateTime.Now;
-        public static bool startTimer = false;
+        public static bool startTimer = false, clrMsg = false;
+        public static DateTime clrMsgTime = DateTime.Now;
 
         internal static Task StartTimer()
         {
@@ -115,6 +116,12 @@ namespace byscuitBot.Core
                         User_Accounts.UserAccounts.SaveAccounts();
                     }
                 }
+            }
+
+            if(clrMsgTime.CompareTo(DateTime.Now) < 0 && clrMsg)
+            {
+                await channel.DeleteMessageAsync(Global.MessageIdToTrack);
+                clrMsg = false;
             }
         }
     }
