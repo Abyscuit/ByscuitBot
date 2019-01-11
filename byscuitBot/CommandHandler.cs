@@ -294,6 +294,7 @@ namespace byscuitBot
                 }
             }
             GetAllVoiceChannels(context.Guild.VoiceChannels);
+            GetAllTextChannels(context.Guild.TextChannels);
         }
 
 
@@ -339,6 +340,7 @@ namespace byscuitBot
             ServerConfig config = ServerConfigs.GetConfig(user.Guild);
             if (config.NewUserMessage)
             {
+                /*
                 ulong currchar = general;
                 //if (debug == 1) currchar = test;
                 //else currchar = general;
@@ -384,10 +386,9 @@ namespace byscuitBot
                 if (chanResult == null)
                     chanResult = result;
                 GetTChannel(user.Guild.TextChannels, chanResult.Name);
+                */
 
-
-                var channel = client.GetChannel(chanResult.Id) as SocketTextChannel; // Gets the channel to send the message in
-
+                var channel = client.GetChannel(config.NewUserChannel) as SocketTextChannel; // Gets the channel to send the message in
                 await CreateStatChannels(user.Guild);
                 await updMemberChan(user.Guild);
 
@@ -412,6 +413,7 @@ namespace byscuitBot
             ServerConfig config = ServerConfigs.GetConfig(user.Guild);
             if (config.NewUserMessage)
             {
+                /*
                 ulong currchar = general;
                 //if (debug == 1) currchar = test;
                 //else currchar = general;
@@ -457,7 +459,8 @@ namespace byscuitBot
                 if (chanResult == null)
                     chanResult = result;
                 GetTChannel(user.Guild.TextChannels, chanResult.Name);
-                var channel = client.GetChannel(chanResult.Id) as SocketTextChannel; // Gets the channel to send the message in
+                */
+                var channel = client.GetChannel(config.NewUserChannel) as SocketTextChannel; // Gets the channel to send the message in
 
                 await CreateStatChannels(user.Guild);
                 await updMemberChan(user.Guild);
@@ -545,8 +548,16 @@ namespace byscuitBot
             foreach (var channel in channels)
             {
                 string channelName = channel.Name;
-                if(!channelName.Contains("Member Count") && !channelName.Contains("User Count") && !channelName.Contains("Bot Count"))
+                if (!channelName.Contains("Member Count") && !channelName.Contains("User Count") && !channelName.Contains("Bot Count"))
                     DataStorage.AddPairToStorage(channel.Guild.Name + " | " + channelName, channel.Id.ToString());
+            }
+        }
+        public static void GetAllTextChannels(IEnumerable<SocketTextChannel> channels)
+        {
+            foreach (var channel in channels)
+            {
+                string channelName = channel.Name;
+                DataStorage.AddPairToStorage(channel.Guild.Name + " | " + channelName, channel.Id.ToString());
             }
         }
 
