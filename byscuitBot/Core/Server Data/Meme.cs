@@ -88,6 +88,8 @@ namespace byscuitBot.Core.Server_Data
         public static void ScanFiles()
         {
             DirectoryInfo d = new DirectoryInfo(@"Memes\");//Assuming Test is your Folder
+            if (!Directory.Exists(d.FullName))
+                Directory.CreateDirectory(d.FullName);
             Console.WriteLine("Scanning Directory: " + d.FullName);
             FileInfo[] Files = d.GetFiles(); //Getting Text files
             Console.WriteLine("Found Files: " + Files.Length);
