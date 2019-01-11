@@ -44,18 +44,29 @@ namespace byscuitBot
             textChannelCBox.Items.Clear();
             afkChanCBox.Items.Clear();
             verRoleCBox.Items.Clear();
+            newUsrChanCBox.Items.Clear();
             SocketGuild guild = guilds[serversCBox.SelectedIndex];
             textChannels = guild.TextChannels;
             voiceChannels = guild.VoiceChannels;
             roles = guild.Roles;
-            foreach (SocketTextChannel chan in textChannels) textChannelCBox.Items.Add(chan.Name);
+            foreach (SocketTextChannel chan in textChannels)
+            {
+                textChannelCBox.Items.Add(chan.Name);
+                newUsrChanCBox.Items.Add(chan.Name);
+            }
             foreach (SocketVoiceChannel chan in voiceChannels) afkChanCBox.Items.Add(chan.Name);
             foreach (SocketRole role in roles) verRoleCBox.Items.Add(role.Name);
             ServerConfigs.LoadServerConfigs();
             config = ServerConfigs.GetConfig(guild);
             tokenTxt.Text = Config.botconf.token;
             prefixTxt.Text = config.Prefix;
-            statsTxt.Text = "Stats:"+Environment.NewLine+"Total Users: " + guild.MemberCount + Environment.NewLine+"Owner: " + guild.Owner;
+            string[] features = guild.Features.ToArray();
+            string featString = Environment.NewLine + "Features:";
+            foreach (string f in features)
+                featString += Environment.NewLine + f;
+            statsTxt.Text = string.Format("Stats:{0}Total Users: {1}{0}Owner: {2}{0}Content Filter: {3}{0}Created On: {4}{0}Verification Level: {5}{0}Default Notifications: {6}",
+                Environment.NewLine, guild.MemberCount, guild.Owner, guild.ExplicitContentFilter.ToString(), guild.CreatedAt,
+                guild.VerificationLevel.ToString(), guild.DefaultMessageNotifications.ToString());
             afkChanCBox.SelectedItem = config.AFKChannelName;
             veriToggle.Checked = config.RequiresVerification;
             if (veriToggle.Checked)
@@ -71,6 +82,10 @@ namespace byscuitBot
             spamThresholdTxt.Text = ""+config.AntiSpamThreshold;
             spamTimeTxt.Text = "" + config.AntiSpamTime;
             footerTxt.Text = config.FooterText;
+            newUsrMsgToggle.Checked = config.NewUserMessage;
+            if (newUsrMsgToggle.Checked)
+                newUsrChanCBox.SelectedItem = guild.GetTextChannel(config.NewUserChannel).Name;
+
             //this.Refresh();
         }
 
@@ -135,6 +150,9 @@ namespace byscuitBot
             config.AntiSpamThreshold = int.Parse(spamThresholdTxt.Text);
             config.AntiSpamTime = double.Parse(spamTimeTxt.Text);
             config.FooterText = footerTxt.Text;
+            config.NewUserMessage = newUsrMsgToggle.Checked;
+            SocketTextChannel tc = textChannels.ToArray()[afkChanCBox.SelectedIndex];
+            config.NewUserChannel = textChannels.ToArray()[newUsrChanCBox.SelectedIndex].Id;
             ServerConfigs.SaveAccounts();
         }
 

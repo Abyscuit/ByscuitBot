@@ -22,6 +22,7 @@ namespace byscuitBot.Core
 
         internal static Task StartTimer()
         {
+            Console.WriteLine(Utilities.getAlert("loadForm"));
             Program.t.Start();
             loopingTimer = new Timer()
             {
