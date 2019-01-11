@@ -98,7 +98,9 @@ namespace byscuitBot.Core.Server_Data
                 AntiSpamTime = 10,
                 AntiSpamWarn = 3,
                 VerificationRoleID = 0,
-                AllowAdvertising = false
+                AllowAdvertising = false,
+                NewUserMessage = true,
+                NewUserChannel = guild.SystemChannel.Id
             };
 
             configs.Add(newConfig);

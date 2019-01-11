@@ -33,5 +33,7 @@ namespace byscuitBot.Core.Server_Data
         public double AntiSpamTime { get; set; }
         public int AntiSpamWarn { get; set; }
         public bool AllowAdvertising { get; set; }
+        public bool NewUserMessage { get; set; }
+        public ulong NewUserChannel { get; set; }
     }
 }
