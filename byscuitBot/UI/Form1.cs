@@ -97,6 +97,7 @@ namespace byscuitBot
         private void serversCBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             changeSettings();
+            respLbl.Text = "Ready";
         }
 
         private void colorBtn_Click(object sender, EventArgs e)
@@ -107,26 +108,27 @@ namespace byscuitBot
                 colorBtn.Text = string.Format("Color: {0},{1},{2}", colorDialog1.Color.R, colorDialog1.Color.G, colorDialog1.Color.B);
                 colorPrev.BackColor = colorDialog1.Color;
             }
+            respLbl.Text = "Ready";
         }
 
         private void adToggle_CheckedChanged(object sender, EventArgs e)
         {
-
+            respLbl.Text = "Ready";
         }
 
         private void tsToggle_CheckedChanged(object sender, EventArgs e)
         {
-
+            respLbl.Text = "Ready";
         }
 
         private void veriToggle_CheckedChanged(object sender, EventArgs e)
         {
-
+            respLbl.Text = "Ready";
         }
 
         private void verRoleCBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            respLbl.Text = "Ready";
         }
 
         private void applyConfigBtn_Click(object sender, EventArgs e)
@@ -154,6 +156,7 @@ namespace byscuitBot
             SocketTextChannel tc = textChannels.ToArray()[afkChanCBox.SelectedIndex];
             config.NewUserChannel = textChannels.ToArray()[newUsrChanCBox.SelectedIndex].Id;
             ServerConfigs.SaveAccounts();
+            respLbl.Text = "Server Settings Updated!";
         }
 
         private void sendMsgBtn_Click(object sender, EventArgs e)
@@ -178,6 +181,7 @@ namespace byscuitBot
                 Console.WriteLine(DateTime.Now + " | Sent server message using GUI in " + channel.Guild.Name + "/" + channel.Name);
                 channel.SendMessageAsync("", false, embed.Build());
             }
+            respLbl.Text = "Ready";
         }
     }
 }

@@ -69,6 +69,7 @@
             this.metroLabel14 = new MetroFramework.Controls.MetroLabel();
             this.newUserMsg = new MetroFramework.Controls.MetroLabel();
             this.newUsrMsgToggle = new MetroFramework.Controls.MetroToggle();
+            this.respLbl = new MetroFramework.Controls.MetroLabel();
             this.configGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.colorPrev)).BeginInit();
             this.SuspendLayout();
@@ -94,6 +95,7 @@
             // 
             // configGroup
             // 
+            this.configGroup.Controls.Add(this.respLbl);
             this.configGroup.Controls.Add(this.newUsrChanCBox);
             this.configGroup.Controls.Add(this.metroLabel14);
             this.configGroup.Controls.Add(this.newUserMsg);
@@ -476,6 +478,15 @@
             this.newUsrMsgToggle.Text = "Off";
             this.newUsrMsgToggle.UseVisualStyleBackColor = true;
             // 
+            // respLbl
+            // 
+            this.respLbl.AutoSize = true;
+            this.respLbl.Location = new System.Drawing.Point(99, 506);
+            this.respLbl.Name = "respLbl";
+            this.respLbl.Size = new System.Drawing.Size(45, 19);
+            this.respLbl.TabIndex = 29;
+            this.respLbl.Text = "Ready";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -546,6 +557,7 @@
         private MetroFramework.Controls.MetroLabel metroLabel14;
         private MetroFramework.Controls.MetroLabel newUserMsg;
         private MetroFramework.Controls.MetroToggle newUsrMsgToggle;
+        private MetroFramework.Controls.MetroLabel respLbl;
     }
 }
 
