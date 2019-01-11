@@ -336,29 +336,21 @@ namespace byscuitBot
         Random rand = new Random();
         private async Task Client_UserLeft(SocketGuildUser user)
         {
-            ulong currchar = general;
-            //if (debug == 1) currchar = test;
-            //else currchar = general;
-
-            var role = from r in user.Guild.TextChannels
-                       where r.Name.ToLower().Contains("general")
-                       select r;
-            var result = role.FirstOrDefault();
-            SocketTextChannel chanResult = null;
-            foreach (SocketTextChannel t in user.Guild.TextChannels)
+            ServerConfig config = ServerConfigs.GetConfig(user.Guild);
+            if (config.NewUserMessage)
             {
-                if (t.Name.ToLower().Contains("bye"))
-                {
-                    chanResult = t;
-                    break;
-                }
+                ulong currchar = general;
+                //if (debug == 1) currchar = test;
+                //else currchar = general;
 
-            }
-            if (chanResult == null)
-            {
+                var role = from r in user.Guild.TextChannels
+                           where r.Name.ToLower().Contains("general")
+                           select r;
+                var result = role.FirstOrDefault();
+                SocketTextChannel chanResult = null;
                 foreach (SocketTextChannel t in user.Guild.TextChannels)
                 {
-                    if (t.Name.ToLower().Contains("welcome"))
+                    if (t.Name.ToLower().Contains("bye"))
                     {
                         chanResult = t;
                         break;
@@ -369,66 +361,69 @@ namespace byscuitBot
                 {
                     foreach (SocketTextChannel t in user.Guild.TextChannels)
                     {
-                        if (t.Name.ToLower().Contains("general"))
+                        if (t.Name.ToLower().Contains("welcome"))
                         {
                             chanResult = t;
                             break;
                         }
 
                     }
+                    if (chanResult == null)
+                    {
+                        foreach (SocketTextChannel t in user.Guild.TextChannels)
+                        {
+                            if (t.Name.ToLower().Contains("general"))
+                            {
+                                chanResult = t;
+                                break;
+                            }
+
+                        }
+                    }
                 }
+                if (chanResult == null)
+                    chanResult = result;
+                GetTChannel(user.Guild.TextChannels, chanResult.Name);
+
+
+                var channel = client.GetChannel(chanResult.Id) as SocketTextChannel; // Gets the channel to send the message in
+
+                await CreateStatChannels(user.Guild);
+                await updMemberChan(user.Guild);
+
+                string msg = String.Format(Global.Bye[rand.Next(Global.Bye.Length)], user.Mention, user.Guild) + "\n👋"; //Bye message
+                var embed = new EmbedBuilder();
+                embed.WithTitle($"{user.Username} Left");
+                embed.WithThumbnailUrl(user.GetAvatarUrl());
+                embed.WithDescription(msg);
+                embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
+                if (config.FooterText != "")
+                    embed.WithFooter(config.FooterText);
+                if (config.TimeStamp)
+                    embed.WithCurrentTimestamp();
+                if (user.Id != BotID)
+                    await channel.SendMessageAsync("", false, embed.Build());   //Send byebye
             }
-            if (chanResult == null)
-                chanResult = result;
-            GetTChannel(user.Guild.TextChannels, chanResult.Name);
-
-
-            var channel = client.GetChannel(chanResult.Id)  as SocketTextChannel; // Gets the channel to send the message in
-
-            await CreateStatChannels(user.Guild);
-            await updMemberChan(user.Guild);
-
-            ServerConfig config = ServerConfigs.GetConfig(user.Guild);
-            string msg = String.Format(Global.Bye[rand.Next(Global.Bye.Length)], user.Mention, user.Guild) + "\n👋"; //Bye message
-            var embed = new EmbedBuilder();
-            embed.WithTitle($"{user.Username} Left");
-            embed.WithThumbnailUrl(user.GetAvatarUrl());
-            embed.WithDescription(msg);
-            embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
-            if(config.FooterText != "")
-                embed.WithFooter(config.FooterText);
-            if (config.TimeStamp)
-                embed.WithCurrentTimestamp();
-            if (user.Id != BotID )
-                await channel.SendMessageAsync("", false, embed.Build());   //Send byebye
-            Console.WriteLine(DateTime.Now.ToLocalTime() + " | " + user.Username + " left " + channel.Guild.Name);
+            Console.WriteLine(DateTime.Now.ToLocalTime() + " | " + user.Username + " left " + user.Guild.Name);
         }
 
         private async Task Client_UserJoined(SocketGuildUser user)
         {
-            ulong currchar = general;
-            //if (debug == 1) currchar = test;
-            //else currchar = general;
-            
-            var role = from r in user.Guild.TextChannels
-                       where r.Name.ToLower().Contains("general")
-                       select r;
-            var result = role.FirstOrDefault();
-            SocketTextChannel chanResult = null;
-            foreach (SocketTextChannel t in user.Guild.TextChannels)
+            ServerConfig config = ServerConfigs.GetConfig(user.Guild);
+            if (config.NewUserMessage)
             {
-                if (t.Name.ToLower().Contains("bye"))
-                {
-                    chanResult = t;
-                    break;
-                }
+                ulong currchar = general;
+                //if (debug == 1) currchar = test;
+                //else currchar = general;
 
-            }
-            if (chanResult == null)
-            {
+                var role = from r in user.Guild.TextChannels
+                           where r.Name.ToLower().Contains("general")
+                           select r;
+                var result = role.FirstOrDefault();
+                SocketTextChannel chanResult = null;
                 foreach (SocketTextChannel t in user.Guild.TextChannels)
                 {
-                    if (t.Name.ToLower().Contains("welcome"))
+                    if (t.Name.ToLower().Contains("bye"))
                     {
                         chanResult = t;
                         break;
@@ -439,39 +434,50 @@ namespace byscuitBot
                 {
                     foreach (SocketTextChannel t in user.Guild.TextChannels)
                     {
-                        if (t.Name.ToLower().Contains("general"))
+                        if (t.Name.ToLower().Contains("welcome"))
                         {
                             chanResult = t;
                             break;
                         }
 
                     }
+                    if (chanResult == null)
+                    {
+                        foreach (SocketTextChannel t in user.Guild.TextChannels)
+                        {
+                            if (t.Name.ToLower().Contains("general"))
+                            {
+                                chanResult = t;
+                                break;
+                            }
+
+                        }
+                    }
                 }
+                if (chanResult == null)
+                    chanResult = result;
+                GetTChannel(user.Guild.TextChannels, chanResult.Name);
+                var channel = client.GetChannel(chanResult.Id) as SocketTextChannel; // Gets the channel to send the message in
+
+                await CreateStatChannels(user.Guild);
+                await updMemberChan(user.Guild);
+
+
+                UserAccount account = UserAccounts.GetAccount(user);
+                string msg = String.Format(Global.Welcome[rand.Next(Global.Welcome.Length)], user.Mention, user.Guild);  //Welcome Message
+                var embed = new EmbedBuilder();
+                embed.WithTitle("New User Joined!");
+                embed.WithDescription(msg);
+                embed.WithThumbnailUrl(user.GetAvatarUrl());
+                embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
+                if (config.FooterText != "")
+                    embed.WithFooter(config.FooterText);
+                if (config.TimeStamp)
+                    embed.WithCurrentTimestamp();
+                if (user.Id != BotID)
+                    await channel.SendMessageAsync("", false, embed.Build());   //Welcomes the new user
             }
-            if (chanResult == null)
-                chanResult = result;
-            GetTChannel(user.Guild.TextChannels, chanResult.Name);
-            var channel = client.GetChannel(chanResult.Id) as SocketTextChannel; // Gets the channel to send the message in
-
-            await CreateStatChannels(user.Guild);
-            await updMemberChan(user.Guild);
-
-
-            ServerConfig config = ServerConfigs.GetConfig(user.Guild);
-            UserAccount account = UserAccounts.GetAccount(user);
-            string msg = String.Format(Global.Welcome[rand.Next(Global.Welcome.Length)], user.Mention, user.Guild);  //Welcome MEssage
-            var embed = new EmbedBuilder();
-            embed.WithTitle("New User Joined!");
-            embed.WithDescription(msg);
-            embed.WithThumbnailUrl(user.GetAvatarUrl());
-            embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
-            if (config.FooterText != "")
-                embed.WithFooter(config.FooterText);
-            if (config.TimeStamp)
-                embed.WithCurrentTimestamp();
-            if (user.Id != BotID)
-                await channel.SendMessageAsync("", false, embed.Build());   //Welcomes the new user
-            Console.WriteLine(DateTime.Now.ToLocalTime() + " | " + user.Username + " joined " + channel.Guild.Name);
+            Console.WriteLine(DateTime.Now.ToLocalTime() + " | " + user.Username + " joined " + user.Guild.Name);
 
             if (config.RequiresVerification)
             {
