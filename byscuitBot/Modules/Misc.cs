@@ -845,6 +845,8 @@ namespace byscuitBot.Modules
         }
 
         [Command("clear")]
+        [RequireUserPermission(GuildPermission.ManageMessages)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
         public async Task Clear(int num)
         {
             await Context.Message.DeleteAsync();
