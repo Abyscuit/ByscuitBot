@@ -55,7 +55,10 @@ namespace byscuitBot
                 newUsrChanCBox.Items.Add(chan.Name);
             }
             foreach (SocketVoiceChannel chan in voiceChannels) afkChanCBox.Items.Add(chan.Name);
-            foreach (SocketRole role in roles) verRoleCBox.Items.Add(role.Name);
+            foreach (SocketRole role in roles)
+                if(!role.IsEveryone)
+                    verRoleCBox.Items.Add(role.Name);
+
             ServerConfigs.LoadServerConfigs();
             config = ServerConfigs.GetConfig(guild);
             tokenTxt.Text = Config.botconf.token;
