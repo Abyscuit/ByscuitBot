@@ -17,12 +17,15 @@ namespace byscuitBot
 
         static Config()
         {
-            if(!Directory.Exists(CONFIG_FOLDER))
+            if (!Directory.Exists(CONFIG_FOLDER))
                 Directory.CreateDirectory(CONFIG_FOLDER);
 
             if (!File.Exists(CONFIG_PATH))
             {
                 botconf = new BotConfig();
+                botconf.botStatus = "";
+                botconf.cmdPrefix = "-";
+                botconf.token = "";
                 string json = JsonConvert.SerializeObject(botconf, Formatting.Indented);
                 File.WriteAllText(CONFIG_PATH, json);
             }
@@ -33,11 +36,16 @@ namespace byscuitBot
                 botconf = data;
             }
         }
+        public static void Save()
+        {
+            string json = JsonConvert.SerializeObject(botconf, Formatting.Indented);
+            File.WriteAllText(CONFIG_PATH, json);
+        }
     }
-
     public struct BotConfig
     {
         public string token;
         public string cmdPrefix;
+        public string botStatus;
     }
 }
