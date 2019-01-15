@@ -1,5 +1,6 @@
 {
 	"abyscuit":"---------------------------------------------\r\n-------------- Made By Abyscuit -------------\r\n---------------------------------------------",
   "configTxt": "Configuring setup information...",
-  "loadForm": "Loading graphical user interface..."
+  "loadForm": "Loading graphical user interface...",
+  "configMissing":  "Config file created...\r\nEnter token, cmdPrefix and optionally a botStatus\r\nRestart program once info is saved"
 }
