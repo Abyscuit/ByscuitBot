@@ -96,6 +96,16 @@ namespace byscuitBot
                         return;
                     }
                 }
+                if(config.BlockMentionEveryone)
+                {
+                    if(context.Message.Content.Contains(context.Guild.EveryoneRole.ToString()))
+                    {
+                        await context.Message.DeleteAsync();
+                        await context.Channel.SendMessageAsync(context.User.Mention + " mentioning everyone is prohibited!");
+                        return;
+                    }
+
+                }
                 spamAccount.LastMessages.Add(DateTime.Now);
                 if(spamAccount.BanAmount > 0)
                 {
@@ -106,6 +116,7 @@ namespace byscuitBot
                 }
                 if (spamAccount.LastMessages.Count > 3)
                 {
+                    //Get last 4 messages sent
                     DateTime d1 = spamAccount.LastMessages[0];
                     DateTime d2 = spamAccount.LastMessages[1];
                     DateTime d3 = spamAccount.LastMessages[2];
@@ -113,13 +124,16 @@ namespace byscuitBot
                     TimeSpan t1 = new TimeSpan();
                     TimeSpan t2 = new TimeSpan();
                     TimeSpan t3 = new TimeSpan();
+                    //Subtract them from each other by Milliseconds
                     t1 = d1.Subtract(d2);
                     t2 = d2.Subtract(d3);
                     t3 = d3.Subtract(d4);
                     double mil1 = Math.Abs(t1.TotalMilliseconds);
                     double mil2 = Math.Abs(t2.TotalMilliseconds);
                     double mil3 = Math.Abs(t3.TotalMilliseconds);
-                    Console.WriteLine(mil1 + "\n" + mil2 + "\n" + mil3);
+                    //Console.WriteLine(mil1 + "\n" + mil2 + "\n" + mil3);
+
+                    //If all past 4 messages are within spam threshold then its considerd spam
                     if (mil1 <= Antispam.millisecondThreshold && 
                         mil2 <= Antispam.millisecondThreshold &&
                         mil3 <= Antispam.millisecondThreshold)
