@@ -43,7 +43,13 @@ namespace byscuitBot
         {
             Console.WriteLine(Utilities.getAlert("abyscuit"));
             Console.WriteLine(Utilities.getAlert("configTxt"));
-            if (Config.botconf.token == "" || Config.botconf.token == null) return;
+            if (Config.botconf.token == "" || Config.botconf.token == null)
+            {
+                Console.WriteLine(Utilities.getAlert("configMissing"));
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
+                return;
+            }
             client = new DiscordSocketClient(new DiscordSocketConfig {
                 LogLevel = Discord.LogSeverity.Verbose
             });
@@ -51,7 +57,7 @@ namespace byscuitBot
             client.Log += Client_Log;
             client.Ready += RepeatingTimer.StartTimer;
             client.ReactionAdded += Client_ReactionAdded;
-            await client.SetGameAsync("@Me help for CMDs");
+            await client.SetGameAsync(Config.botconf.botStatus);
             await client.LoginAsync(Discord.TokenType.Bot, Config.botconf.token);
             await client.StartAsync();
             Global.Client = client;
