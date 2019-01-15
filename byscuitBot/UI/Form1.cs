@@ -85,7 +85,7 @@ namespace byscuitBot
             newUsrMsgToggle.Checked = config.NewUserMessage;
             if (newUsrMsgToggle.Checked)
                 newUsrChanCBox.SelectedItem = guild.GetTextChannel(config.NewUserChannel).Name;
-
+            eMentionTog.Checked = config.BlockMentionEveryone;
             //this.Refresh();
         }
 
@@ -155,6 +155,7 @@ namespace byscuitBot
             config.NewUserMessage = newUsrMsgToggle.Checked;
             SocketTextChannel tc = textChannels.ToArray()[afkChanCBox.SelectedIndex];
             config.NewUserChannel = textChannels.ToArray()[newUsrChanCBox.SelectedIndex].Id;
+            config.BlockMentionEveryone = eMentionTog.Checked;
             ServerConfigs.SaveAccounts();
             respLbl.Text = "Server Settings Updated!";
         }
@@ -169,7 +170,8 @@ namespace byscuitBot
                 ServerConfig config = ServerConfigs.GetConfig(channel.Guild);
                 EmbedBuilder embed = new EmbedBuilder();
                 embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
-                    embed.WithTitle("Server Message");
+                if(titleTxt.Text != "")
+                    embed.WithTitle(titleTxt.Text);
                 if (config.FooterText != "")
                     embed.WithFooter(config.FooterText);
                     embed.WithDescription(messageTxt.Text);
@@ -182,6 +184,13 @@ namespace byscuitBot
                 channel.SendMessageAsync("", false, embed.Build());
             }
             respLbl.Text = "Ready";
+        }
+
+        private void applyStatusBtn_Click(object sender, EventArgs e)
+        {
+            Config.botconf.botStatus = botStatusTxt.Text;
+            Config.Save();
+            Global.Client.SetGameAsync(botStatusTxt.Text);
         }
     }
 }

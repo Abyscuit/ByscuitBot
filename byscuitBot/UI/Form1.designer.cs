@@ -59,7 +59,6 @@
             this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
             this.tokenTxt = new MetroFramework.Controls.MetroTextBox();
             this.statsTxt = new MetroFramework.Controls.MetroTextBox();
-            this.applyBtn = new MetroFramework.Controls.MetroButton();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.sendMsgBtn = new MetroFramework.Controls.MetroButton();
             this.messageTxt = new MetroFramework.Controls.MetroTextBox();
@@ -70,8 +69,19 @@
             this.newUserMsg = new MetroFramework.Controls.MetroLabel();
             this.newUsrMsgToggle = new MetroFramework.Controls.MetroToggle();
             this.respLbl = new MetroFramework.Controls.MetroLabel();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.metroLabel15 = new MetroFramework.Controls.MetroLabel();
+            this.metroLabel16 = new MetroFramework.Controls.MetroLabel();
+            this.metroLabel17 = new MetroFramework.Controls.MetroLabel();
+            this.titleTxt = new MetroFramework.Controls.MetroTextBox();
+            this.metroLabel18 = new MetroFramework.Controls.MetroLabel();
+            this.eMentionTog = new MetroFramework.Controls.MetroToggle();
+            this.metroLabel19 = new MetroFramework.Controls.MetroLabel();
+            this.botStatusTxt = new MetroFramework.Controls.MetroTextBox();
+            this.applyStatusBtn = new MetroFramework.Controls.MetroButton();
             this.configGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.colorPrev)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // serversCBox
@@ -95,6 +105,8 @@
             // 
             // configGroup
             // 
+            this.configGroup.Controls.Add(this.metroLabel18);
+            this.configGroup.Controls.Add(this.eMentionTog);
             this.configGroup.Controls.Add(this.respLbl);
             this.configGroup.Controls.Add(this.newUsrChanCBox);
             this.configGroup.Controls.Add(this.metroLabel14);
@@ -127,14 +139,14 @@
             this.configGroup.Controls.Add(this.metroLabel3);
             this.configGroup.Location = new System.Drawing.Point(340, 63);
             this.configGroup.Name = "configGroup";
-            this.configGroup.Size = new System.Drawing.Size(384, 532);
+            this.configGroup.Size = new System.Drawing.Size(384, 452);
             this.configGroup.TabIndex = 2;
             this.configGroup.TabStop = false;
             this.configGroup.Text = "Server Config";
             // 
             // applyConfigBtn
             // 
-            this.applyConfigBtn.Location = new System.Drawing.Point(6, 503);
+            this.applyConfigBtn.Location = new System.Drawing.Point(7, 420);
             this.applyConfigBtn.Name = "applyConfigBtn";
             this.applyConfigBtn.Size = new System.Drawing.Size(86, 23);
             this.applyConfigBtn.TabIndex = 24;
@@ -225,7 +237,7 @@
             // metroLabel9
             // 
             this.metroLabel9.AutoSize = true;
-            this.metroLabel9.Location = new System.Drawing.Point(6, 207);
+            this.metroLabel9.Location = new System.Drawing.Point(6, 211);
             this.metroLabel9.Name = "metroLabel9";
             this.metroLabel9.Size = new System.Drawing.Size(106, 19);
             this.metroLabel9.TabIndex = 14;
@@ -327,7 +339,7 @@
             // metroLabel5
             // 
             this.metroLabel5.AutoSize = true;
-            this.metroLabel5.Location = new System.Drawing.Point(6, 77);
+            this.metroLabel5.Location = new System.Drawing.Point(6, 80);
             this.metroLabel5.Name = "metroLabel5";
             this.metroLabel5.Size = new System.Drawing.Size(87, 19);
             this.metroLabel5.TabIndex = 4;
@@ -345,7 +357,7 @@
             // metroLabel4
             // 
             this.metroLabel4.AutoSize = true;
-            this.metroLabel4.Location = new System.Drawing.Point(6, 45);
+            this.metroLabel4.Location = new System.Drawing.Point(6, 48);
             this.metroLabel4.Name = "metroLabel4";
             this.metroLabel4.Size = new System.Drawing.Size(86, 19);
             this.metroLabel4.TabIndex = 2;
@@ -387,26 +399,17 @@
             // 
             // statsTxt
             // 
-            this.statsTxt.Location = new System.Drawing.Point(24, 204);
+            this.statsTxt.Location = new System.Drawing.Point(22, 252);
             this.statsTxt.Multiline = true;
             this.statsTxt.Name = "statsTxt";
             this.statsTxt.ReadOnly = true;
-            this.statsTxt.Size = new System.Drawing.Size(299, 242);
+            this.statsTxt.Size = new System.Drawing.Size(299, 263);
             this.statsTxt.TabIndex = 5;
             this.statsTxt.Text = "Stats:";
             // 
-            // applyBtn
-            // 
-            this.applyBtn.Location = new System.Drawing.Point(24, 175);
-            this.applyBtn.Name = "applyBtn";
-            this.applyBtn.Size = new System.Drawing.Size(75, 23);
-            this.applyBtn.TabIndex = 6;
-            this.applyBtn.Text = "Apply";
-            this.applyBtn.Click += new System.EventHandler(this.applyBtn_Click);
-            // 
             // sendMsgBtn
             // 
-            this.sendMsgBtn.Location = new System.Drawing.Point(362, 602);
+            this.sendMsgBtn.Location = new System.Drawing.Point(177, 290);
             this.sendMsgBtn.Name = "sendMsgBtn";
             this.sendMsgBtn.Size = new System.Drawing.Size(96, 23);
             this.sendMsgBtn.TabIndex = 7;
@@ -415,17 +418,16 @@
             // 
             // messageTxt
             // 
-            this.messageTxt.Location = new System.Drawing.Point(24, 453);
+            this.messageTxt.Location = new System.Drawing.Point(6, 142);
             this.messageTxt.Multiline = true;
             this.messageTxt.Name = "messageTxt";
-            this.messageTxt.Size = new System.Drawing.Size(299, 142);
+            this.messageTxt.Size = new System.Drawing.Size(267, 142);
             this.messageTxt.TabIndex = 8;
-            this.messageTxt.Text = "Send a Message.";
             // 
             // embedChk
             // 
             this.embedChk.AutoSize = true;
-            this.embedChk.Location = new System.Drawing.Point(296, 606);
+            this.embedChk.Location = new System.Drawing.Point(111, 294);
             this.embedChk.Name = "embedChk";
             this.embedChk.Size = new System.Drawing.Size(60, 15);
             this.embedChk.TabIndex = 9;
@@ -436,7 +438,7 @@
             // 
             this.textChannelCBox.FormattingEnabled = true;
             this.textChannelCBox.ItemHeight = 23;
-            this.textChannelCBox.Location = new System.Drawing.Point(24, 598);
+            this.textChannelCBox.Location = new System.Drawing.Point(7, 41);
             this.textChannelCBox.Name = "textChannelCBox";
             this.textChannelCBox.Size = new System.Drawing.Size(266, 29);
             this.textChannelCBox.TabIndex = 10;
@@ -453,7 +455,7 @@
             // metroLabel14
             // 
             this.metroLabel14.AutoSize = true;
-            this.metroLabel14.Location = new System.Drawing.Point(6, 366);
+            this.metroLabel14.Location = new System.Drawing.Point(6, 369);
             this.metroLabel14.Name = "metroLabel14";
             this.metroLabel14.Size = new System.Drawing.Size(119, 19);
             this.metroLabel14.TabIndex = 27;
@@ -462,7 +464,7 @@
             // newUserMsg
             // 
             this.newUserMsg.AutoSize = true;
-            this.newUserMsg.Location = new System.Drawing.Point(22, 344);
+            this.newUserMsg.Location = new System.Drawing.Point(7, 344);
             this.newUserMsg.Name = "newUserMsg";
             this.newUserMsg.Size = new System.Drawing.Size(97, 19);
             this.newUserMsg.TabIndex = 26;
@@ -471,7 +473,7 @@
             // newUsrMsgToggle
             // 
             this.newUsrMsgToggle.AutoSize = true;
-            this.newUsrMsgToggle.Location = new System.Drawing.Point(125, 346);
+            this.newUsrMsgToggle.Location = new System.Drawing.Point(109, 347);
             this.newUsrMsgToggle.Name = "newUsrMsgToggle";
             this.newUsrMsgToggle.Size = new System.Drawing.Size(80, 17);
             this.newUsrMsgToggle.TabIndex = 25;
@@ -481,22 +483,116 @@
             // respLbl
             // 
             this.respLbl.AutoSize = true;
-            this.respLbl.Location = new System.Drawing.Point(99, 506);
+            this.respLbl.Location = new System.Drawing.Point(100, 423);
             this.respLbl.Name = "respLbl";
             this.respLbl.Size = new System.Drawing.Size(45, 19);
             this.respLbl.TabIndex = 29;
             this.respLbl.Text = "Ready";
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.titleTxt);
+            this.groupBox1.Controls.Add(this.embedChk);
+            this.groupBox1.Controls.Add(this.sendMsgBtn);
+            this.groupBox1.Controls.Add(this.metroLabel17);
+            this.groupBox1.Controls.Add(this.metroLabel16);
+            this.groupBox1.Controls.Add(this.metroLabel15);
+            this.groupBox1.Controls.Add(this.messageTxt);
+            this.groupBox1.Controls.Add(this.textChannelCBox);
+            this.groupBox1.Location = new System.Drawing.Point(730, 63);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(285, 323);
+            this.groupBox1.TabIndex = 11;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Send Message";
+            // 
+            // metroLabel15
+            // 
+            this.metroLabel15.AutoSize = true;
+            this.metroLabel15.Location = new System.Drawing.Point(7, 19);
+            this.metroLabel15.Name = "metroLabel15";
+            this.metroLabel15.Size = new System.Drawing.Size(59, 19);
+            this.metroLabel15.TabIndex = 11;
+            this.metroLabel15.Text = "Channel:";
+            // 
+            // metroLabel16
+            // 
+            this.metroLabel16.AutoSize = true;
+            this.metroLabel16.Location = new System.Drawing.Point(7, 121);
+            this.metroLabel16.Name = "metroLabel16";
+            this.metroLabel16.Size = new System.Drawing.Size(63, 19);
+            this.metroLabel16.TabIndex = 12;
+            this.metroLabel16.Text = "Message:";
+            // 
+            // metroLabel17
+            // 
+            this.metroLabel17.AutoSize = true;
+            this.metroLabel17.Location = new System.Drawing.Point(7, 73);
+            this.metroLabel17.Name = "metroLabel17";
+            this.metroLabel17.Size = new System.Drawing.Size(36, 19);
+            this.metroLabel17.TabIndex = 13;
+            this.metroLabel17.Text = "Title:";
+            // 
+            // titleTxt
+            // 
+            this.titleTxt.Location = new System.Drawing.Point(7, 95);
+            this.titleTxt.Name = "titleTxt";
+            this.titleTxt.Size = new System.Drawing.Size(266, 23);
+            this.titleTxt.TabIndex = 14;
+            // 
+            // metroLabel18
+            // 
+            this.metroLabel18.AutoSize = true;
+            this.metroLabel18.Location = new System.Drawing.Point(7, 398);
+            this.metroLabel18.Name = "metroLabel18";
+            this.metroLabel18.Size = new System.Drawing.Size(114, 19);
+            this.metroLabel18.TabIndex = 31;
+            this.metroLabel18.Text = "Block @everyone:";
+            // 
+            // eMentionTog
+            // 
+            this.eMentionTog.AutoSize = true;
+            this.eMentionTog.Location = new System.Drawing.Point(117, 401);
+            this.eMentionTog.Name = "eMentionTog";
+            this.eMentionTog.Size = new System.Drawing.Size(80, 17);
+            this.eMentionTog.TabIndex = 30;
+            this.eMentionTog.Text = "Off";
+            this.eMentionTog.UseVisualStyleBackColor = true;
+            // 
+            // metroLabel19
+            // 
+            this.metroLabel19.AutoSize = true;
+            this.metroLabel19.Location = new System.Drawing.Point(23, 171);
+            this.metroLabel19.Name = "metroLabel19";
+            this.metroLabel19.Size = new System.Drawing.Size(70, 19);
+            this.metroLabel19.TabIndex = 12;
+            this.metroLabel19.Text = "Bot Status:";
+            // 
+            // botStatusTxt
+            // 
+            this.botStatusTxt.Location = new System.Drawing.Point(23, 193);
+            this.botStatusTxt.Name = "botStatusTxt";
+            this.botStatusTxt.Size = new System.Drawing.Size(298, 23);
+            this.botStatusTxt.TabIndex = 13;
+            // 
+            // applyStatusBtn
+            // 
+            this.applyStatusBtn.Location = new System.Drawing.Point(24, 223);
+            this.applyStatusBtn.Name = "applyStatusBtn";
+            this.applyStatusBtn.Size = new System.Drawing.Size(75, 23);
+            this.applyStatusBtn.TabIndex = 14;
+            this.applyStatusBtn.Text = "Apply Status";
+            this.applyStatusBtn.Click += new System.EventHandler(this.applyStatusBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(751, 630);
-            this.Controls.Add(this.textChannelCBox);
-            this.Controls.Add(this.embedChk);
-            this.Controls.Add(this.messageTxt);
-            this.Controls.Add(this.sendMsgBtn);
-            this.Controls.Add(this.applyBtn);
+            this.ClientSize = new System.Drawing.Size(1025, 523);
+            this.Controls.Add(this.applyStatusBtn);
+            this.Controls.Add(this.botStatusTxt);
+            this.Controls.Add(this.metroLabel19);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.statsTxt);
             this.Controls.Add(this.tokenTxt);
             this.Controls.Add(this.metroLabel2);
@@ -509,6 +605,8 @@
             this.configGroup.ResumeLayout(false);
             this.configGroup.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.colorPrev)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -522,7 +620,6 @@
         private MetroFramework.Controls.MetroLabel metroLabel2;
         private MetroFramework.Controls.MetroTextBox tokenTxt;
         private MetroFramework.Controls.MetroTextBox statsTxt;
-        private MetroFramework.Controls.MetroButton applyBtn;
         private MetroFramework.Controls.MetroTextBox prefixTxt;
         private MetroFramework.Controls.MetroLabel metroLabel3;
         private MetroFramework.Controls.MetroComboBox afkTimeCBox;
@@ -558,6 +655,16 @@
         private MetroFramework.Controls.MetroLabel newUserMsg;
         private MetroFramework.Controls.MetroToggle newUsrMsgToggle;
         private MetroFramework.Controls.MetroLabel respLbl;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private MetroFramework.Controls.MetroTextBox titleTxt;
+        private MetroFramework.Controls.MetroLabel metroLabel17;
+        private MetroFramework.Controls.MetroLabel metroLabel16;
+        private MetroFramework.Controls.MetroLabel metroLabel15;
+        private MetroFramework.Controls.MetroLabel metroLabel18;
+        private MetroFramework.Controls.MetroToggle eMentionTog;
+        private MetroFramework.Controls.MetroLabel metroLabel19;
+        private MetroFramework.Controls.MetroTextBox botStatusTxt;
+        private MetroFramework.Controls.MetroButton applyStatusBtn;
     }
 }
 
