@@ -100,7 +100,8 @@ namespace byscuitBot.Core.Server_Data
                 VerificationRoleID = 0,
                 AllowAdvertising = false,
                 NewUserMessage = true,
-                NewUserChannel = guild.SystemChannel.Id
+                NewUserChannel = guild.SystemChannel.Id,
+                BlockMentionEveryone = false
             };
 
             configs.Add(newConfig);

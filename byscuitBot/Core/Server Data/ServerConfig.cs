@@ -35,5 +35,6 @@ namespace byscuitBot.Core.Server_Data
         public bool AllowAdvertising { get; set; }
         public bool NewUserMessage { get; set; }
         public ulong NewUserChannel { get; set; }
+        public bool BlockMentionEveryone { get; set; }
     }
 }
