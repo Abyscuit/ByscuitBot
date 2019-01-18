@@ -79,6 +79,9 @@
             this.metroLabel19 = new MetroFramework.Controls.MetroLabel();
             this.botStatusTxt = new MetroFramework.Controls.MetroTextBox();
             this.applyStatusBtn = new MetroFramework.Controls.MetroButton();
+            this.metroLabel20 = new MetroFramework.Controls.MetroLabel();
+            this.usersCBox = new MetroFramework.Controls.MetroComboBox();
+            this.mentionBtn = new MetroFramework.Controls.MetroButton();
             this.configGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.colorPrev)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -409,7 +412,7 @@
             // 
             // sendMsgBtn
             // 
-            this.sendMsgBtn.Location = new System.Drawing.Point(177, 290);
+            this.sendMsgBtn.Location = new System.Drawing.Point(177, 340);
             this.sendMsgBtn.Name = "sendMsgBtn";
             this.sendMsgBtn.Size = new System.Drawing.Size(96, 23);
             this.sendMsgBtn.TabIndex = 7;
@@ -427,7 +430,7 @@
             // embedChk
             // 
             this.embedChk.AutoSize = true;
-            this.embedChk.Location = new System.Drawing.Point(111, 294);
+            this.embedChk.Location = new System.Drawing.Point(111, 344);
             this.embedChk.Name = "embedChk";
             this.embedChk.Size = new System.Drawing.Size(60, 15);
             this.embedChk.TabIndex = 9;
@@ -491,6 +494,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.mentionBtn);
+            this.groupBox1.Controls.Add(this.metroLabel20);
+            this.groupBox1.Controls.Add(this.usersCBox);
             this.groupBox1.Controls.Add(this.titleTxt);
             this.groupBox1.Controls.Add(this.embedChk);
             this.groupBox1.Controls.Add(this.sendMsgBtn);
@@ -501,7 +507,7 @@
             this.groupBox1.Controls.Add(this.textChannelCBox);
             this.groupBox1.Location = new System.Drawing.Point(730, 63);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(285, 323);
+            this.groupBox1.Size = new System.Drawing.Size(285, 375);
             this.groupBox1.TabIndex = 11;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Send Message";
@@ -584,6 +590,33 @@
             this.applyStatusBtn.Text = "Apply Status";
             this.applyStatusBtn.Click += new System.EventHandler(this.applyStatusBtn_Click);
             // 
+            // metroLabel20
+            // 
+            this.metroLabel20.AutoSize = true;
+            this.metroLabel20.Location = new System.Drawing.Point(6, 287);
+            this.metroLabel20.Name = "metroLabel20";
+            this.metroLabel20.Size = new System.Drawing.Size(91, 19);
+            this.metroLabel20.TabIndex = 16;
+            this.metroLabel20.Text = "Mention User:";
+            // 
+            // usersCBox
+            // 
+            this.usersCBox.FormattingEnabled = true;
+            this.usersCBox.ItemHeight = 23;
+            this.usersCBox.Location = new System.Drawing.Point(6, 309);
+            this.usersCBox.Name = "usersCBox";
+            this.usersCBox.Size = new System.Drawing.Size(266, 29);
+            this.usersCBox.TabIndex = 15;
+            // 
+            // mentionBtn
+            // 
+            this.mentionBtn.Location = new System.Drawing.Point(7, 340);
+            this.mentionBtn.Name = "mentionBtn";
+            this.mentionBtn.Size = new System.Drawing.Size(75, 23);
+            this.mentionBtn.TabIndex = 17;
+            this.mentionBtn.Text = "Mention";
+            this.mentionBtn.Click += new System.EventHandler(this.mentionBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -665,6 +698,9 @@
         private MetroFramework.Controls.MetroLabel metroLabel19;
         private MetroFramework.Controls.MetroTextBox botStatusTxt;
         private MetroFramework.Controls.MetroButton applyStatusBtn;
+        private MetroFramework.Controls.MetroLabel metroLabel20;
+        private MetroFramework.Controls.MetroComboBox usersCBox;
+        private MetroFramework.Controls.MetroButton mentionBtn;
     }
 }
 

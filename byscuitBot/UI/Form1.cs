@@ -20,6 +20,7 @@ namespace byscuitBot
         IReadOnlyCollection<SocketRole> roles;
         IReadOnlyCollection<SocketTextChannel> textChannels;
         IReadOnlyCollection<SocketVoiceChannel> voiceChannels;
+        IReadOnlyCollection<SocketGuildUser> users;
         ServerConfig config;
         public Form1()
         {
@@ -45,10 +46,12 @@ namespace byscuitBot
             afkChanCBox.Items.Clear();
             verRoleCBox.Items.Clear();
             newUsrChanCBox.Items.Clear();
+            usersCBox.Items.Clear();
             SocketGuild guild = guilds[serversCBox.SelectedIndex];
             textChannels = guild.TextChannels;
             voiceChannels = guild.VoiceChannels;
             roles = guild.Roles;
+            users = guild.Users;
             foreach (SocketTextChannel chan in textChannels)
             {
                 textChannelCBox.Items.Add(chan.Name);
@@ -56,8 +59,9 @@ namespace byscuitBot
             }
             foreach (SocketVoiceChannel chan in voiceChannels) afkChanCBox.Items.Add(chan.Name);
             foreach (SocketRole role in roles)
-                if(!role.IsEveryone)
+                if (!role.IsEveryone)
                     verRoleCBox.Items.Add(role.Name);
+            foreach (SocketGuildUser user in users) usersCBox.Items.Add(user.Username);
 
             ServerConfigs.LoadServerConfigs();
             config = ServerConfigs.GetConfig(guild);
@@ -194,6 +198,10 @@ namespace byscuitBot
             Config.botconf.botStatus = botStatusTxt.Text;
             Config.Save();
             Global.Client.SetGameAsync(botStatusTxt.Text);
+        }
+        private void mentionBtn_Click(object sender, EventArgs e)
+        {
+            messageTxt.Text += users.ToArray()[usersCBox.SelectedIndex].Mention;
         }
     }
 }
