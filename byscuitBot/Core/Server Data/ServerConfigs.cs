@@ -73,6 +73,9 @@ namespace byscuitBot.Core.Server_Data
             }
             if (guild.IconUrl != null)
                 IconUrl = guild.IconUrl;
+            ulong newUsrChan = dChanID;
+            if (guild.SystemChannel != null)
+                newUsrChan = guild.SystemChannel.Id;
             ServerConfig newConfig = new ServerConfig()
             {
                 DiscordServerID = guild.Id,
@@ -100,7 +103,7 @@ namespace byscuitBot.Core.Server_Data
                 VerificationRoleID = 0,
                 AllowAdvertising = false,
                 NewUserMessage = true,
-                NewUserChannel = guild.SystemChannel.Id,
+                NewUserChannel = newUsrChan,
                 BlockMentionEveryone = false
             };
 
