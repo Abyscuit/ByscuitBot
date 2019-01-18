@@ -143,9 +143,12 @@ namespace byscuitBot
             SocketGuild guild = guilds[serversCBox.SelectedIndex];
             config = ServerConfigs.GetConfig(guild);
             config.Prefix = prefixTxt.Text;
-            SocketVoiceChannel vc = voiceChannels.ToArray()[afkChanCBox.SelectedIndex];
-            config.AFKChannelName = vc.Name;
-            config.AFKChannelID = vc.Id;
+            if (afkChanCBox.SelectedIndex != -1)
+            {
+                SocketVoiceChannel vc = voiceChannels.ToArray()[afkChanCBox.SelectedIndex];
+                config.AFKChannelName = vc.Name;
+                config.AFKChannelID = vc.Id;
+            }
             config.RequiresVerification = veriToggle.Checked;
             if (veriToggle.Checked)
                 config.VerificationRoleID = roles.ToArray()[verRoleCBox.SelectedIndex].Id;
@@ -160,7 +163,7 @@ namespace byscuitBot
             config.AntiSpamTime = double.Parse(spamTimeTxt.Text);
             config.FooterText = footerTxt.Text;
             config.NewUserMessage = newUsrMsgToggle.Checked;
-            SocketTextChannel tc = textChannels.ToArray()[afkChanCBox.SelectedIndex];
+            //SocketTextChannel tc = textChannels.ToArray()[afkChanCBox.SelectedIndex];
             config.NewUserChannel = textChannels.ToArray()[newUsrChanCBox.SelectedIndex].Id;
             config.BlockMentionEveryone = eMentionTog.Checked;
             ServerConfigs.SaveAccounts();
