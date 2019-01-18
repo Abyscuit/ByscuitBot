@@ -19,10 +19,12 @@ namespace byscuitBot.Core
         public static DateTime timeToStop = DateTime.Now;
         public static bool startTimer = false, clrMsg = false;
         public static DateTime clrMsgTime = DateTime.Now;
+        static int oldGCount = 0;
 
         internal static Task StartTimer()
         {
             Console.WriteLine(Utilities.getAlert("loadForm"));
+            oldGCount = Program.client.Guilds.Count;
             Program.t.Start();
             loopingTimer = new Timer()
             {
@@ -124,6 +126,11 @@ namespace byscuitBot.Core
             {
                 await channel.DeleteMessageAsync(Global.MessageIdToTrack);
                 clrMsg = false;
+            }
+            if(oldGCount != Program.client.Guilds.Count)
+            {
+                Program.form.updateServers();
+                oldGCount = Program.client.Guilds.Count;
             }
         }
     }

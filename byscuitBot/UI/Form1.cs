@@ -16,7 +16,7 @@ namespace byscuitBot
     public partial class Form1 : MetroFramework.Forms.MetroForm
     {
         DiscordSocketClient Client;
-        List<SocketGuild> guilds;
+        public List<SocketGuild> guilds;
         IReadOnlyCollection<SocketRole> roles;
         IReadOnlyCollection<SocketTextChannel> textChannels;
         IReadOnlyCollection<SocketVoiceChannel> voiceChannels;
@@ -30,14 +30,15 @@ namespace byscuitBot
         private void Form1_Load(object sender, EventArgs e)
         {
             updateServers();
-            serversCBox.SelectedIndex = 0;
             //changeSettings();
         }
         public void updateServers()
         {
+            serversCBox.Items.Clear();
             guilds = Program.client.Guilds.ToList();
             foreach (SocketGuild guild in guilds)
                 serversCBox.Items.Add(guild.Name);
+            serversCBox.SelectedIndex = 0;
         }
 
         private void changeSettings()

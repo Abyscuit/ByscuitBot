@@ -23,7 +23,7 @@ namespace byscuitBot
 
         static void Main(string[] args)
             => new Program().StartAsync().GetAwaiter().GetResult();
-        static Form1 form;
+        public static Form1 form;
         public static Thread t = new Thread(m => 
         {
             Application.EnableVisualStyles();
