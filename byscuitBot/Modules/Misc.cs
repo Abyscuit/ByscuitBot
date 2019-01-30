@@ -2296,6 +2296,28 @@ namespace byscuitBot.Modules
 
         #endregion
 
+        #region Xbox calls
+        [Command("clientinfo")]
+        public async Task clientInfo(string CPUKey)
+        {
+            await Context.Channel.SendMessageAsync(ServerSQL.Select("consoles", "cpukey", CPUKey));
+        }
+
+        [Command("insert")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task Insert([Remainder] string s)
+        {
+            await Context.Channel.SendMessageAsync(ServerSQL.Insert("consoles", new string[] { "uLogin","uHash","uType" }, s.Split(',')));
+        }
+        struct user
+        {
+            public uint id;
+            public string uLogin;
+            public string uHash;
+            public string uType;
+        }
+        #endregion
+
         #region Verification
 
         [Command("verify")]

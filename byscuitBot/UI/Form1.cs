@@ -29,6 +29,7 @@ namespace byscuitBot
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            metroTabControl1.SelectedIndex = 0;
             updateServers();
             //changeSettings();
         }
@@ -72,7 +73,7 @@ namespace byscuitBot
             string featString = Environment.NewLine + "Features:";
             foreach (string f in features)
                 featString += Environment.NewLine + f;
-            statsTxt.Text = string.Format("Stats:{0}Total Users: {1}{0}Owner: {2}{0}Content Filter: {3}{0}Created On: {4}{0}Verification Level: {5}{0}Default Notifications: {6}",
+            statsTxt.Text = string.Format("Total Users: {1}{0}Owner: {2}{0}Content Filter: {3}{0}Created On: {4}{0}Verification Level: {5}{0}Default Notifications: {6}",
                 Environment.NewLine, guild.MemberCount, guild.Owner, guild.ExplicitContentFilter.ToString(), guild.CreatedAt,
                 guild.VerificationLevel.ToString(), guild.DefaultMessageNotifications.ToString());
             afkChanCBox.SelectedItem = config.AFKChannelName;

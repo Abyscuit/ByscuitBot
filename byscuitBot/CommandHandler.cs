@@ -134,7 +134,7 @@ namespace byscuitBot
                     //Console.WriteLine(mil1 + "\n" + mil2 + "\n" + mil3);
 
                     //If all past 4 messages are within spam threshold then its considerd spam
-                    if (mil1 <= Antispam.millisecondThreshold && 
+                    if (mil1 <= Antispam.millisecondThreshold &&    //Threshold is 5 seconds
                         mil2 <= Antispam.millisecondThreshold &&
                         mil3 <= Antispam.millisecondThreshold)
                     {
