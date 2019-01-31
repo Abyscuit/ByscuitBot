@@ -80,13 +80,15 @@ namespace byscuitBot.Core
                         string totalTime = (int)totalDays + "d " + (int)(totalHours % 24) + "h " + (int)(totalMins % 60) + "m";
                         if (totalDays >= 300)
                             totalTime = "Lifetime";
+                        if (totalSeconds < 0)
+                            totalTime = "Expired";
                         Xbox xbox = new Xbox();
                         xbox.CPUKey = reader["cpukey"].ToString();
                         xbox.ID = (int)reader["id"];
                         xbox.Salt = reader["salt"].ToString();
                         xbox.Enabled = bool.Parse(reader["enabled"].ToString());
-                        //1096157269 WaW; 1480659546 CSGO
-                        xbox.Game = 1096157460;    //‭‭5841125A‬‬ CSGO
+                        //1096157269 WaW; 1480659546 CSGO; 1096157460 AW
+                        xbox.Game = 4294838225;    //Dashboard
                         xbox.Time = totalTime;
                         xbox.Gamertag = "Abyscuit"; //Replace with reader ToString()
                         xbox.totalDays = totalDays;
@@ -125,7 +127,7 @@ namespace byscuitBot.Core
             public double totalDays;
             public double totalMinutes;
             public bool Enabled;
-            public int Game;
+            public uint Game;
             public string Gamertag;
         }
         public static string Insert(string table, string[] columns, string[] values)
