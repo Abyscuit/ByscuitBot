@@ -72,5 +72,140 @@ namespace byscuitBot
         {
             Console.WriteLine(DateTime.Now + " | " + username+ " used " + text);
         }
+
+        //------Xbox Stuff------
+        public static string ConvertIntToHex(int val)
+        {
+            return val.ToString("X");
+        }
+
+        public static string getTitle(string title)
+        {
+            string game = "No Game Detected";
+            switch (title)
+            {
+                case "FFFE07D1":
+                    game = "[Dashboard]";
+                    break;
+                case "41560855":
+                    game = "[Call of Duty®: WaW]";
+                    break;
+                case "4156081c":
+                    game = "[Black Ops I]";
+                    break;
+                case "415608C3":
+                    game = "[Black Ops II]";
+                    break;
+                case "4156091D":
+                    game = "[Black Ops III]";
+                    break;
+                case "41560929":
+                    game = "[Black Ops III Bundle]";
+                    break;
+                case "415607E6":
+                    game = "[Modern Warfare I]";
+                    break;
+                case "41560817":
+                    game = "[Modern Warfare II]";
+                    break;
+                case "415608CB":
+                    game = "[Modern Warfare III]";
+                    break;
+                case "41560914":
+                    game = "[Advanced Warfare]";
+                    break;
+                case "415608FC":
+                    game = "[Ghosts]";
+                    break;
+                case "545408A7":
+                    game = "[ Grand Theft Auto V]";
+                    break;
+                case "464f0803":
+                    game = "[Sniper Elite 3]";
+                    break;
+                case "425307e6":
+                    game = "[Skyrim]";
+                    break;
+                case "5841149e":
+                    game = "[Minecraft: Story Mode]";
+                    break;
+                case "fffe07de":
+                    game = "[Account Creation Tool]";
+                    break;
+                case "41560927":
+                    game = "[Destiny: Legendary Edition]";
+                    break;
+                case "41560928":
+                    game = "[Destiny: Collectors Edition']";
+                    break;
+                case "58411457":
+                    game = "[MONOPOLY PLUS]";
+                    break;
+                case "415608f8":
+                    game = "[Destiny]";
+                    break;
+                case "454108e6":
+                    game = "[Skate 3]";
+                    break;
+                case "545408b8":
+                    game = "[Grand Theft Auto: San Andreas]";
+                    break;
+                case "45410950":
+                    game = "[Battlefield 3™]";
+                    break;
+                case "454109ba":
+                    game = "[Battlefield 4™']";
+                    break;
+                case "584111f7":
+                    game = "[Minecraft: Xbox 360 Edition]";
+                    break;
+                case "58410a95":
+                    game = "[Iron Brigade]";
+                    break;
+                case "58480880":
+                    game = "[Internet Explorer]";
+                    break;
+                case "5848085b":
+                    game = "[Xbox Music and Video]";
+                    break;
+                case "545408b0":
+                    game = "[NBA 2K14]";
+                    break;
+                case "58411420":
+                    game = "[Rekoil: Liberator]";
+                    break;
+                case "315a07d1":
+                    game = "['NBA 2K16]";
+                    break;
+                case "423607d3":
+                    game = "[YouTube]";
+                    break;
+                case "4b4e085e":
+                    game = "[METAL GEAR SOLID V: THE PHANTOM PAIN]";
+                    break;
+                case "4a3707d1":
+                    game = "[Crunchyroll]";
+                    break;
+                case "534307db":
+                    game = "[Hitman: Blood Money]";
+                    break;
+                case "464f0800":
+                    game = "[PAYDAY 2]";
+                    break;
+                case "53510804":
+                    game = "[Hitman: Absolution]";
+                    break;
+                case "5841125a":
+                    game = "[Counter-Strike: GO]";
+                    break;
+                case "545407f2":
+                    game = "[Grand Theft Auto IV]";
+                    break;
+                case "5841128f":
+                    game = "[Terraria – Xbox 360 Edition]";
+                    break;
+            }
+            return game;
+        }
     }
 }

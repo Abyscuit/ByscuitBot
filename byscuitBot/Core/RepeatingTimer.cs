@@ -25,7 +25,8 @@ namespace byscuitBot.Core
         {
             Console.WriteLine(Utilities.getAlert("loadForm"));
             oldGCount = Program.client.Guilds.Count;
-            Program.t.Start();
+            if(!Program.t.IsAlive)
+                Program.t.Start();
             loopingTimer = new Timer()
             {
                 Interval = 5000,

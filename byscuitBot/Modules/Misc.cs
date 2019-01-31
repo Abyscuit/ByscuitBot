@@ -21,6 +21,7 @@ using byscuitBot.Core.Steam_Accounts;
 using System.Runtime;
 using System.Net;
 using byscuitBot.Core.Server_Data;
+using static byscuitBot.Core.ServerSQL;
 
 namespace byscuitBot.Modules
 {
@@ -2300,7 +2301,18 @@ namespace byscuitBot.Modules
         [Command("clientinfo")]
         public async Task clientInfo(string CPUKey)
         {
-            await Context.Channel.SendMessageAsync(ServerSQL.Select("consoles", "cpukey", CPUKey));
+            string result = "";
+            Xbox xbox = ServerSQL.Select("consoles", "cpukey", CPUKey);
+            if (xbox.CPUKey == "Failed")
+            {
+                await PrintEmbedMessage(xbox.CPUKey, "Time: " + xbox.Time);
+                return;
+            }
+            result = "**CPUKey:** " + xbox.CPUKey + "\n**Time Left:** "+xbox.Time + 
+                "\n**Gamertag:** "+ xbox.Gamertag + 
+                "\n**Game:** "+Global.getTitle(Global.ConvertIntToHex(xbox.Game));
+            await PrintEmbedMessage("ID: " + xbox.ID + " | " + xbox.Gamertag, result);
+            //await Context.Channel.SendMessageAsync(result);
         }
 
         [Command("insert")]
@@ -2308,13 +2320,6 @@ namespace byscuitBot.Modules
         public async Task Insert([Remainder] string s)
         {
             await Context.Channel.SendMessageAsync(ServerSQL.Insert("consoles", new string[] { "uLogin","uHash","uType" }, s.Split(',')));
-        }
-        struct user
-        {
-            public uint id;
-            public string uLogin;
-            public string uHash;
-            public string uType;
         }
         #endregion
 

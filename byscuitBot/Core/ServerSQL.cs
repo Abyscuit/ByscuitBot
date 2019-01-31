@@ -54,10 +54,10 @@ namespace byscuitBot.Core
         }
 
         //Gets all info from a table where it equals the condition
-        public static string Select(string table, string where, string equals)
+        public static Xbox Select(string table, string where, string equals)
         {
             string queryString = "SELECT * FROM  " + table + " WHERE " + where + " = @equals";
-            string result = "";
+            Xbox result = null;
             using (MySqlConnection connection = new MySqlConnection(csb.ToString()))
             {
                 connection.Open();
@@ -80,13 +80,28 @@ namespace byscuitBot.Core
                         string totalTime = (int)totalDays + "d " + (int)(totalHours % 24) + "h " + (int)(totalMins % 60) + "m";
                         if (totalDays >= 300)
                             totalTime = "Lifetime";
-                        result = string.Format("**ID:** {0}\n**CPUKey:** {1}\n**Salt:** {2}\n**Time:** {3}\n**Enabled:** {4}",
-                            reader["id"], reader["cpukey"], reader["salt"], totalTime, reader["enabled"]); 
+                        Xbox xbox = new Xbox();
+                        xbox.CPUKey = reader["cpukey"].ToString();
+                        xbox.ID = (int)reader["id"];
+                        xbox.Salt = reader["salt"].ToString();
+                        xbox.Enabled = bool.Parse(reader["enabled"].ToString());
+                        //1096157269 WaW; 1480659546 CSGO
+                        xbox.Game = 1096157460;    //‭‭5841125A‬‬ CSGO
+                        xbox.Time = totalTime;
+                        xbox.Gamertag = "Abyscuit"; //Replace with reader ToString()
+                        xbox.totalDays = totalDays;
+                        xbox.totalHours = totalHours;
+                        xbox.totalMinutes = totalMins;
+                        xbox.totalSeconds = totalSeconds;
+                        result = xbox;
                     }
                 }
                 catch (Exception e)
                 {
-                    return e.Message;
+                    result = new Xbox();
+                    result.CPUKey = "Failed";
+                    result.Time = e.Message;
+                    return result;
                 }
                 finally
                 {
@@ -97,6 +112,21 @@ namespace byscuitBot.Core
             Console.WriteLine(string.Format("{0}", result));
 
             return result;
+        }
+
+        public class Xbox
+        {
+            public int ID;
+            public string CPUKey;
+            public string Salt;
+            public string Time;
+            public double totalSeconds;
+            public double totalHours;
+            public double totalDays;
+            public double totalMinutes;
+            public bool Enabled;
+            public int Game;
+            public string Gamertag;
         }
         public static string Insert(string table, string[] columns, string[] values)
         {
@@ -121,36 +151,11 @@ namespace byscuitBot.Core
                 command.Prepare();
                 command.ExecuteNonQuery();
                 result += "Successfully added query!";
-                //MySqlDataReader reader = command.ExecuteReader();
-                /*
-                try
-                {
-                    while (reader.Read())
-                    {
-                        foreach(string s in columns)
-                        {
-                            string str = s + ": " + reader[s];
-                            result += str;
-                            Console.WriteLine(str);
-                        }
-                        //result = string.Format("**ID:** {0}\n**uLogin:** {1}\n**uHash:** {2}\n**uType:** {3}",
-                          //  reader["id"], reader["uLogin"], reader["uHash"], reader["uType"]);
-                    }
-                }
-                catch (Exception e)
-                {
-                    return e.Message;
-                }
-                finally
-                {
-                    // Always call Close when done reading.
-                    reader.Close();
-                }
-                */
             }
             Console.WriteLine(string.Format("{0}", result));
 
             return result;
         }
+
     }
 }
