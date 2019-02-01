@@ -16,7 +16,7 @@ namespace byscuitBot.Core
         public static string IP = "localhost";
         public static uint PORT = 3306;
         //Add port if needed
-        static MySqlConnectionStringBuilder csb = new MySqlConnectionStringBuilder
+        public static MySqlConnectionStringBuilder csb = new MySqlConnectionStringBuilder
         {
             Server = IP,
             Database = DATABASE,
@@ -24,6 +24,7 @@ namespace byscuitBot.Core
             UserID = USER,
             Password = PASS
         };
+        
         public static string Select(string column, string table)
         {
             string queryString = "SELECT "+ column +" FROM  "+table;
@@ -141,7 +142,7 @@ namespace byscuitBot.Core
             string vals = "";
             for (int i = 0; i < values.Length; i++)
             {
-                vals += "'"+values[i]+"'";
+                vals += values[i];
                 if (i < values.Length - 1) vals += ", ";
             }
             string queryString = "INSERT INTO " + table + " (" + cols + ") VALUES (" + vals + ")";

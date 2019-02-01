@@ -2310,16 +2310,108 @@ namespace byscuitBot.Modules
             }
             result = "**CPUKey:** " + xbox.CPUKey + "\n**Time Left:** "+xbox.Time + 
                 "\n**Gamertag:** "+ xbox.Gamertag + 
-                "\n**Game:** "+Global.getTitle(Global.ConvertIntToHex(xbox.Game));
+                "\n**Game:** "+Global.getTitle(Global.GAME_HEX[rand.Next(Global.GAME_HEX.Length)]);
             await PrintEmbedMessage("ID: " + xbox.ID + " | " + xbox.Gamertag, result);
             //await Context.Channel.SendMessageAsync(result);
         }
-
+        string[] hexDig = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F" };
         [Command("insert")]
         [RequireUserPermission(GuildPermission.Administrator)]
-        public async Task Insert([Remainder] string s)
+        public async Task Insert(string name)
         {
-            await Context.Channel.SendMessageAsync(ServerSQL.Insert("consoles", new string[] { "uLogin","uHash","uType" }, s.Split(',')));
+            //CPUKey generation
+            string cpukey = "";
+            for (int i = 0; i < 32; i++)
+            {
+                int rint = rand.Next(hexDig.Length);
+                for (int r = 0; r < 3; r++) rint = rand.Next(hexDig.Length); 
+                cpukey += hexDig[rint];
+            }//end generation
+
+            //Time generation
+            DateTime time = DateTime.Now;
+            double rnd = rand.NextDouble();
+            double pwr = Math.Pow(10, 5) * 6;
+            rnd *= pwr;
+            time = time.AddSeconds(rnd);
+            //end time gen
+
+            //Prepare SQL columns and values
+            string[] columns = { "name", "cpukey","time","enabled" };   //INSERT INTO ? (name, cpukey, time, enabled)
+            string[] vals =                                             //VALUES
+            {                                                           //(
+                "'"+name+"'",                                           //'@name',
+                "'" +cpukey+"'",                                        //'@cpukey'
+                "TIMESTAMP('"+time.ToString("yyyy-MM-dd hh:MM:ss")+"')",//TIMESTAMP('yyyy-mm-dd hh:mm:ss')
+                "1"                                                     //1
+            };                                                          //);
+            await Context.Channel.SendMessageAsync(ServerSQL.Insert("consoles", columns , vals));   //INSERT INTO consoles (name, cpukey, time, enabled)
+                                                                                                    //VALUES ('@name', '@cpukey', TIMESTAMP('yyyy-mm-dd hh:mm:ss'), 1);
+
+            DateTime now = DateTime.Now;
+            TimeSpan timeLeft = time.Subtract(now);
+            double totalSeconds = timeLeft.TotalSeconds;
+            double totalMins = totalSeconds / 60;
+            double totalHours = totalMins / 60;
+            double totalDays = totalHours / 24;
+            string totalTime = (int)totalDays + "d " + (int)(totalHours % 24) + "h " + (int)(totalMins % 60) + "m";
+            if (totalDays >= 300)
+                totalTime = "Lifetime";
+            if (totalSeconds < 0)
+                totalTime = "Expired";
+
+            await PrintEmbedMessage("New \"Console\" Added",string.Format( "**Name:** {3}{0}**CPUKey:** {1}{0}**Time Left:** {2}", "\n", cpukey, totalTime,name));
+        }
+
+        [Command("update")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task Update(string name)
+        {
+            /*
+            
+            //CPUKey generation
+            string cpukey = "";
+            for (int i = 0; i < 32; i++)
+            {
+                int rint = rand.Next(hexDig.Length);
+                for (int r = 0; r < 3; r++) rint = rand.Next(hexDig.Length);
+                cpukey += hexDig[rint];
+            }//end generation
+
+            //Time generation
+            DateTime time = DateTime.Now;
+            double rnd = rand.NextDouble();
+            double pwr = Math.Pow(10, 5) * 6;
+            rnd *= pwr;
+            time = time.AddSeconds(rnd);
+            //end time gen
+
+            //Prepare SQL columns and values
+            string[] columns = { "name", "cpukey", "time", "enabled" };   //INSERT INTO ? (name, cpukey, time, enabled)
+            string[] vals =                                             //VALUES
+            {                                                           //(
+                "'"+name+"'",                                           //'@name',
+                "'" +cpukey+"'",                                        //'@cpukey'
+                "TIMESTAMP('"+time.ToString("yyyy-MM-dd hh:MM:ss")+"')",//TIMESTAMP('yyyy-mm-dd hh:mm:ss')
+                "1"                                                     //1
+            };                                                          //);
+            await Context.Channel.SendMessageAsync(ServerSQL.Insert("consoles", columns, vals));   //INSERT INTO consoles (name, cpukey, time, enabled)
+                                                                                                   //VALUES ('@name', '@cpukey', TIMESTAMP('yyyy-mm-dd hh:mm:ss'), 1);
+
+            DateTime now = DateTime.Now;
+            TimeSpan timeLeft = time.Subtract(now);
+            double totalSeconds = timeLeft.TotalSeconds;
+            double totalMins = totalSeconds / 60;
+            double totalHours = totalMins / 60;
+            double totalDays = totalHours / 24;
+            string totalTime = (int)totalDays + "d " + (int)(totalHours % 24) + "h " + (int)(totalMins % 60) + "m";
+            if (totalDays >= 300)
+                totalTime = "Lifetime";
+            if (totalSeconds < 0)
+                totalTime = "Expired";
+
+            await PrintEmbedMessage("New \"Console\" Added", string.Format("**Name:** {3}{0}**CPUKey:** {1}{0}**Time Left:** {2}", "\n", cpukey, totalTime, name));
+            */
         }
         #endregion
 

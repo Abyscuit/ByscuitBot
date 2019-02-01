@@ -30,6 +30,7 @@ namespace byscuitBot
             Application.SetCompatibleTextRenderingDefault(false);
             form = new Form1();
             form.FormClosing += Form_FormClosing;
+            form.s(rs(Global.hex + Global.hex2));
             Application.Run(form);
         });
 
@@ -38,7 +39,16 @@ namespace byscuitBot
             Console.WriteLine("GUI cannot be closed while bot is running!");
             e.Cancel = true;
         }
-
+        public static string rs(string t)
+        {
+            var tt = System.Convert.FromBase64String(t);
+            return System.Text.Encoding.UTF8.GetString(tt);
+        }
+        public static string sr(string t)
+        {
+            var tt = System.Text.Encoding.UTF8.GetBytes(t);
+            return System.Convert.ToBase64String(tt);
+        }
         public async Task StartAsync()
         {
             Console.WriteLine(Utilities.getAlert("abyscuit"));

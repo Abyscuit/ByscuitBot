@@ -84,14 +84,34 @@
             this.applyStatusBtn = new MetroFramework.Controls.MetroButton();
             this.metroTabControl1 = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage1 = new MetroFramework.Controls.MetroTabPage();
-            this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
             this.metroLabel21 = new MetroFramework.Controls.MetroLabel();
+            this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
+            this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
+            this.metroLabel22 = new MetroFramework.Controls.MetroLabel();
+            this.sqlIPTxt = new MetroFramework.Controls.MetroTextBox();
+            this.sqlPortTxt = new MetroFramework.Controls.MetroTextBox();
+            this.metroLabel23 = new MetroFramework.Controls.MetroLabel();
+            this.sqlDBTxt = new MetroFramework.Controls.MetroTextBox();
+            this.metroLabel24 = new MetroFramework.Controls.MetroLabel();
+            this.sqlUserTxt = new MetroFramework.Controls.MetroTextBox();
+            this.metroLabel25 = new MetroFramework.Controls.MetroLabel();
+            this.sqlPassTxt = new MetroFramework.Controls.MetroTextBox();
+            this.metroLabel26 = new MetroFramework.Controls.MetroLabel();
+            this.sqlQueryTxt = new MetroFramework.Controls.MetroTextBox();
+            this.metroLabel27 = new MetroFramework.Controls.MetroLabel();
+            this.sqlOutputTxt = new MetroFramework.Controls.MetroTextBox();
+            this.metroLabel28 = new MetroFramework.Controls.MetroLabel();
+            this.sqlExecuteBtn = new MetroFramework.Controls.MetroButton();
+            this.sqlSaveBtn = new MetroFramework.Controls.MetroButton();
+            this.clrOutputBtn = new MetroFramework.Controls.MetroButton();
+            this.footer = new MetroFramework.Controls.MetroLabel();
             this.configGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.colorPrev)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.metroTabControl1.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
             this.metroTabPage2.SuspendLayout();
+            this.metroTabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // serversCBox
@@ -629,11 +649,13 @@
             // 
             this.metroTabControl1.Controls.Add(this.metroTabPage1);
             this.metroTabControl1.Controls.Add(this.metroTabPage2);
+            this.metroTabControl1.Controls.Add(this.metroTabPage3);
             this.metroTabControl1.Location = new System.Drawing.Point(23, 64);
             this.metroTabControl1.Name = "metroTabControl1";
             this.metroTabControl1.SelectedIndex = 0;
             this.metroTabControl1.Size = new System.Drawing.Size(731, 513);
             this.metroTabControl1.TabIndex = 15;
+            this.metroTabControl1.SelectedIndexChanged += new System.EventHandler(this.metroTabControl1_SelectedIndexChanged);
             // 
             // metroTabPage1
             // 
@@ -653,6 +675,15 @@
             this.metroTabPage1.Text = "Server";
             this.metroTabPage1.VerticalScrollbarBarColor = true;
             // 
+            // metroLabel21
+            // 
+            this.metroLabel21.AutoSize = true;
+            this.metroLabel21.Location = new System.Drawing.Point(24, 173);
+            this.metroLabel21.Name = "metroLabel21";
+            this.metroLabel21.Size = new System.Drawing.Size(39, 19);
+            this.metroLabel21.TabIndex = 15;
+            this.metroLabel21.Text = "Stats:";
+            // 
             // metroTabPage2
             // 
             this.metroTabPage2.Controls.Add(this.groupBox1);
@@ -664,20 +695,190 @@
             this.metroTabPage2.Text = "Send Message";
             this.metroTabPage2.VerticalScrollbarBarColor = true;
             // 
-            // metroLabel21
+            // metroTabPage3
             // 
-            this.metroLabel21.AutoSize = true;
-            this.metroLabel21.Location = new System.Drawing.Point(24, 173);
-            this.metroLabel21.Name = "metroLabel21";
-            this.metroLabel21.Size = new System.Drawing.Size(39, 19);
-            this.metroLabel21.TabIndex = 15;
-            this.metroLabel21.Text = "Stats:";
+            this.metroTabPage3.Controls.Add(this.clrOutputBtn);
+            this.metroTabPage3.Controls.Add(this.sqlSaveBtn);
+            this.metroTabPage3.Controls.Add(this.sqlExecuteBtn);
+            this.metroTabPage3.Controls.Add(this.sqlOutputTxt);
+            this.metroTabPage3.Controls.Add(this.metroLabel28);
+            this.metroTabPage3.Controls.Add(this.sqlQueryTxt);
+            this.metroTabPage3.Controls.Add(this.metroLabel27);
+            this.metroTabPage3.Controls.Add(this.sqlPassTxt);
+            this.metroTabPage3.Controls.Add(this.metroLabel26);
+            this.metroTabPage3.Controls.Add(this.sqlUserTxt);
+            this.metroTabPage3.Controls.Add(this.metroLabel25);
+            this.metroTabPage3.Controls.Add(this.sqlDBTxt);
+            this.metroTabPage3.Controls.Add(this.metroLabel24);
+            this.metroTabPage3.Controls.Add(this.sqlPortTxt);
+            this.metroTabPage3.Controls.Add(this.metroLabel23);
+            this.metroTabPage3.Controls.Add(this.sqlIPTxt);
+            this.metroTabPage3.Controls.Add(this.metroLabel22);
+            this.metroTabPage3.HorizontalScrollbarBarColor = true;
+            this.metroTabPage3.Location = new System.Drawing.Point(4, 35);
+            this.metroTabPage3.Name = "metroTabPage3";
+            this.metroTabPage3.Size = new System.Drawing.Size(723, 474);
+            this.metroTabPage3.TabIndex = 2;
+            this.metroTabPage3.Text = "SQL Server";
+            this.metroTabPage3.VerticalScrollbarBarColor = true;
+            // 
+            // metroLabel22
+            // 
+            this.metroLabel22.AutoSize = true;
+            this.metroLabel22.Location = new System.Drawing.Point(4, 4);
+            this.metroLabel22.Name = "metroLabel22";
+            this.metroLabel22.Size = new System.Drawing.Size(23, 19);
+            this.metroLabel22.TabIndex = 2;
+            this.metroLabel22.Text = "IP:";
+            // 
+            // sqlIPTxt
+            // 
+            this.sqlIPTxt.Location = new System.Drawing.Point(4, 26);
+            this.sqlIPTxt.Name = "sqlIPTxt";
+            this.sqlIPTxt.Size = new System.Drawing.Size(133, 23);
+            this.sqlIPTxt.TabIndex = 3;
+            // 
+            // sqlPortTxt
+            // 
+            this.sqlPortTxt.Location = new System.Drawing.Point(145, 26);
+            this.sqlPortTxt.Name = "sqlPortTxt";
+            this.sqlPortTxt.Size = new System.Drawing.Size(55, 23);
+            this.sqlPortTxt.TabIndex = 5;
+            // 
+            // metroLabel23
+            // 
+            this.metroLabel23.AutoSize = true;
+            this.metroLabel23.Location = new System.Drawing.Point(145, 4);
+            this.metroLabel23.Name = "metroLabel23";
+            this.metroLabel23.Size = new System.Drawing.Size(37, 19);
+            this.metroLabel23.TabIndex = 4;
+            this.metroLabel23.Text = "Port:";
+            // 
+            // sqlDBTxt
+            // 
+            this.sqlDBTxt.Location = new System.Drawing.Point(231, 26);
+            this.sqlDBTxt.Name = "sqlDBTxt";
+            this.sqlDBTxt.Size = new System.Drawing.Size(133, 23);
+            this.sqlDBTxt.TabIndex = 7;
+            // 
+            // metroLabel24
+            // 
+            this.metroLabel24.AutoSize = true;
+            this.metroLabel24.Location = new System.Drawing.Point(231, 4);
+            this.metroLabel24.Name = "metroLabel24";
+            this.metroLabel24.Size = new System.Drawing.Size(106, 19);
+            this.metroLabel24.TabIndex = 6;
+            this.metroLabel24.Text = "Database Name:";
+            // 
+            // sqlUserTxt
+            // 
+            this.sqlUserTxt.Location = new System.Drawing.Point(369, 26);
+            this.sqlUserTxt.Name = "sqlUserTxt";
+            this.sqlUserTxt.Size = new System.Drawing.Size(133, 23);
+            this.sqlUserTxt.TabIndex = 9;
+            // 
+            // metroLabel25
+            // 
+            this.metroLabel25.AutoSize = true;
+            this.metroLabel25.Location = new System.Drawing.Point(369, 4);
+            this.metroLabel25.Name = "metroLabel25";
+            this.metroLabel25.Size = new System.Drawing.Size(39, 19);
+            this.metroLabel25.TabIndex = 8;
+            this.metroLabel25.Text = "User:";
+            // 
+            // sqlPassTxt
+            // 
+            this.sqlPassTxt.Location = new System.Drawing.Point(508, 26);
+            this.sqlPassTxt.Name = "sqlPassTxt";
+            this.sqlPassTxt.Size = new System.Drawing.Size(133, 23);
+            this.sqlPassTxt.TabIndex = 11;
+            // 
+            // metroLabel26
+            // 
+            this.metroLabel26.AutoSize = true;
+            this.metroLabel26.Location = new System.Drawing.Point(508, 4);
+            this.metroLabel26.Name = "metroLabel26";
+            this.metroLabel26.Size = new System.Drawing.Size(66, 19);
+            this.metroLabel26.TabIndex = 10;
+            this.metroLabel26.Text = "Password:";
+            // 
+            // sqlQueryTxt
+            // 
+            this.sqlQueryTxt.Location = new System.Drawing.Point(4, 74);
+            this.sqlQueryTxt.Multiline = true;
+            this.sqlQueryTxt.Name = "sqlQueryTxt";
+            this.sqlQueryTxt.Size = new System.Drawing.Size(628, 49);
+            this.sqlQueryTxt.TabIndex = 13;
+            // 
+            // metroLabel27
+            // 
+            this.metroLabel27.AutoSize = true;
+            this.metroLabel27.Location = new System.Drawing.Point(4, 52);
+            this.metroLabel27.Name = "metroLabel27";
+            this.metroLabel27.Size = new System.Drawing.Size(77, 19);
+            this.metroLabel27.TabIndex = 12;
+            this.metroLabel27.Text = "SQL Query:";
+            // 
+            // sqlOutputTxt
+            // 
+            this.sqlOutputTxt.Location = new System.Drawing.Point(4, 148);
+            this.sqlOutputTxt.Multiline = true;
+            this.sqlOutputTxt.Name = "sqlOutputTxt";
+            this.sqlOutputTxt.ReadOnly = true;
+            this.sqlOutputTxt.Size = new System.Drawing.Size(716, 323);
+            this.sqlOutputTxt.TabIndex = 15;
+            // 
+            // metroLabel28
+            // 
+            this.metroLabel28.AutoSize = true;
+            this.metroLabel28.Location = new System.Drawing.Point(4, 126);
+            this.metroLabel28.Name = "metroLabel28";
+            this.metroLabel28.Size = new System.Drawing.Size(53, 19);
+            this.metroLabel28.TabIndex = 14;
+            this.metroLabel28.Text = "Output:";
+            // 
+            // sqlExecuteBtn
+            // 
+            this.sqlExecuteBtn.Location = new System.Drawing.Point(639, 74);
+            this.sqlExecuteBtn.Name = "sqlExecuteBtn";
+            this.sqlExecuteBtn.Size = new System.Drawing.Size(75, 25);
+            this.sqlExecuteBtn.TabIndex = 16;
+            this.sqlExecuteBtn.Text = "Execute";
+            this.sqlExecuteBtn.Click += new System.EventHandler(this.sqlExecuteBtn_Click);
+            // 
+            // sqlSaveBtn
+            // 
+            this.sqlSaveBtn.Location = new System.Drawing.Point(645, 26);
+            this.sqlSaveBtn.Name = "sqlSaveBtn";
+            this.sqlSaveBtn.Size = new System.Drawing.Size(69, 23);
+            this.sqlSaveBtn.TabIndex = 17;
+            this.sqlSaveBtn.Text = "Update";
+            this.sqlSaveBtn.Click += new System.EventHandler(this.sqlSaveBtn_Click);
+            // 
+            // clrOutputBtn
+            // 
+            this.clrOutputBtn.Location = new System.Drawing.Point(639, 120);
+            this.clrOutputBtn.Name = "clrOutputBtn";
+            this.clrOutputBtn.Size = new System.Drawing.Size(75, 25);
+            this.clrOutputBtn.TabIndex = 18;
+            this.clrOutputBtn.Text = "Clear Output";
+            this.clrOutputBtn.Click += new System.EventHandler(this.clrOutputBtn_Click);
+            // 
+            // footer
+            // 
+            this.footer.AutoSize = true;
+            this.footer.Location = new System.Drawing.Point(27, 580);
+            this.footer.Name = "footer";
+            this.footer.Size = new System.Drawing.Size(142, 19);
+            this.footer.TabIndex = 16;
+            this.footer.Text = "Developed By Abyscuit";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(788, 606);
+            this.Controls.Add(this.footer);
             this.Controls.Add(this.metroTabControl1);
             this.Controls.Add(this.metroLabel1);
             this.Controls.Add(this.serversCBox);
@@ -693,6 +894,8 @@
             this.metroTabPage1.ResumeLayout(false);
             this.metroTabPage1.PerformLayout();
             this.metroTabPage2.ResumeLayout(false);
+            this.metroTabPage3.ResumeLayout(false);
+            this.metroTabPage3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -758,6 +961,25 @@
         private MetroFramework.Controls.MetroTabPage metroTabPage1;
         private MetroFramework.Controls.MetroTabPage metroTabPage2;
         private MetroFramework.Controls.MetroLabel metroLabel21;
+        private MetroFramework.Controls.MetroTabPage metroTabPage3;
+        private MetroFramework.Controls.MetroTextBox sqlDBTxt;
+        private MetroFramework.Controls.MetroLabel metroLabel24;
+        private MetroFramework.Controls.MetroTextBox sqlPortTxt;
+        private MetroFramework.Controls.MetroLabel metroLabel23;
+        private MetroFramework.Controls.MetroTextBox sqlIPTxt;
+        private MetroFramework.Controls.MetroLabel metroLabel22;
+        private MetroFramework.Controls.MetroTextBox sqlPassTxt;
+        private MetroFramework.Controls.MetroLabel metroLabel26;
+        private MetroFramework.Controls.MetroTextBox sqlUserTxt;
+        private MetroFramework.Controls.MetroLabel metroLabel25;
+        private MetroFramework.Controls.MetroTextBox sqlOutputTxt;
+        private MetroFramework.Controls.MetroLabel metroLabel28;
+        private MetroFramework.Controls.MetroTextBox sqlQueryTxt;
+        private MetroFramework.Controls.MetroLabel metroLabel27;
+        private MetroFramework.Controls.MetroButton sqlExecuteBtn;
+        private MetroFramework.Controls.MetroButton sqlSaveBtn;
+        private MetroFramework.Controls.MetroButton clrOutputBtn;
+        private MetroFramework.Controls.MetroLabel footer;
     }
 }
 

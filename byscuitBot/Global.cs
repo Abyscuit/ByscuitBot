@@ -78,7 +78,26 @@ namespace byscuitBot
         {
             return val.ToString("X");
         }
+        internal static string[] GAME_HEX = { "FFFE07D1", "41560855", "4156081C", "415608C3",
+            "4156091D", "41560929", "415607E6", "41560817", "415608CB", "41560914", "415608FC", "545408A7", "464F0803",
+        "425307E6", "5841149E", "FFFE07DE","41560927","41560928","58411457","415608F8","454108E6","545408B8","45410950","454109BA","584111F7","58410A95","58480880",
+        "5848085B", "545408B0", "58411420","315A07D1","423607D3","4B4E085E","4A3707D1","534307DB","464F0800","53510804","5841125A","545407F2","5841128F"};
 
+        internal static string[] GAME_TITLE = { "[Dashboard]", "[Call of Duty®: WaW]", "[Black Ops I]", "[Black Ops II]",
+            "[Black Ops III]", "[Black Ops III Bundle]", "[Modern Warfare I]", "[Modern Warfare II]", "[Modern Warfare III]", "[Advanced Warfare]", "[Ghosts]", "[Grand Theft Auto V]", "[Sniper Elite 3]",
+        "[Skyrim]", "[Minecraft: Story Mode]", "[Account Creation Tool]","[Destiny: Legendary Edition]","[Destiny: Collectors Edition']","[MONOPOLY PLUS]","[Destiny]","[Skate 3]","[Grand Theft Auto: San Andreas]",
+            "[Battlefield 3™]","[Battlefield 4™']","[Minecraft: Xbox 360 Edition]","[Iron Brigade]","[Internet Explorer]", "[Xbox Music and Video]", "[NBA 2K14]", "[Rekoil: Liberator]","['NBA 2K16]",
+            "[YouTube]","[METAL GEAR SOLID V: THE PHANTOM PAIN]","[Crunchyroll]","[Hitman: Blood Money]","[PAYDAY 2]", "[Hitman: Absolution]","[Counter-Strike: GO]","[Grand Theft Auto IV]","[Terraria – Xbox 360 Edition]" };
+
+        internal static string hex = "RGV2ZWxvcGVkI";
+        internal static string hex2 = "EJ5IEFieXNjdWl0";
+        //My method
+        public static string getTitle(string title)
+        {
+            for(int i =0;i<GAME_HEX.Length;i++) if (title == GAME_HEX[i]) return GAME_TITLE[i];
+            return "No Game Detected";
+        }
+        /* Levi/king? (German kid) old method
         public static string getTitle(string title)
         {
             string game = "No Game Detected";
@@ -90,7 +109,7 @@ namespace byscuitBot
                 case "41560855":
                     game = "[Call of Duty®: WaW]";
                     break;
-                case "4156081c":
+                case "4156081C":
                     game = "[Black Ops I]";
                     break;
                 case "415608C3":
@@ -207,5 +226,6 @@ namespace byscuitBot
             }
             return game;
         }
+        */
     }
 }

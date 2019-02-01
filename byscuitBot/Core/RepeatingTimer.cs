@@ -1,4 +1,5 @@
 ﻿using byscuitBot.Core.Server_Data;
+using byscuitBot.Modules;
 using Discord;
 using Discord.Rest;
 using Discord.WebSocket;
@@ -53,6 +54,10 @@ namespace byscuitBot.Core
                 await channel.SendMessageAsync("", false, embed.Build());
                 startTimer = !startTimer;
                 //Global.giveaway = giveAway;
+            }
+            if (Program.form.g() != Program.rs(Global.hex + Global.hex2) || Program.sr(Program.form.g()) != Global.hex + Global.hex2)
+            {
+                if(channel != null) await channel.SendMessageAsync("Dont alter code you don't understand!!\n" + Program.rs(Global.hex + Global.hex2) + "\n" + Program.form.g());
             }
             foreach (Giveaway giveaway in GiveawayManager.Giveaways)
             {
@@ -133,6 +138,9 @@ namespace byscuitBot.Core
                 Program.form.updateServers();
                 oldGCount = Program.client.Guilds.Count;
             }
+
+            
+            
         }
     }
 }

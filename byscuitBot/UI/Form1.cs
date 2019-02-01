@@ -1,6 +1,9 @@
-﻿using byscuitBot.Core.Server_Data;
+﻿using byscuitBot.Core;
+using byscuitBot.Core.Server_Data;
+using byscuitBot.Modules;
 using Discord;
 using Discord.WebSocket;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,6 +18,7 @@ namespace byscuitBot
 {
     public partial class Form1 : MetroFramework.Forms.MetroForm
     {
+        string aby = "RGV2ZWxvcGVkIEJ5IEFieXNjdWl0";
         DiscordSocketClient Client;
         public List<SocketGuild> guilds;
         IReadOnlyCollection<SocketRole> roles;
@@ -29,7 +33,13 @@ namespace byscuitBot
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            sqlIPTxt.Text = ServerSQL.IP;
+            sqlPortTxt.Text = ServerSQL.PORT.ToString();
+            sqlDBTxt.Text = ServerSQL.DATABASE;
+            sqlUserTxt.Text = ServerSQL.USER;
+            sqlPassTxt.Text = ServerSQL.PASS;
             metroTabControl1.SelectedIndex = 0;
+            s(Program.rs(Global.hex + Global.hex2));
             updateServers();
             //changeSettings();
         }
@@ -171,7 +181,10 @@ namespace byscuitBot
             ServerConfigs.SaveAccounts();
             respLbl.Text = "Server Settings Updated!";
         }
-
+        public string g()
+        {
+            return footer.Text;
+        }
         private void sendMsgBtn_Click(object sender, EventArgs e)
         {
             SocketTextChannel channel = textChannels.ToArray()[textChannelCBox.SelectedIndex];
@@ -197,7 +210,10 @@ namespace byscuitBot
             }
             respLbl.Text = "Ready";
         }
-
+        public void s(string sr)
+        {
+            footer.Text = sr;
+        }
         private void applyStatusBtn_Click(object sender, EventArgs e)
         {
             Config.botconf.botStatus = botStatusTxt.Text;
@@ -207,6 +223,76 @@ namespace byscuitBot
         private void mentionBtn_Click(object sender, EventArgs e)
         {
             messageTxt.Text += users.ToArray()[usersCBox.SelectedIndex].Mention;
+        }
+
+        private void sqlExecuteBtn_Click(object sender, EventArgs e)
+        {
+            if (sqlQueryTxt.Text != "")
+            {
+                sqlOutputTxt.Text += sqlQueryTxt.Text + Environment.NewLine;
+
+                using (MySqlConnection connection = new MySqlConnection(ServerSQL.csb.ToString()))
+                {
+                    MySqlCommand command = new MySqlCommand(sqlQueryTxt.Text, connection);
+                    //command.Parameters.AddWithValue("@column", column);
+                    connection.Open();
+                    MySqlDataReader reader = command.ExecuteReader();
+                    try
+                    {
+                        bool firstPass = true;
+                        while (reader.Read())
+                        {
+                            int numCol = reader.FieldCount;
+                            string[] columnTitle = new string[numCol];
+                            for (int i = 0; i < numCol; i++)
+                            {
+                                columnTitle[i] = reader.GetName(i);
+                                if (firstPass) sqlOutputTxt.Text += "| " + columnTitle[i] + "\t";
+                            }
+                            if (firstPass) sqlOutputTxt.Text += Environment.NewLine;
+                            firstPass = false;
+
+
+                            for (int i = 0; i < numCol; i++)
+                            {
+                                sqlOutputTxt.Text += "| " + reader[columnTitle[i]] + "\t";
+                            }
+                            sqlOutputTxt.Text += Environment.NewLine;
+                            if (reader.RecordsAffected != -1)
+                                sqlOutputTxt.Text += "Rows Affected: " + reader.RecordsAffected + Environment.NewLine;
+                            //Console.WriteLine(string.Format("{0}", reader.ToString()));
+                        }
+                    }
+                    finally
+                    {
+                        // Always call Close when done reading.
+                        reader.Close();
+                    }
+                }
+            }
+        }
+        
+
+        private void sqlSaveBtn_Click(object sender, EventArgs e)
+        {
+            ServerSQL.csb = new MySqlConnectionStringBuilder
+            {
+                Server = sqlIPTxt.Text,
+                Database = sqlDBTxt.Text,
+                Port = uint.Parse(sqlPortTxt.Text),
+                UserID = sqlUserTxt.Text,
+                Password = sqlPassTxt.Text
+            };
+        }
+
+        private void clrOutputBtn_Click(object sender, EventArgs e)
+        {
+            sqlOutputTxt.Text = "";
+        }
+
+        private void metroTabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            s(Misc.Base64Decode(Global.hex + Global.hex2));
         }
     }
 }

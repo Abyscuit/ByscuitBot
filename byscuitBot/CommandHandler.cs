@@ -271,7 +271,20 @@ namespace byscuitBot
                 */
                 //if (canSend)
                 {
-                    var result = await service.ExecuteAsync(context, argPos, null);
+                    //Levi request
+                    //Delete message if clientinfo
+                    SocketCommandContext temp = null;
+                    if(context.Message.Content.Contains("clientinfo"))
+                    {
+                        temp = makeCopy(context);
+                        await context.Message.DeleteAsync();
+                    }
+                    IResult result = null;
+                    if(temp != null)
+                        result = await service.ExecuteAsync(temp, argPos, null);
+                    else
+                        result = await service.ExecuteAsync(context, argPos, null);
+                    //end clientinfo check
                     if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
                     {
                         var role = from r in context.Guild.Roles
@@ -299,8 +312,12 @@ namespace byscuitBot
                             if (config.TimeStamp)
                                 embed.WithCurrentTimestamp();
 
-
-                            await context.Channel.SendMessageAsync("", false, embed.Build());
+                            //if temp not null or message didnt delete
+                            if (temp != null)
+                                await temp.Channel.SendMessageAsync("", false, embed.Build());
+                            else
+                                await context.Channel.SendMessageAsync("", false, embed.Build());
+                            //end clientinfo check
                             Console.WriteLine(result.ErrorReason);
                             Console.WriteLine(result.Error);
                         }
@@ -309,6 +326,13 @@ namespace byscuitBot
             }
             GetAllVoiceChannels(context.Guild.VoiceChannels);
             GetAllTextChannels(context.Guild.TextChannels);
+        }
+
+        //Make copy of context in case it makes pointer
+        public SocketCommandContext makeCopy(SocketCommandContext cmd)
+        {
+            SocketCommandContext temp = cmd;
+            return temp;
         }
 
 
@@ -405,6 +429,7 @@ namespace byscuitBot
                 var channel = client.GetChannel(config.NewUserChannel) as SocketTextChannel; // Gets the channel to send the message in
                 await CreateStatChannels(user.Guild);
                 await updMemberChan(user.Guild);
+                
 
                 string msg = String.Format(Global.Bye[rand.Next(Global.Bye.Length)], user.Mention, user.Guild) + "\n👋"; //Bye message
                 var embed = new EmbedBuilder();
