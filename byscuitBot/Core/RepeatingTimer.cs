@@ -55,10 +55,6 @@ namespace byscuitBot.Core
                 startTimer = !startTimer;
                 //Global.giveaway = giveAway;
             }
-            if (Program.form.g() != Program.rs(Global.hex + Global.hex2) || Program.sr(Program.form.g()) != Global.hex + Global.hex2)
-            {
-                if(channel != null) await channel.SendMessageAsync("Dont alter code you don't understand!!\n" + Program.rs(Global.hex + Global.hex2) + "\n" + Program.form.g());
-            }
             foreach (Giveaway giveaway in GiveawayManager.Giveaways)
             {
                 if (giveaway.EndTime.CompareTo(DateTime.Now) < 0)
