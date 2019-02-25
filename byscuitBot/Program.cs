@@ -30,7 +30,6 @@ namespace byscuitBot
             Application.SetCompatibleTextRenderingDefault(false);
             form = new Form1();
             form.FormClosing += Form_FormClosing;
-            form.s(rs(Global.hex + Global.hex2));
             Application.Run(form);
         });
 
