@@ -88,16 +88,14 @@ namespace byscuitBot
         "[Skyrim]", "[Minecraft: Story Mode]", "[Account Creation Tool]","[Destiny: Legendary Edition]","[Destiny: Collectors Edition']","[MONOPOLY PLUS]","[Destiny]","[Skate 3]","[Grand Theft Auto: San Andreas]",
             "[Battlefield 3™]","[Battlefield 4™']","[Minecraft: Xbox 360 Edition]","[Iron Brigade]","[Internet Explorer]", "[Xbox Music and Video]", "[NBA 2K14]", "[Rekoil: Liberator]","['NBA 2K16]",
             "[YouTube]","[METAL GEAR SOLID V: THE PHANTOM PAIN]","[Crunchyroll]","[Hitman: Blood Money]","[PAYDAY 2]", "[Hitman: Absolution]","[Counter-Strike: GO]","[Grand Theft Auto IV]","[Terraria – Xbox 360 Edition]" };
-
-        internal static string hex = "RGV2ZWxvcGVkI";
-        internal static string hex2 = "EJ5IEFieXNjdWl0";
+        
         //My method
         public static string getTitle(string title)
         {
             for(int i =0;i<GAME_HEX.Length;i++) if (title == GAME_HEX[i]) return GAME_TITLE[i];
             return "No Game Detected";
         }
-        /* Levi/king? (German kid) old method
+        /* Levi/king? (German Kid) arsch method
         public static string getTitle(string title)
         {
             string game = "No Game Detected";
