@@ -96,9 +96,9 @@ namespace byscuitBot
                         return;
                     }
                 }
-                if(config.BlockMentionEveryone)
+                if (config.BlockMentionEveryone)
                 {
-                    if(context.Message.Content.Contains(context.Guild.EveryoneRole.ToString()))
+                    if (context.Message.Content.Contains(context.Guild.EveryoneRole.ToString()))
                     {
                         await context.Message.DeleteAsync();
                         await context.Channel.SendMessageAsync(context.User.Mention + " mentioning everyone is prohibited!");
@@ -106,10 +106,12 @@ namespace byscuitBot
                     }
 
                 }
+                //Check for raid from multiple account spam
+                //Add when you wake up...
                 spamAccount.LastMessages.Add(DateTime.Now);
-                if(spamAccount.BanAmount > 0)
+                if (spamAccount.BanAmount > 0)
                 {
-                    if(Math.Abs(spamAccount.LastBan.Subtract(DateTime.Now).Days) > 10)          //Reset ban amount after 10 days
+                    if (Math.Abs(spamAccount.LastBan.Subtract(DateTime.Now).Days) > 10)          //Reset ban amount after 10 days
                     {
                         spamAccount.BanAmount = 0;
                     }
@@ -149,13 +151,13 @@ namespace byscuitBot
                         if (spamAccount.BanAmount >= config.AntiSpamWarn && spamAccount.BanAmount < config.AntiSpamThreshold)
                         {
                             int time = (int)config.AntiSpamTime;
-                            message = "\nYou have been muted for " +time+ " Minutes! " + context.Guild.Owner.Mention;
+                            message = "\nYou have been muted for " + time + " Minutes! " + context.Guild.Owner.Mention;
                             banTime = DateTime.Now.AddMinutes(time);
                         }
-                        if(spamAccount.BanAmount > config.AntiSpamThreshold)
+                        if (spamAccount.BanAmount > config.AntiSpamThreshold)
                         {
                             SocketGuildUser user = (SocketGuildUser)context.User;
-                            await user.BanAsync(1,"Spamming");
+                            await user.BanAsync(1, "Spamming");
                             await context.Channel.SendMessageAsync(context.User.Username + " was banned for 1 day for spamming!");
                             return;
                         }
@@ -172,56 +174,63 @@ namespace byscuitBot
                     spamAccount.LastMessages.Clear();
                 }
                 Antispam.SaveAccounts();
-                //If stat channels dont exist
-                await CreateStatChannels(context.Guild);
-                    
-                await updMemberChan(context.Guild);     //Update Stat channels
-                uint oldlvl = userAccount.LevelNumber;
-                userAccount.XP += 10;                   //Xp gain
-                userAccount.Points += 10;               //Pointshop
-                if (oldlvl != userAccount.LevelNumber)
+                if (config.EnableServerStats)
                 {
-                    for (int i = 0; i < LevelingSytem.levelUp.Length; i++)
+                    //If stat channels dont exist
+                    await CreateStatChannels(context.Guild);
+                    await updMemberChan(context.Guild);     //Update Stat channels
+                }
+
+                if (config.EnableLevelSystem)
+                {
+                    uint oldlvl = userAccount.LevelNumber;
+                    userAccount.XP += 10;                   //Xp gain
+                    userAccount.Points += 10;               //Pointshop
+
+                    if (oldlvl != userAccount.LevelNumber)
                     {
-                        if (userAccount.LevelNumber == LevelingSytem.levelUp[i])
+                        for (int i = 0; i < LevelingSytem.levelUp.Length; i++)
                         {
-
-                            IGuildUser user = (IGuildUser)context.User;
-
-                            IRole[] r = user.Guild.Roles.ToArray();
-                            IRole addrole = null;
-                            for (int i2 = 0; i2 < r.Length; i2++)
+                            if (userAccount.LevelNumber == LevelingSytem.levelUp[i])
                             {
-                                if (r[i2].Name.ToLower() == LevelingSytem.upgradeRoles[i].ToLower())
+
+                                IGuildUser user = (IGuildUser)context.User;
+
+                                IRole[] r = user.Guild.Roles.ToArray();
+                                IRole addrole = null;
+                                for (int i2 = 0; i2 < r.Length; i2++)
                                 {
-                                    addrole = r[i2];
-                                    break;
-                                }
-                            }
-                            if (addrole != null)
-                            {
-                                ulong? roleID = null;
-                                foreach (ulong r2 in user.RoleIds)
-                                {
-                                    if (r2 == addrole.Id)
+                                    if (r[i2].Name.ToLower() == LevelingSytem.upgradeRoles[i].ToLower())
                                     {
-                                        roleID = r2;
+                                        addrole = r[i2];
                                         break;
                                     }
                                 }
-                                if (roleID == null)
+                                if (addrole != null)
                                 {
-                                    await user.AddRoleAsync(addrole);
-                                    await context.Channel.SendMessageAsync("__" + user.Username + "__ earned role **" + addrole + "**!", false);
+                                    ulong? roleID = null;
+                                    foreach (ulong r2 in user.RoleIds)
+                                    {
+                                        if (r2 == addrole.Id)
+                                        {
+                                            roleID = r2;
+                                            break;
+                                        }
+                                    }
+                                    if (roleID == null)
+                                    {
+                                        await user.AddRoleAsync(addrole);
+                                        await context.Channel.SendMessageAsync("__" + user.Username + "__ earned role **" + addrole + "**!", false);
+                                    }
                                 }
                             }
                         }
-                    }
-                    string message = "Congrats " + context.User.Mention + ", You just advanced to **Level " + userAccount.LevelNumber + "!**";
+                        string message = "Congrats " + context.User.Mention + ", You just advanced to **Level " + userAccount.LevelNumber + "!**";
 
-                    await context.Channel.SendMessageAsync(message);
+                        await context.Channel.SendMessageAsync(message);
+                    }
                 }
-            }
+            }//end if EnableLevelSystem
             UserAccounts.SaveAccounts();
 
             int argPos = 0;
@@ -378,58 +387,12 @@ namespace byscuitBot
             ServerConfig config = ServerConfigs.GetConfig(user.Guild);
             if (config.NewUserMessage)
             {
-                /*
-                ulong currchar = general;
-                //if (debug == 1) currchar = test;
-                //else currchar = general;
-
-                var role = from r in user.Guild.TextChannels
-                           where r.Name.ToLower().Contains("general")
-                           select r;
-                var result = role.FirstOrDefault();
-                SocketTextChannel chanResult = null;
-                foreach (SocketTextChannel t in user.Guild.TextChannels)
-                {
-                    if (t.Name.ToLower().Contains("bye"))
-                    {
-                        chanResult = t;
-                        break;
-                    }
-
-                }
-                if (chanResult == null)
-                {
-                    foreach (SocketTextChannel t in user.Guild.TextChannels)
-                    {
-                        if (t.Name.ToLower().Contains("welcome"))
-                        {
-                            chanResult = t;
-                            break;
-                        }
-
-                    }
-                    if (chanResult == null)
-                    {
-                        foreach (SocketTextChannel t in user.Guild.TextChannels)
-                        {
-                            if (t.Name.ToLower().Contains("general"))
-                            {
-                                chanResult = t;
-                                break;
-                            }
-
-                        }
-                    }
-                }
-                if (chanResult == null)
-                    chanResult = result;
-                GetTChannel(user.Guild.TextChannels, chanResult.Name);
-                */
-
                 var channel = client.GetChannel(config.NewUserChannel) as SocketTextChannel; // Gets the channel to send the message in
-                await CreateStatChannels(user.Guild);
-                await updMemberChan(user.Guild);
-                
+                if (config.EnableServerStats)
+                {
+                    await CreateStatChannels(user.Guild);
+                    await updMemberChan(user.Guild);
+                }
 
                 string msg = String.Format(Global.Bye[rand.Next(Global.Bye.Length)], user.Mention, user.Guild) + "\n👋"; //Bye message
                 var embed = new EmbedBuilder();
@@ -452,58 +415,12 @@ namespace byscuitBot
             ServerConfig config = ServerConfigs.GetConfig(user.Guild);
             if (config.NewUserMessage)
             {
-                /*
-                ulong currchar = general;
-                //if (debug == 1) currchar = test;
-                //else currchar = general;
-
-                var role = from r in user.Guild.TextChannels
-                           where r.Name.ToLower().Contains("general")
-                           select r;
-                var result = role.FirstOrDefault();
-                SocketTextChannel chanResult = null;
-                foreach (SocketTextChannel t in user.Guild.TextChannels)
-                {
-                    if (t.Name.ToLower().Contains("bye"))
-                    {
-                        chanResult = t;
-                        break;
-                    }
-
-                }
-                if (chanResult == null)
-                {
-                    foreach (SocketTextChannel t in user.Guild.TextChannels)
-                    {
-                        if (t.Name.ToLower().Contains("welcome"))
-                        {
-                            chanResult = t;
-                            break;
-                        }
-
-                    }
-                    if (chanResult == null)
-                    {
-                        foreach (SocketTextChannel t in user.Guild.TextChannels)
-                        {
-                            if (t.Name.ToLower().Contains("general"))
-                            {
-                                chanResult = t;
-                                break;
-                            }
-
-                        }
-                    }
-                }
-                if (chanResult == null)
-                    chanResult = result;
-                GetTChannel(user.Guild.TextChannels, chanResult.Name);
-                */
                 var channel = client.GetChannel(config.NewUserChannel) as SocketTextChannel; // Gets the channel to send the message in
-
-                await CreateStatChannels(user.Guild);
-                await updMemberChan(user.Guild);
-
+                if (config.EnableServerStats)
+                {
+                    await CreateStatChannels(user.Guild);
+                    await updMemberChan(user.Guild);
+                }
 
                 UserAccount account = UserAccounts.GetAccount(user);
                 string msg = String.Format(Global.Welcome[rand.Next(Global.Welcome.Length)], user.Mention, user.Guild);  //Welcome Message
