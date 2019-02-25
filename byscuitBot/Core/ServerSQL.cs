@@ -54,6 +54,36 @@ namespace byscuitBot.Core
             return result;
         }
 
+        public static bool IsFreeMode()
+        {
+            string queryString = "SELECT guestmode FROM settings";
+            using (MySqlConnection connection = new MySqlConnection(csb.ToString()))
+            {
+                connection.Open();
+                MySqlCommand command = new MySqlCommand(queryString, connection);
+                command.Prepare();
+                MySqlDataReader reader = command.ExecuteReader();
+                try
+                {
+                    while (reader.Read())
+                    {
+                        return bool.Parse(reader["guestmode"].ToString());
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    return false;
+                }
+                finally
+                {
+                    // Always call Close when done reading.
+                    reader.Close();
+                }
+            }
+            return false;
+        }
+
         //Gets all info from a table where it equals the condition
         public static Xbox Select(string table, string where, string equals)
         {
