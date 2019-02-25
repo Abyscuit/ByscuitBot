@@ -242,6 +242,7 @@
   <ItemGroup>
     <Compile Include="CommandHandler.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Core\AntiRaid.cs" />
     <Compile Include="Core\Antispam.cs" />
     <Compile Include="Core\CoinMarketCap.cs" />
     <Compile Include="Core\DataStorage.cs" />
