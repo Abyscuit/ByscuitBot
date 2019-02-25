@@ -104,7 +104,9 @@ namespace byscuitBot.Core.Server_Data
                 AllowAdvertising = false,
                 NewUserMessage = true,
                 NewUserChannel = newUsrChan,
-                BlockMentionEveryone = false
+                BlockMentionEveryone = false,
+                EnableLevelSystem = true,
+                EnableServerStats = true
             };
 
             configs.Add(newConfig);

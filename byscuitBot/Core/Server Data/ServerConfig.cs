@@ -36,5 +36,7 @@ namespace byscuitBot.Core.Server_Data
         public bool NewUserMessage { get; set; }
         public ulong NewUserChannel { get; set; }
         public bool BlockMentionEveryone { get; set; }
+        public bool EnableLevelSystem { get; set; }
+        public bool EnableServerStats { get; set; }
     }
 }
