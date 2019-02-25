@@ -729,7 +729,6 @@ namespace byscuitBot.Core.Steam_Accounts
             }
 
             Dictionary<string, PlayerStats> r = JsonConvert.DeserializeObject<Dictionary<string, PlayerStats>>(data);
-            string msg = "";
             PlayerStats stats = r["playerstats"];
             string[] wantedStats = { "deagle", "glock", "elite", "fiveseven", "awp", "ak47", "aug", "famas", "g3sg1", "p90", "mac10", "ump45", "xm1014", "m249", "hkp2000",
                 "p250", "sg556", "scar20", "ssg08", "mp7", "mp9", "nova", "negev", "sawedoff", "bizon", "tec9", "mag7", "m4a1", "galilar", "taser", "molotov", "decoy" };
