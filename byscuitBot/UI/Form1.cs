@@ -18,7 +18,6 @@ namespace byscuitBot
 {
     public partial class Form1 : MetroFramework.Forms.MetroForm
     {
-        string aby = "RGV2ZWxvcGVkIEJ5IEFieXNjdWl0";
         DiscordSocketClient Client;
         public List<SocketGuild> guilds;
         IReadOnlyCollection<SocketRole> roles;
@@ -39,7 +38,6 @@ namespace byscuitBot
             sqlUserTxt.Text = ServerSQL.USER;
             sqlPassTxt.Text = ServerSQL.PASS;
             metroTabControl1.SelectedIndex = 0;
-            s(Program.rs(Global.hex + Global.hex2));
             updateServers();
             //changeSettings();
         }
@@ -102,6 +100,8 @@ namespace byscuitBot
             spamTimeTxt.Text = "" + config.AntiSpamTime;
             footerTxt.Text = config.FooterText;
             newUsrMsgToggle.Checked = config.NewUserMessage;
+            levelTog.Checked = config.EnableLevelSystem;
+            serverStatsTog.Checked = config.EnableServerStats;
             if (newUsrMsgToggle.Checked)
                 newUsrChanCBox.SelectedItem = guild.GetTextChannel(config.NewUserChannel).Name;
             eMentionTog.Checked = config.BlockMentionEveryone;
@@ -178,6 +178,8 @@ namespace byscuitBot
             //SocketTextChannel tc = textChannels.ToArray()[afkChanCBox.SelectedIndex];
             config.NewUserChannel = textChannels.ToArray()[newUsrChanCBox.SelectedIndex].Id;
             config.BlockMentionEveryone = eMentionTog.Checked;
+            config.EnableServerStats = serverStatsTog.Checked;
+            config.EnableLevelSystem = levelTog.Checked;
             ServerConfigs.SaveAccounts();
             respLbl.Text = "Server Settings Updated!";
         }
@@ -292,7 +294,16 @@ namespace byscuitBot
 
         private void metroTabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            s(Misc.Base64Decode(Global.hex + Global.hex2));
+        }
+
+        private void levelTog_CheckedChanged(object sender, EventArgs e)
+        {
+            respLbl.Text = "Ready";
+        }
+
+        private void serverStatsTog_CheckedChanged(object sender, EventArgs e)
+        {
+            respLbl.Text = "Ready";
         }
     }
 }
