@@ -31,7 +31,7 @@ namespace byscuitBot.Modules
             "mute", "unmute", "move", "stats", "level", "addxp","subxp", "warn", "pointshop", "serverstats", "invlink", "nickname", "invite", "giveaway", "clear",
             "\n\n------------Media Stuff--------------", "youtube", "select", "meme", "creatememe", "\n\n--------Steam Commands-----------",
         "resolve", "steaminfo", "steambans", "steamgames", "linksteam", "steamaccts", "csgostats", "csgolastmatch", "csgolastmatches", "csgowepstats"};
-        string[] desc = { "", "Displays your roles or others roles with @username", "Kick @username 'reason'", "ban @username days 'reason'", "unban @username",
+    string[] desc = { "", "Displays your roles or others roles with @username", "Kick @username 'reason'", "ban @username days 'reason'", "unban @username",
             "adds a role to a user | addrole @username role_name", "adds roles to a user | addrole @username role_name, role_name, role_name", "remove a role from a user", "removes all roles from a user",
             "Mutes a user", "Unmute a user", "Move a user to a Voice Channel", "Get stats of a user", "Get account level of user", "Add XP to a user",
             "Remove XP to a user", "Warn a user", "Lists all the items in the pointshop", "Displays server the servers currents stats", "Get the invite link",
@@ -498,15 +498,24 @@ namespace byscuitBot.Modules
                     msg += "\n__Steam Commands__\n";
                 else
                     msg += "**" + cmds[i] + "**: " + desc[i] + "\n";
+                    
             }
 
             
-
-            await PrintEmbedMessage("Help/Commands", msg);
-            msg = "\n\n__Server Configuration__\n";
-            for (int i = 0; i < configCMDs.Length; i++)
+            
+            await DMEmbedMessage("Help/Commands", msg);
+            SocketGuildUser user = (SocketGuildUser)Context.User;
+            var role = from r in user.Roles
+                       where r.Permissions.Administrator
+                       select r;
+            SocketRole r1 = role.FirstOrDefault();
+            if (user.Roles.Contains(r1))
             {
-                msg += "**" + configCMDs[i] + "**: " + configDesc[i] + "\n";
+                msg = "\n\n__Server Configuration__\n";
+                for (int i = 0; i < configCMDs.Length; i++)
+                {
+                    msg += "**" + configCMDs[i] + "**: " + configDesc[i] + "\n";
+                }
             }
             msg += "\n__Cryptocurrency Commands__\n";
             for (int i = 0; i < miningCmds.Length; i++)
@@ -518,7 +527,7 @@ namespace byscuitBot.Modules
             {
                 msg += "**" + twitchCMDs[i] + "**: " + twitchDesc[i] + "\n";
             }
-            await PrintEmbedMessage("Help/Commands", msg);
+            await DMEmbedMessage("Help/Commands", msg);
         }
         
 
@@ -1892,16 +1901,15 @@ namespace byscuitBot.Modules
         string[] miningDesc = { "Get NanoPool general account info | Usage: nanopool <optional:address>", "Link an ETH address to your discord account | Usage: linketh <address>",
         "Get the balance of an address or yours | Usage: ethbal <optional:address>", "Get the top 10 cryptocurrencies by market cap", "Calculate how much ETH you can mine using your Mh/s",
         "Get ERC-20 Tokens linked to Ethereum address | Usage: ethtokens <optional:address>", "Get basic price info of one or more coins use commas to separate | Usage: crypto btc,eth,bch"};
-        [Command("nanopool")]
-        public async Task Nanopool([Remainder]string address = null)
+
+        public string GetNanoPoolInfo(string address, SocketUser user)
         {
-            NanoPool.Account account = NanoPool.GetAccount(address, Context.User);
+            NanoPool.Account account = NanoPool.GetAccount(address, user);
             string msg = "";
             if (account == null)
             {
                 msg = "Account **" + address + "**\nNot Found!";
-                await PrintEmbedMessage("NanoPool Account", msg);
-                return;
+                return msg;
             }
 
 
@@ -1939,10 +1947,21 @@ namespace byscuitBot.Modules
                 msg += "\n**12hr Avg Hashrate:** " + account.workers[i].h12 + " Mh/s";
                 msg += "\n**24hr Avg Hashrate:** " + account.workers[i].h24 + " Mh/s";
             }
+            return msg;
+        }
 
-            await PrintEmbedMessage("NanoPool Account", msg);
+        [Command("nanopool")]
+        public async Task Nanopool(SocketUser user)
+        {
+            NanoPool.UserAccount userAccount = NanoPool.GetUser(user);
+            string address = userAccount.address;
 
-            //await Context.Channel.SendMessageAsync(msg);
+            await PrintEmbedMessage("NanoPool Account", GetNanoPoolInfo(address,user));
+        }
+        [Command("nanopool")]
+        public async Task Nanopool([Remainder]string address = null)
+        {
+            await PrintEmbedMessage("NanoPool Account", GetNanoPoolInfo(address,Context.User));
         }
 
         [Command("linketh")]
@@ -2302,7 +2321,9 @@ namespace byscuitBot.Modules
         public async Task clientInfo(string CPUKey)
         {
             string result = "";
-            Xbox xbox = ServerSQL.Select("consoles", "cpukey", CPUKey);
+            Xbox xbox = null; 
+            if(ServerSQL.IsFreeMode())xbox = ServerSQL.Select("guest", "cpukey", CPUKey);
+            else xbox = ServerSQL.Select("consoles", "cpukey", CPUKey);
             if (xbox.CPUKey == "Failed")
             {
                 await PrintEmbedMessage(xbox.CPUKey, "Time: " + xbox.Time);
@@ -2441,30 +2462,62 @@ namespace byscuitBot.Modules
             ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
             EmbedBuilder embed = new EmbedBuilder();
             embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
-            if(title != "")
+            if (title != "")
                 embed.WithTitle(title);
-            if(config.FooterText != "")
+            if (config.FooterText != "")
                 embed.WithFooter(config.FooterText);
-            if(msg != "")
+            if (msg != "")
                 embed.WithDescription(msg);
             if (url != "")
                 embed.WithUrl(url);
             if (config.TimeStamp)
                 embed.WithCurrentTimestamp();
-            if(iconUrl != "")
+            if (iconUrl != "")
                 embed.WithThumbnailUrl(iconUrl);
-            if(fields != null)
+            if (fields != null)
             {
-                for(int i =0;i<fields.Length;i++)
+                for (int i = 0; i < fields.Length; i++)
                 {
                     embed.AddField(fields[i][0], fields[i][1], true);
                 }
             }
-            
+
             //Console.WriteLine(DateTime.Now + " | " + title + " |\n" + msg);
             Console.WriteLine(DateTime.Now + " | " + Context.User.Username + " used " + title + " in " + Context.Guild.Name);
             await Context.Channel.SendMessageAsync("", false, embed.Build());
-            
+
+        }
+
+        public async Task DMEmbedMessage(string title = "", string msg = "", string url = "", string iconUrl = "", string[][] fields = null)
+        {
+            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
+            EmbedBuilder embed = new EmbedBuilder();
+            embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
+            if (title != "")
+                embed.WithTitle(title);
+            if (config.FooterText != "")
+                embed.WithFooter(config.FooterText);
+            if (msg != "")
+                embed.WithDescription(msg);
+            if (url != "")
+                embed.WithUrl(url);
+            if (config.TimeStamp)
+                embed.WithCurrentTimestamp();
+            if (iconUrl != "")
+                embed.WithThumbnailUrl(iconUrl);
+            if (fields != null)
+            {
+                for (int i = 0; i < fields.Length; i++)
+                {
+                    embed.AddField(fields[i][0], fields[i][1], true);
+                }
+            }
+
+            //Console.WriteLine(DateTime.Now + " | " + title + " |\n" + msg);
+            Console.WriteLine(DateTime.Now + " | " + Context.User.Username + " used " + title + " in " + Context.Guild.Name);
+
+            var x = await Context.User.GetOrCreateDMChannelAsync();
+            await x.SendMessageAsync("", false, embed.Build());
         }
     }
 }
