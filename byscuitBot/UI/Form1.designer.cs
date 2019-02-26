@@ -31,6 +31,10 @@
             this.serversCBox = new MetroFramework.Controls.MetroComboBox();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.configGroup = new System.Windows.Forms.GroupBox();
+            this.metroLabel30 = new MetroFramework.Controls.MetroLabel();
+            this.serverStatsTog = new MetroFramework.Controls.MetroToggle();
+            this.metroLabel29 = new MetroFramework.Controls.MetroLabel();
+            this.levelTog = new MetroFramework.Controls.MetroToggle();
             this.metroLabel18 = new MetroFramework.Controls.MetroLabel();
             this.eMentionTog = new MetroFramework.Controls.MetroToggle();
             this.respLbl = new MetroFramework.Controls.MetroLabel();
@@ -85,7 +89,6 @@
             this.metroTabControl1 = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage1 = new MetroFramework.Controls.MetroTabPage();
             this.metroLabel21 = new MetroFramework.Controls.MetroLabel();
-            this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
             this.clrOutputBtn = new MetroFramework.Controls.MetroButton();
             this.sqlSaveBtn = new MetroFramework.Controls.MetroButton();
@@ -104,18 +107,15 @@
             this.metroLabel23 = new MetroFramework.Controls.MetroLabel();
             this.sqlIPTxt = new MetroFramework.Controls.MetroTextBox();
             this.metroLabel22 = new MetroFramework.Controls.MetroLabel();
+            this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
             this.footer = new MetroFramework.Controls.MetroLabel();
-            this.metroLabel29 = new MetroFramework.Controls.MetroLabel();
-            this.levelTog = new MetroFramework.Controls.MetroToggle();
-            this.metroLabel30 = new MetroFramework.Controls.MetroLabel();
-            this.serverStatsTog = new MetroFramework.Controls.MetroToggle();
             this.configGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.colorPrev)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.metroTabControl1.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
-            this.metroTabPage2.SuspendLayout();
             this.metroTabPage3.SuspendLayout();
+            this.metroTabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // serversCBox
@@ -182,6 +182,46 @@
             this.configGroup.TabIndex = 2;
             this.configGroup.TabStop = false;
             this.configGroup.Text = "Server Config";
+            // 
+            // metroLabel30
+            // 
+            this.metroLabel30.AutoSize = true;
+            this.metroLabel30.Location = new System.Drawing.Point(7, 440);
+            this.metroLabel30.Name = "metroLabel30";
+            this.metroLabel30.Size = new System.Drawing.Size(81, 19);
+            this.metroLabel30.TabIndex = 35;
+            this.metroLabel30.Text = "Server Stats:";
+            // 
+            // serverStatsTog
+            // 
+            this.serverStatsTog.AutoSize = true;
+            this.serverStatsTog.Location = new System.Drawing.Point(117, 443);
+            this.serverStatsTog.Name = "serverStatsTog";
+            this.serverStatsTog.Size = new System.Drawing.Size(80, 17);
+            this.serverStatsTog.TabIndex = 34;
+            this.serverStatsTog.Text = "Off";
+            this.serverStatsTog.UseVisualStyleBackColor = true;
+            this.serverStatsTog.CheckedChanged += new System.EventHandler(this.serverStatsTog_CheckedChanged);
+            // 
+            // metroLabel29
+            // 
+            this.metroLabel29.AutoSize = true;
+            this.metroLabel29.Location = new System.Drawing.Point(7, 421);
+            this.metroLabel29.Name = "metroLabel29";
+            this.metroLabel29.Size = new System.Drawing.Size(86, 19);
+            this.metroLabel29.TabIndex = 33;
+            this.metroLabel29.Text = "Level System:";
+            // 
+            // levelTog
+            // 
+            this.levelTog.AutoSize = true;
+            this.levelTog.Location = new System.Drawing.Point(117, 424);
+            this.levelTog.Name = "levelTog";
+            this.levelTog.Size = new System.Drawing.Size(80, 17);
+            this.levelTog.TabIndex = 32;
+            this.levelTog.Text = "Off";
+            this.levelTog.UseVisualStyleBackColor = true;
+            this.levelTog.CheckedChanged += new System.EventHandler(this.levelTog_CheckedChanged);
             // 
             // metroLabel18
             // 
@@ -488,7 +528,7 @@
             // metroLabel2
             // 
             this.metroLabel2.AutoSize = true;
-            this.metroLabel2.Location = new System.Drawing.Point(24, 10);
+            this.metroLabel2.Location = new System.Drawing.Point(3, 10);
             this.metroLabel2.Name = "metroLabel2";
             this.metroLabel2.Size = new System.Drawing.Size(45, 19);
             this.metroLabel2.TabIndex = 3;
@@ -496,18 +536,18 @@
             // 
             // tokenTxt
             // 
-            this.tokenTxt.Location = new System.Drawing.Point(24, 32);
+            this.tokenTxt.Location = new System.Drawing.Point(3, 32);
             this.tokenTxt.Name = "tokenTxt";
-            this.tokenTxt.Size = new System.Drawing.Size(297, 23);
+            this.tokenTxt.Size = new System.Drawing.Size(318, 23);
             this.tokenTxt.TabIndex = 4;
             // 
             // statsTxt
             // 
-            this.statsTxt.Location = new System.Drawing.Point(22, 195);
+            this.statsTxt.Location = new System.Drawing.Point(1, 195);
             this.statsTxt.Multiline = true;
             this.statsTxt.Name = "statsTxt";
             this.statsTxt.ReadOnly = true;
-            this.statsTxt.Size = new System.Drawing.Size(299, 267);
+            this.statsTxt.Size = new System.Drawing.Size(320, 331);
             this.statsTxt.TabIndex = 5;
             // 
             // sendMsgBtn
@@ -631,7 +671,7 @@
             // metroLabel19
             // 
             this.metroLabel19.AutoSize = true;
-            this.metroLabel19.Location = new System.Drawing.Point(23, 97);
+            this.metroLabel19.Location = new System.Drawing.Point(2, 97);
             this.metroLabel19.Name = "metroLabel19";
             this.metroLabel19.Size = new System.Drawing.Size(70, 19);
             this.metroLabel19.TabIndex = 12;
@@ -639,14 +679,14 @@
             // 
             // botStatusTxt
             // 
-            this.botStatusTxt.Location = new System.Drawing.Point(23, 119);
+            this.botStatusTxt.Location = new System.Drawing.Point(2, 119);
             this.botStatusTxt.Name = "botStatusTxt";
-            this.botStatusTxt.Size = new System.Drawing.Size(298, 23);
+            this.botStatusTxt.Size = new System.Drawing.Size(319, 23);
             this.botStatusTxt.TabIndex = 13;
             // 
             // applyStatusBtn
             // 
-            this.applyStatusBtn.Location = new System.Drawing.Point(24, 149);
+            this.applyStatusBtn.Location = new System.Drawing.Point(3, 149);
             this.applyStatusBtn.Name = "applyStatusBtn";
             this.applyStatusBtn.Size = new System.Drawing.Size(75, 23);
             this.applyStatusBtn.TabIndex = 14;
@@ -686,22 +726,11 @@
             // metroLabel21
             // 
             this.metroLabel21.AutoSize = true;
-            this.metroLabel21.Location = new System.Drawing.Point(24, 173);
+            this.metroLabel21.Location = new System.Drawing.Point(3, 173);
             this.metroLabel21.Name = "metroLabel21";
             this.metroLabel21.Size = new System.Drawing.Size(39, 19);
             this.metroLabel21.TabIndex = 15;
             this.metroLabel21.Text = "Stats:";
-            // 
-            // metroTabPage2
-            // 
-            this.metroTabPage2.Controls.Add(this.groupBox1);
-            this.metroTabPage2.HorizontalScrollbarBarColor = true;
-            this.metroTabPage2.Location = new System.Drawing.Point(4, 35);
-            this.metroTabPage2.Name = "metroTabPage2";
-            this.metroTabPage2.Size = new System.Drawing.Size(723, 474);
-            this.metroTabPage2.TabIndex = 1;
-            this.metroTabPage2.Text = "Send Message";
-            this.metroTabPage2.VerticalScrollbarBarColor = true;
             // 
             // metroTabPage3
             // 
@@ -725,7 +754,7 @@
             this.metroTabPage3.HorizontalScrollbarBarColor = true;
             this.metroTabPage3.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage3.Name = "metroTabPage3";
-            this.metroTabPage3.Size = new System.Drawing.Size(723, 474);
+            this.metroTabPage3.Size = new System.Drawing.Size(723, 529);
             this.metroTabPage3.TabIndex = 2;
             this.metroTabPage3.Text = "SQL Server";
             this.metroTabPage3.VerticalScrollbarBarColor = true;
@@ -873,6 +902,17 @@
             this.metroLabel22.TabIndex = 2;
             this.metroLabel22.Text = "IP:";
             // 
+            // metroTabPage2
+            // 
+            this.metroTabPage2.Controls.Add(this.groupBox1);
+            this.metroTabPage2.HorizontalScrollbarBarColor = true;
+            this.metroTabPage2.Location = new System.Drawing.Point(4, 35);
+            this.metroTabPage2.Name = "metroTabPage2";
+            this.metroTabPage2.Size = new System.Drawing.Size(723, 529);
+            this.metroTabPage2.TabIndex = 1;
+            this.metroTabPage2.Text = "Send Message";
+            this.metroTabPage2.VerticalScrollbarBarColor = true;
+            // 
             // footer
             // 
             this.footer.AutoSize = true;
@@ -881,46 +921,6 @@
             this.footer.Size = new System.Drawing.Size(142, 19);
             this.footer.TabIndex = 16;
             this.footer.Text = "Developed By Abyscuit";
-            // 
-            // metroLabel29
-            // 
-            this.metroLabel29.AutoSize = true;
-            this.metroLabel29.Location = new System.Drawing.Point(7, 421);
-            this.metroLabel29.Name = "metroLabel29";
-            this.metroLabel29.Size = new System.Drawing.Size(86, 19);
-            this.metroLabel29.TabIndex = 33;
-            this.metroLabel29.Text = "Level System:";
-            // 
-            // levelTog
-            // 
-            this.levelTog.AutoSize = true;
-            this.levelTog.Location = new System.Drawing.Point(117, 424);
-            this.levelTog.Name = "levelTog";
-            this.levelTog.Size = new System.Drawing.Size(80, 17);
-            this.levelTog.TabIndex = 32;
-            this.levelTog.Text = "Off";
-            this.levelTog.UseVisualStyleBackColor = true;
-            this.levelTog.CheckedChanged += new System.EventHandler(this.levelTog_CheckedChanged);
-            // 
-            // metroLabel30
-            // 
-            this.metroLabel30.AutoSize = true;
-            this.metroLabel30.Location = new System.Drawing.Point(7, 440);
-            this.metroLabel30.Name = "metroLabel30";
-            this.metroLabel30.Size = new System.Drawing.Size(81, 19);
-            this.metroLabel30.TabIndex = 35;
-            this.metroLabel30.Text = "Server Stats:";
-            // 
-            // serverStatsTog
-            // 
-            this.serverStatsTog.AutoSize = true;
-            this.serverStatsTog.Location = new System.Drawing.Point(117, 443);
-            this.serverStatsTog.Name = "serverStatsTog";
-            this.serverStatsTog.Size = new System.Drawing.Size(80, 17);
-            this.serverStatsTog.TabIndex = 34;
-            this.serverStatsTog.Text = "Off";
-            this.serverStatsTog.UseVisualStyleBackColor = true;
-            this.serverStatsTog.CheckedChanged += new System.EventHandler(this.serverStatsTog_CheckedChanged);
             // 
             // Form1
             // 
@@ -942,9 +942,9 @@
             this.metroTabControl1.ResumeLayout(false);
             this.metroTabPage1.ResumeLayout(false);
             this.metroTabPage1.PerformLayout();
-            this.metroTabPage2.ResumeLayout(false);
             this.metroTabPage3.ResumeLayout(false);
             this.metroTabPage3.PerformLayout();
+            this.metroTabPage2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
