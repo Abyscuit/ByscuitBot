@@ -259,6 +259,7 @@
     <Compile Include="Core\Steam Accounts\SteamAccount.cs" />
     <Compile Include="Core\Steam Accounts\SteamAccounts.cs" />
     <Compile Include="Core\Twitch.cs" />
+    <Compile Include="Core\UrbanDictionary.cs" />
     <Compile Include="Core\User Accounts\UserAccount.cs" />
     <Compile Include="Core\User Accounts\UserAccounts.cs" />
     <Compile Include="Global.cs" />
