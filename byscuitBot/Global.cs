@@ -57,6 +57,7 @@ namespace byscuitBot
         internal static string ETH_SCAN_KEY = "";
         internal static string CMC_API_KEY = "";
         internal static string nanopoolGeneralInfo = "https://api.nanopool.org/v1/eth/user/";
+        internal static string nanopoolWorkers = "https://api.nanopool.org/v1/eth/workers/";
         internal static string etherscanBalance = "https://api.etherscan.io/api?module=account&action=balance&tag=latest&apikey=" + ETH_SCAN_KEY + "&address=";
         internal static string ethtokenBalance = "http://api.etherscan.io/api?module=account&action=tokentx&startblock=0&endblock=999999999&sort=asc&apikey=" + ETH_SCAN_KEY + "&address=";
         internal static string ethPrice = "https://api.nanopool.org/v1/eth/prices";
@@ -95,7 +96,7 @@ namespace byscuitBot
             for(int i =0;i<GAME_HEX.Length;i++) if (title == GAME_HEX[i]) return GAME_TITLE[i];
             return "No Game Detected";
         }
-        /* Levi/king? (German Kid) arsch method
+        /* Levi/king? (German fotze) arsch method
         public static string getTitle(string title)
         {
             string game = "No Game Detected";
