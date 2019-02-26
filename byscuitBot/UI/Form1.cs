@@ -38,6 +38,7 @@ namespace byscuitBot
             sqlUserTxt.Text = ServerSQL.USER;
             sqlPassTxt.Text = ServerSQL.PASS;
             metroTabControl1.SelectedIndex = 0;
+            botStatusTxt.Text = Config.botconf.botStatus;
             updateServers();
             //changeSettings();
         }
