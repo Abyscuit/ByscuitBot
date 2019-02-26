@@ -29,7 +29,7 @@ namespace byscuitBot.Modules
     {
         string[] cmds = { "-------------Server Stuff-------------" ,"roles", "kick", "ban", "unban", "addrole", "addroles", "removerole", "removeallroles",
             "mute", "unmute", "move", "stats", "level", "addxp","subxp", "warn", "pointshop", "serverstats", "invlink", "nickname", "invite", "giveaway", "clear",
-            "\n\n------------Media Stuff--------------", "youtube", "select", "meme", "creatememe", "\n\n--------Steam Commands-----------",
+            "\n\n------------Media Stuff--------------", "youtube", "select", "meme", "creatememe", "urban", "\n\n--------Steam Commands-----------",
         "resolve", "steaminfo", "steambans", "steamgames", "linksteam", "steamaccts", "csgostats", "csgolastmatch", "csgolastmatches", "csgowepstats"};
     string[] desc = { "", "Displays your roles or others roles with @username", "Kick @username 'reason'", "ban @username days 'reason'", "unban @username",
             "adds a role to a user | addrole @username role_name", "adds roles to a user | addrole @username role_name, role_name, role_name", "remove a role from a user", "removes all roles from a user",
@@ -38,7 +38,7 @@ namespace byscuitBot.Modules
             "Change nickname of a user", "Get an Invite Link for the server", "Create a giveaway | Usage: giveaway <9d23h59m,Item to give>", "Clear messages in bulk | Usage: clear <number>",
             "", "Search YouTube for a keyword", "Select an option displayed",
             "Post a random or specific meme | Usage: meme <optional> keyword",
-            "Create a meme using a members avatar | Usage: creatememe @user <top text,bottom text>", "", "Resolve steam URL or username to SteamID64",
+            "Create a meme using a members avatar | Usage: creatememe @user <top text,bottom text>", "Gets a definition from Urban Dictionary", "", "Resolve steam URL or username to SteamID64",
             "Get Account Summary of your linked account or a steam user", "Get steam account bans (VAC, community, economy)", "Get All steam games or time played for a specific game",
             "Link steam account to Discord Account", "Get all steam accounts linked to Discord users", "Get relevant CS:GO stats (totals, last match)",
             "Get CS:GO last match info", "Get CS:GO info for up to 10 games of your last matches saved", "Get CS:GO weapon stats of all weapons or a specific weapon"
@@ -982,7 +982,7 @@ namespace byscuitBot.Modules
             await Context.Message.DeleteAsync();
             File.Delete(meme);
         }
-        
+
         [Command("upload")]
         [RequireUserPermission(GuildPermission.Administrator)]
         [RequireBotPermission(GuildPermission.Administrator)]
@@ -1013,6 +1013,16 @@ namespace byscuitBot.Modules
             }
             await Context.Channel.SendMessageAsync(msg);
             await Context.Message.DeleteAsync();
+        }
+
+        [Command("urban")]
+        public async Task Urban([Remainder]string word)
+        {
+            word = char.ToUpper(word[0]) + word.Substring(1);
+            string msg = UrbanDictionary.GetDefinition(word);
+            Console.WriteLine("Encoded word: " + EncodeURL(word) + "\n");
+
+            await PrintEmbedMessage(word + " - Urban Dictionary", msg);
         }
         #endregion
 
@@ -1066,6 +1076,11 @@ namespace byscuitBot.Modules
         public static string EncodeURL(string url)
         {
             url = WebUtility.UrlEncode(url);
+            return url;
+        }
+        public static string DecodeUrl(string url)
+        {
+            url = WebUtility.UrlDecode(url);
             return url;
         }
         public static string Base64Encode(string plainText)
@@ -1941,11 +1956,13 @@ namespace byscuitBot.Modules
                 msg += "\n**Hashrate:** " + account.workers[i].hashrate + " Mh/s";
                 msg += "\n**Last Share:** " + SteamAccounts.UnixTimeStampToDateTime(account.workers[i].lastshare);
                 msg += "\n**Rating:** " + account.workers[i].rating;
+                /*
                 msg += "\n**1hr Avg Hashrate:** " + account.workers[i].h1 + " Mh/s";
                 msg += "\n**3hr Avg Hashrate:** " + account.workers[i].h3 + " Mh/s";
                 msg += "\n**6hr Avg Hashrate:** " + account.workers[i].h6 + " Mh/s";
                 msg += "\n**12hr Avg Hashrate:** " + account.workers[i].h12 + " Mh/s";
                 msg += "\n**24hr Avg Hashrate:** " + account.workers[i].h24 + " Mh/s";
+                */
             }
             return msg;
         }
