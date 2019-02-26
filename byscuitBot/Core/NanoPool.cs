@@ -18,6 +18,12 @@ namespace byscuitBot.Core
             public Account data { get; set; }
             public string error { get; set; }
         }
+        public class WorkerResponse
+        {
+            public bool status { get; set; }
+            public List<Worker> data { get; set; }
+            public string error { get; set; }
+        }
         public class Account
         {
             public string account { get; set; }
@@ -70,7 +76,38 @@ namespace byscuitBot.Core
             else
                 return null;
 
+            account.workers = GetWorkers(address, user);
+
             return account;
+        }
+
+        public static List<Worker> GetWorkers(string address, SocketUser user)
+        {
+            if (address == null)
+            {
+                UserAccount userAccount = GetUser(user);
+                if (userAccount != null)
+                    address = userAccount.address;
+                else
+                    address = "";
+            }
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Global.nanopoolWorkers + address);
+            request.ContentType = "application/json; charset=utf-8";
+            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+            string data = "";
+            using (Stream responseStream = response.GetResponseStream())
+            {
+                StreamReader reader = new StreamReader(responseStream, Encoding.UTF8);
+                data = reader.ReadToEnd();
+            }
+
+            WorkerResponse r = JsonConvert.DeserializeObject<WorkerResponse>(data);
+            List<Worker> workers = null;
+
+            if (r.status != false) workers = r.data;
+            else return null;
+
+            return workers;
         }
 
         public class UserAccount
