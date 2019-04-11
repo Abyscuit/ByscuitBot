@@ -26,12 +26,12 @@ namespace byscuitBot.Core
             }
             string[] split = data.Replace( "<div class=\"meaning\">", "▬" ).Split('▬');
             string definition = "";
-            for (int i = 1; i < split.Length; i++)
+            //for (int i = 1; i < split.Length; i++)
             {
-                string[] split2 = split[i].Replace("</div>", "▬").Split('▬');
+                string[] split2 = split[1].Replace("</div>", "▬").Split('▬');
                 string def = split2[0];
                 //Console.WriteLine("Definition " + 1 + ":\n" + definition + "\n");
-                definition += "Definition " + i + ":\n" + StripHTML(def) + "\n\n";
+                definition += "Definition:\n" + StripHTML(def) + "\n\n";
             }
 
             return definition;
