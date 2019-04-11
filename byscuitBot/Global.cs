@@ -43,7 +43,7 @@ namespace byscuitBot
 
         #region Steam API
         //----Steam API------
-        internal static string API_KEY = "";
+        internal static string API_KEY = "F72C8721E241606D2C1E4C4AD45152BD";
         internal static string csgoURL = "http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=730&key="+API_KEY+"&steamid=";
         internal static string resolveURL = "http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=" + API_KEY + "&vanityurl=";
         internal static string bansURL = "http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?key=" + API_KEY + "&steamids=";
@@ -54,8 +54,8 @@ namespace byscuitBot
 
 
         //----Crypto----
-        internal static string ETH_SCAN_KEY = "";
-        internal static string CMC_API_KEY = "";
+        internal static string ETH_SCAN_KEY = "AJ9K1KS1JKSAXZ1FG49SX3UDEMCP6VHQH7";
+        internal static string CMC_API_KEY = "6799c713-476a-4830-8e89-fbebcd57eb9e";
         internal static string nanopoolGeneralInfo = "https://api.nanopool.org/v1/eth/user/";
         internal static string nanopoolWorkers = "https://api.nanopool.org/v1/eth/workers/";
         internal static string etherscanBalance = "https://api.etherscan.io/api?module=account&action=balance&tag=latest&apikey=" + ETH_SCAN_KEY + "&address=";

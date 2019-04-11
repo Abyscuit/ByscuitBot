@@ -22,6 +22,8 @@ using System.Runtime;
 using System.Net;
 using byscuitBot.Core.Server_Data;
 using static byscuitBot.Core.ServerSQL;
+using System.Diagnostics;
+using System.Threading;
 
 namespace byscuitBot.Modules
 {
@@ -495,15 +497,16 @@ namespace byscuitBot.Modules
                 else if (cmds[i].Contains("Media Stuff"))
                     msg += "\n__Media Stuff__\n";
                 else if (cmds[i].Contains("Steam Commands"))
-                    msg += "\n__Steam Commands__\n";
+                    msg += "%\n__Steam Commands__\n";
                 else
                     msg += "**" + cmds[i] + "**: " + desc[i] + "\n";
                     
             }
 
-            
-            
-            await DMEmbedMessage("Help/Commands", msg);
+
+            string[] split = msg.Split('%');
+            for (int i = 0; i < split.Length; i++)
+                await DMEmbedMessage("Help/Commands", split[i]);
             SocketGuildUser user = (SocketGuildUser)Context.User;
             var role = from r in user.Roles
                        where r.Permissions.Administrator
@@ -517,6 +520,7 @@ namespace byscuitBot.Modules
                     msg += "**" + configCMDs[i] + "**: " + configDesc[i] + "\n";
                 }
             }
+            else msg = "";
             msg += "\n__Cryptocurrency Commands__\n";
             for (int i = 0; i < miningCmds.Length; i++)
             {
@@ -879,8 +883,6 @@ namespace byscuitBot.Modules
         #endregion
 
         #region media
-
-
         [Command("meme")]
         [RequireUserPermission(GuildPermission.AttachFiles)]
         [RequireBotPermission(GuildPermission.AttachFiles)]
@@ -903,22 +905,22 @@ namespace byscuitBot.Modules
                 memeToPost = "Memes/" + filePath[rand.Next(0, fileMax)];
             }
             bool useMeme = true;
-            if(text != null && text != "")
+            if (text != null && text != "")
             {
                 string[] tags = text.Split(' ');
                 List<Meme> memes = MemeLoader.SearchMeme(tags);
                 if (memes.Count == 1)
                     memeToPost = "Memes/" + memes[0].path;
-                else if(memes.Count > 1)
+                else if (memes.Count > 1)
                 {
-                    Meme meme = memes[rand.Next(0,memes.Count - 1)];
+                    Meme meme = memes[rand.Next(0, memes.Count - 1)];
                     memeToPost = "Memes/" + meme.path;
                 }
                 useMeme = false;
             }
             Console.WriteLine("Posting " + memeToPost);
             await Context.Channel.SendFileAsync(memeToPost);
-            if(useMeme)
+            if (useMeme)
                 Global.MemesUsed.Add(memeToPost);
             if (Global.MemesUsed.Count >= 20)
                 Global.MemesUsed.RemoveAt(0);
@@ -1019,8 +1021,8 @@ namespace byscuitBot.Modules
         public async Task Urban([Remainder]string word)
         {
             word = char.ToUpper(word[0]) + word.Substring(1);
-            string msg = UrbanDictionary.GetDefinition(word);
             Console.WriteLine("Encoded word: " + EncodeURL(word) + "\n");
+            string msg = UrbanDictionary.GetDefinition(EncodeURL(word));
 
             await PrintEmbedMessage(word + " - Urban Dictionary", msg);
         }

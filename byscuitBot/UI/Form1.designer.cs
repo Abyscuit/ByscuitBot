@@ -695,13 +695,16 @@
             // 
             // metroTabControl1
             // 
+            this.metroTabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.metroTabControl1.Controls.Add(this.metroTabPage1);
             this.metroTabControl1.Controls.Add(this.metroTabPage3);
             this.metroTabControl1.Controls.Add(this.metroTabPage2);
             this.metroTabControl1.Location = new System.Drawing.Point(23, 64);
             this.metroTabControl1.Name = "metroTabControl1";
             this.metroTabControl1.SelectedIndex = 0;
-            this.metroTabControl1.Size = new System.Drawing.Size(731, 568);
+            this.metroTabControl1.Size = new System.Drawing.Size(751, 568);
             this.metroTabControl1.TabIndex = 15;
             this.metroTabControl1.SelectedIndexChanged += new System.EventHandler(this.metroTabControl1_SelectedIndexChanged);
             // 
@@ -718,7 +721,7 @@
             this.metroTabPage1.HorizontalScrollbarBarColor = true;
             this.metroTabPage1.Location = new System.Drawing.Point(4, 35);
             this.metroTabPage1.Name = "metroTabPage1";
-            this.metroTabPage1.Size = new System.Drawing.Size(723, 529);
+            this.metroTabPage1.Size = new System.Drawing.Size(743, 529);
             this.metroTabPage1.TabIndex = 0;
             this.metroTabPage1.Text = "Server";
             this.metroTabPage1.VerticalScrollbarBarColor = true;
@@ -915,6 +918,7 @@
             // 
             // footer
             // 
+            this.footer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.footer.AutoSize = true;
             this.footer.Location = new System.Drawing.Point(23, 635);
             this.footer.Name = "footer";
