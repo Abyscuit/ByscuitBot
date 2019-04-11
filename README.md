@@ -1,10 +1,10 @@
 # ByscuitBot
-<h3>Basic Discord Bot</h3>
+<h3>Basic C# Discord Bot</h3>
 
 <h4>Features</h4>
 <ul>
   <li>Antispam</li>
-  <li>User-Interface</li>
+  <li>Graphical User-Interface</li>
   <li>Meme Generator</li>
   <li>Multiple Server Configuration</li>
   <li>Search YouTube</li>
@@ -15,6 +15,7 @@
   <li>Coin Market Cap API Calls</li>
   <li>EtherScan API Calls</li>
   <li>NanoPool API Calls</li>
+  <li>Urban Dictionary Definition search</li>
   <li>Twitch API Calls</li>
   <li>Welcome/Bye Messages</li>
   <li>User/Bot/Member Count</li>
@@ -72,6 +73,7 @@ select: Select an option displayed<br>
 meme: Post a random or specific meme | Usage: meme <optional> keyword<br>
 upload: Upload a meme or image to Memes folder | Usage: upload <optional:title> <optional:tag,tag><br>
 creatememe: Create a meme using a members avatar | Usage: creatememe @user <top text,bottom text><br>
+urban: Gets a definition from Urban Dictionary<br>
 <br>
 <b><i>Steam Commands</i></b><br>
 resolve: Resolve steam URL or username to SteamID64<br>
