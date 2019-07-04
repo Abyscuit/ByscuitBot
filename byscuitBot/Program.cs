@@ -80,6 +80,11 @@ namespace byscuitBot
                 await consolePrint("Missing Twitch API Key...");
                 await consolePrint("Twitch Commands will not work.");
             }
+            if (Config.botconf.GOOGLE_API_KEY == "" || Config.botconf.GOOGLE_API_KEY == null)
+            {
+                await consolePrint("Missing Google API Key...");
+                await consolePrint("Google Commands will not work.");
+            }
             await SetupClient();
             await Task.Delay(-1);
         }
