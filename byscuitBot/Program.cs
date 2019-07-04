@@ -20,9 +20,11 @@ namespace byscuitBot
         CommandHandler handler;
         private IServiceProvider services;
         public static string OutputFolder = $"{Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar}videos"; // Output folder for songs
+        public static bool shutDown = false;
 
         static void Main(string[] args)
             => new Program().StartAsync().GetAwaiter().GetResult();
+
         public static Form1 form;
         public static Thread t = new Thread(m => 
         {
@@ -30,7 +32,16 @@ namespace byscuitBot
             Application.SetCompatibleTextRenderingDefault(false);
             form = new Form1();
             form.FormClosing += Form_FormClosing;
-            Application.Run(form);
+            try
+            {
+                Application.Run(form);
+            }
+            catch(Exception ex)
+            {
+                string text = DateTime.Now + " | EXCEPTION: " + ex.Message;
+                Console.WriteLine(text);
+                Log.AddTextToLog(text);
+            }
         });
 
         private static void Form_FormClosing(object sender, FormClosingEventArgs e)
@@ -38,34 +49,65 @@ namespace byscuitBot
             Console.WriteLine("GUI cannot be closed while bot is running!");
             e.Cancel = true;
         }
-        public static string rs(string t)
-        {
-            var tt = System.Convert.FromBase64String(t);
-            return System.Text.Encoding.UTF8.GetString(tt);
-        }
-        public static string sr(string t)
-        {
-            var tt = System.Text.Encoding.UTF8.GetBytes(t);
-            return System.Convert.ToBase64String(tt);
-        }
         public async Task StartAsync()
         {
             Console.WriteLine(Utilities.getAlert("abyscuit"));
-            Console.WriteLine(Utilities.getAlert("configTxt"));
+            await consolePrint(Utilities.getAlert("configTxt"));
             if (Config.botconf.token == "" || Config.botconf.token == null)
             {
-                Console.WriteLine(Utilities.getAlert("configMissing"));
+                await consolePrint(Utilities.getAlert("configMissing"));
                 Console.WriteLine("Press any key to exit...");
                 Console.ReadKey();
                 return;
             }
-            client = new DiscordSocketClient(new DiscordSocketConfig {
-                LogLevel = Discord.LogSeverity.Verbose
-            });
+            if (Config.botconf.CMC_API_KEY == "" || Config.botconf.CMC_API_KEY == null)
+            {
+                await consolePrint("Missing CoinMarketCap API Key...");
+                await consolePrint("CoinMarketCap Commands will not work.");
+            }
+            if (Config.botconf.ETH_SCAN_API_KEY == "" || Config.botconf.ETH_SCAN_API_KEY == null)
+            {
+                await consolePrint("Missing EtherScan API Key...");
+                await consolePrint("EtherScan Commands will not work.");
+            }
+            if (Config.botconf.STEAM_API_KEY == "" || Config.botconf.STEAM_API_KEY == null)
+            {
+                await consolePrint("Missing Steam API Key...");
+                await consolePrint("Steam Commands will not work.");
+            }
+            if (Config.botconf.TWITCH_APi_KEY == "" || Config.botconf.TWITCH_APi_KEY == null)
+            {
+                await consolePrint("Missing Twitch API Key...");
+                await consolePrint("Twitch Commands will not work.");
+            }
+            await SetupClient();
+            await Task.Delay(-1);
+        }
+        delegate void formCloseCallback();
+        public async Task SetupClient()
+        {
+            //if (t.IsAlive)
+            {
+                //if(form.InvokeRequired)
+                {
+                    //formCloseCallback formCallBack = new formCloseCallback(form.Close);
+                    //form.Invoke(formCallBack);
+                }
+                //else form.Close();
+            }
             
+            client = new DiscordSocketClient(new DiscordSocketConfig
+            {
+                LogLevel = Discord.LogSeverity.Debug //change log level if you want
+            });
+
+
+
             client.Log += Client_Log;
             client.Ready += RepeatingTimer.StartTimer;
             client.ReactionAdded += Client_ReactionAdded;
+            
+
             await client.SetGameAsync(Config.botconf.botStatus);
             await client.LoginAsync(Discord.TokenType.Bot, Config.botconf.token);
             await client.StartAsync();
@@ -78,9 +120,7 @@ namespace byscuitBot
             //services.GetService<SongService>().AudioPlaybackService = services.GetService<AudioPlaybackService>();
             handler = new CommandHandler();
             await handler.InitializeAsync(client);
-            await Task.Delay(-1);
         }
-
         private void ConfigureServices(IServiceCollection serviceCollection)
         {
             //serviceCollection.AddSingleton(new YouTubeDownloadService());
@@ -126,7 +166,24 @@ namespace byscuitBot
 
         private async Task Client_Log(Discord.LogMessage msg)
         {
-            Console.WriteLine(msg.Message);
+            await consolePrint(msg.Message);
+            if (msg.Message == "Failed to resume previous session")
+            {
+                try
+                {
+                    await consolePrint("Might need to restart client...");
+                }
+                catch (Exception ex)
+                {
+                    await consolePrint(ex.Message);
+                }
+            }
+        }
+        public async Task consolePrint(string msg)
+        {
+            string text = DateTime.Now + " | " + msg;
+            Console.WriteLine(text);
+            Log.AddTextToLog(text);
         }
     }
 }

@@ -26,6 +26,10 @@ namespace byscuitBot
                 botconf.botStatus = "";
                 botconf.cmdPrefix = "-";
                 botconf.token = "";
+                botconf.CMC_API_KEY = "";
+                botconf.ETH_SCAN_API_KEY = "";
+                botconf.STEAM_API_KEY = "";
+                botconf.TWITCH_APi_KEY = "";
                 string json = JsonConvert.SerializeObject(botconf, Formatting.Indented);
                 File.WriteAllText(CONFIG_PATH, json);
             }
@@ -47,5 +51,9 @@ namespace byscuitBot
         public string token;
         public string cmdPrefix;
         public string botStatus;
+        public string CMC_API_KEY;
+        public string ETH_SCAN_API_KEY;
+        public string STEAM_API_KEY;
+        public string TWITCH_APi_KEY;
     }
 }

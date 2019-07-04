@@ -27,23 +27,33 @@ namespace byscuitBot
         //-----Welcome/Leave Messages-----
         internal static string[] Welcome =
         {
-            "Welcome {0} to {1}!\n**Read the rules and enjoy your stay!**",
-            "**Yo {0} just joined {1}!**\nBe cool and chill!",
-            "**Everybody!**\n{0} is now in {1}!",
-            "Where's the beer?\n__{0}__ just joined **{1}**!",
-            "{0} just slid into {1}\n**Enjoy your stay!**"
+            "Welcome **{0}** to __{1}__! Read the rules and enjoy your stay!",
+            "Yo **{0}** just joined __{1}__! Be cool and chill!",
+            "Everybody! **{0}** is now in __{1}__!",
+            "Where's the beer? **{0}** just joined __{1}__!",
+            "**{0}** just slid into __{1}__!"
         };
         internal static string[] Bye =
         {
-            "__Bye {0}__\n**Too good for {1}?**",
-            "**Hmm, {0} just left {1}!**\nOh well...",
-            "**See ya later dude!**\n{0} decided to leave {1}!",
-            "{0} slid out the server {1}\nEhhh..."
+            "Bye **{0}**! Too good for __{1}__?",
+            "Hmm, **{0}** just left __{1}__! Oh well...",
+            "See ya later dude! **{0}** decided to leave __{1}__!",
+            "**{0}** slid out the server __{1}__"
+        };
+
+        internal static string[] Holidays =
+        {
+            "🎂**{0}** just turned **{1:N0}** years old! Happy Birthday!🎂",
+            "🧨🎇🎆Happy Fourth of July!🎆🎇🧨\n**Be Safe!**",
+            "👻🎃Happy Halloween Everyone!🎃👻",
+            "🍗🦃Happy Thanksgiving Everyone!🦃🍗",
+            "🎄🎅Merry Christmas Everyone!🎅🎄",
+            "🍾🎉Happy New Year!🎉🍾"
         };
 
         #region Steam API
         //----Steam API------
-        internal static string API_KEY = "F72C8721E241606D2C1E4C4AD45152BD";
+        internal static string API_KEY = Config.botconf.STEAM_API_KEY;
         internal static string csgoURL = "http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=730&key="+API_KEY+"&steamid=";
         internal static string resolveURL = "http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=" + API_KEY + "&vanityurl=";
         internal static string bansURL = "http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?key=" + API_KEY + "&steamids=";
@@ -54,8 +64,8 @@ namespace byscuitBot
 
 
         //----Crypto----
-        internal static string ETH_SCAN_KEY = "AJ9K1KS1JKSAXZ1FG49SX3UDEMCP6VHQH7";
-        internal static string CMC_API_KEY = "6799c713-476a-4830-8e89-fbebcd57eb9e";
+        internal static string ETH_SCAN_KEY = Config.botconf.ETH_SCAN_API_KEY;
+        internal static string CMC_API_KEY = Config.botconf.CMC_API_KEY;
         internal static string nanopoolGeneralInfo = "https://api.nanopool.org/v1/eth/user/";
         internal static string nanopoolWorkers = "https://api.nanopool.org/v1/eth/workers/";
         internal static string etherscanBalance = "https://api.etherscan.io/api?module=account&action=balance&tag=latest&apikey=" + ETH_SCAN_KEY + "&address=";
