@@ -1,6 +1,7 @@
 ﻿using byscuitBot.Core;
 using byscuitBot.Core.Server_Data;
 using byscuitBot.Modules;
+using byscuitBot.UI.Popup;
 using Discord;
 using Discord.WebSocket;
 using MySql.Data.MySqlClient;
@@ -42,13 +43,42 @@ namespace byscuitBot
             updateServers();
             //changeSettings();
         }
+
+        delegate void SetItems(string[] Items);
+        delegate void SetIndex(int index);
+        public void changeIndex(int index)
+        {
+            if (serversCBox.InvokeRequired)
+            {
+                SetIndex setIndex = new SetIndex(changeIndex);
+                this.Invoke(setIndex, index);
+            }
+            else
+            {
+                serversCBox.SelectedIndex = index;
+            }
+        }
+        public void changeServers(string[] servers)
+        {
+            if (serversCBox.InvokeRequired)
+            {
+                SetItems items = new SetItems(changeServers);
+                this.Invoke(items, servers);
+            }
+            else
+            {
+                serversCBox.Items.Clear();
+                serversCBox.Items.AddRange(servers);
+            }
+            changeIndex(0);
+        }
         public void updateServers()
         {
-            serversCBox.Items.Clear();
             guilds = Program.client.Guilds.ToList();
+            List<string> guildNames = new List<string>();
             foreach (SocketGuild guild in guilds)
-                serversCBox.Items.Add(guild.Name);
-            serversCBox.SelectedIndex = 0;
+                guildNames.Add(guild.Name);
+            changeServers(guildNames.ToArray());
         }
 
         private void changeSettings()
@@ -56,8 +86,10 @@ namespace byscuitBot
             textChannelCBox.Items.Clear();
             afkChanCBox.Items.Clear();
             verRoleCBox.Items.Clear();
+            roleCBox.Items.Clear();
             newUsrChanCBox.Items.Clear();
             usersCBox.Items.Clear();
+            usersList.Items.Clear();
             SocketGuild guild = guilds[serversCBox.SelectedIndex];
             textChannels = guild.TextChannels;
             voiceChannels = guild.VoiceChannels;
@@ -70,10 +102,23 @@ namespace byscuitBot
             }
             foreach (SocketVoiceChannel chan in voiceChannels) afkChanCBox.Items.Add(chan.Name);
             foreach (SocketRole role in roles)
+            {
                 if (!role.IsEveryone)
+                {
                     verRoleCBox.Items.Add(role.Name);
-            foreach (SocketGuildUser user in users) usersCBox.Items.Add(user.Username);
+                    roleCBox.Items.Add(role.Name);
+                }
 
+            }
+            foreach (SocketGuildUser user in users)
+            {
+                usersCBox.Items.Add(user.Username + "#" + user.Discriminator);
+                usersList.Items.Add(user.Username + "#" + user.Discriminator);
+            }
+            if (roleCBox.Items.Count > 0)
+                roleCBox.SelectedIndex = 0;
+            if (usersList.Items.Count > 0)
+                usersList.SelectedIndex = 0;
             ServerConfigs.LoadServerConfigs();
             config = ServerConfigs.GetConfig(guild);
             tokenTxt.Text = Config.botconf.token;
@@ -305,6 +350,139 @@ namespace byscuitBot
         private void serverStatsTog_CheckedChanged(object sender, EventArgs e)
         {
             respLbl.Text = "Ready";
+        }
+
+        private void UsersList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateUserRoleList();
+        }
+
+        private void UpdateUserRoleList()
+        {
+            uRoleList.Items.Clear();
+            foreach (SocketGuildUser user in users)
+            {
+                if (user.Username + "#" + user.Discriminator == usersList.SelectedItem.ToString())
+                {
+                    foreach (SocketRole role in user.Roles)
+                    {
+                        if (!role.IsEveryone)
+                            uRoleList.Items.Add(role.Name);
+                    }
+                    if(user.VoiceChannel != null)
+                    {
+                        muteBtn.Visible = true;
+                        deafenBtn.Visible = true;
+                    }
+                    else
+                    {
+                        muteBtn.Visible = false;
+                        deafenBtn.Visible = false;
+                    }
+                }
+            }
+        }
+
+        private void MetroButton2_Click(object sender, EventArgs e)
+        {
+            string rolename = uRoleList.SelectedItem.ToString().ToLower();
+            foreach (SocketGuildUser user in users)
+            {
+                if (user.Username + "#" + user.Discriminator == usersList.SelectedItem.ToString())
+                {
+                    foreach (SocketRole role in user.Roles)
+                    {
+                        if (!role.IsEveryone && role.Name.ToLower() == rolename)
+                        {
+                            user.RemoveRoleAsync(role);
+                            MessageBox.Show("Role Removed!");
+                            break;
+                        }
+                    }
+                }
+            }
+            UpdateUserRoleList();
+        }
+
+        private void MetroButton1_Click(object sender, EventArgs e)
+        {
+            string rolename = roleCBox.SelectedItem.ToString().ToLower();
+            foreach (SocketGuildUser user in users)
+            {
+                if (user.Username + "#" + user.Discriminator == usersList.SelectedItem.ToString())
+                {
+                    foreach (SocketRole role in user.Guild.Roles)
+                    {
+                        if (!role.IsEveryone && role.Name.ToLower() == rolename)
+                        {
+                            user.AddRoleAsync(role);
+                            MessageBox.Show("Role Added!");
+                            break;
+                        }
+                    }
+                }
+            }
+            UpdateUserRoleList();
+        }
+
+        private void KickBtn_Click(object sender, EventArgs e)
+        {
+            foreach (SocketGuildUser user in users)
+            {
+                string username = user.Username + "#" + user.Discriminator;
+                if (username == usersList.SelectedItem.ToString())
+                {
+                    new BanKickForm(username, user).Show();
+                }
+            }
+        }
+
+        private async void MuteBtn_Click(object sender, EventArgs e)
+        {
+            foreach (SocketGuildUser user in users)
+            {
+                string username = user.Username + "#" + user.Discriminator;
+                if (username == usersList.SelectedItem.ToString())
+                {
+                    await changeUser(user, true, false);
+                }
+                CheckUserSettings(user);
+            }
+        }
+        public async Task changeUser(SocketGuildUser user, bool mute, bool deaf)
+        {
+            if(user.VoiceChannel != null)
+            await user.ModifyAsync(m => {
+                if(mute) m.Mute = !(user.IsMuted);
+                if(deaf) m.Deaf = !(user.IsDeafened);
+            });
+        }
+        private void CheckUserSettings(SocketGuildUser user)
+        {
+            string username = user.Username + "#" + user.Discriminator;
+            if (username == usersList.SelectedItem.ToString())
+            {
+                if (user.IsMuted)
+                    muteBtn.Text = "Unmute User";
+                else muteBtn.Text = "Mute User";
+                if (user.IsDeafened)
+                    deafenBtn.Text = "Undeafen User";
+                else deafenBtn.Text = "Deafen User";
+            }
+        }
+
+        private async void DeafenBtn_Click(object sender, EventArgs e)
+        {
+            foreach (SocketGuildUser user in users)
+            {
+                string username = user.Username + "#" + user.Discriminator;
+                if (username == usersList.SelectedItem.ToString())
+                {
+                    await changeUser(user, false, true);
+                }
+                CheckUserSettings(user);
+            }
+
         }
     }
 }
