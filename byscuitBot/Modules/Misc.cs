@@ -387,7 +387,7 @@ namespace byscuitBot.Modules
         {
             YouTubeService youtube = new YouTubeService(new BaseClientService.Initializer()
             {
-                ApiKey = "AIzaSyDnxzvq9A-XhVgO0x9I5IRNk67oboUcZD8",
+                ApiKey = Config.botconf.GOOGLE_API_KEY,
                 ApplicationName = this.GetType().ToString()
             });
 

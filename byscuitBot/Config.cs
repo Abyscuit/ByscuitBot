@@ -55,5 +55,6 @@ namespace byscuitBot
         public string ETH_SCAN_API_KEY;
         public string STEAM_API_KEY;
         public string TWITCH_APi_KEY;
+        public string GOOGLE_API_KEY;
     }
 }
