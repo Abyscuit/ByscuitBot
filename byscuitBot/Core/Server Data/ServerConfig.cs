@@ -9,6 +9,39 @@ namespace byscuitBot.Core.Server_Data
 {
     public class ServerConfig
     {
+        public ServerConfig()
+        {
+            DiscordServerID = 0;
+            DiscordServerName = "private";
+            FooterText = "";
+            Prefix = "/";
+            EmbedColorRed = 100;
+            EmbedColorGreen = 150;
+            EmbedColorBlue = 255;
+            TimeStamp = true;
+            AFKChannelID = 0;
+            IconURL = "";
+            AFKTimeout = 0;
+            DefaultChannelID = 0;
+            AFKChannelName = "";
+            DefaultChannelName = "";
+            WhiteListMining = null;
+            WhiteListNSFW = null;
+            BlackListCMDs = null;
+            BlackListMeme = null;
+            RequiresVerification = false;
+            AntiSpamThreshold = 99999999;
+            AntiSpamTime = 9999999;
+            AntiSpamWarn = 99999;
+            VerificationRoleID = 0;
+            AllowAdvertising = false;
+            NewUserMessage = false;
+            NewUserChannel = 0;
+            BlockMentionEveryone = false;
+            EnableLevelSystem = false;
+            EnableServerStats = false;
+        }
+
         public string DiscordServerName { get; set; }
         public ulong DiscordServerID { get; set; }
         public ulong AFKChannelID { get; set; }
