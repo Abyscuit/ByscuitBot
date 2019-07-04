@@ -52,7 +52,22 @@ namespace byscuitBot.Modules
         string[] shop = { "Colin's Bitches", "Well-Reknown Byscuit", "Seasoned Byscuit", "Professional Byscuit", "BUTTERED UP BYSCUIT", "DaCrew", "Moderator" };
         int[] price = { 200, 400, 800, 1600, 3200, 6000, 6500 };
 
-       
+
+        #region admin
+
+        [Command("shutdown")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        [RequireBotPermission(GuildPermission.Administrator)]
+        public async Task Shutdown()
+        {
+            await Context.Channel.SendMessageAsync("Shutting down...");
+            System.Environment.Exit(0);
+            await Context.Channel.SendMessageAsync("Shut down failed.");
+        }
+
+        #endregion
+
+
         #region users
 
 
@@ -69,13 +84,24 @@ namespace byscuitBot.Modules
                 username = user.Username;
             }
             else
-                user = CommandHandler.GetUser(Context.Guild.Users, username);
-            string permissions = "\n__Permissions__\nAdmin: **" + user.GuildPermissions.Administrator + "**\nManage Roles: **" + user.GuildPermissions.ManageRoles + "**\nMute Members: **" + user.GuildPermissions.MuteMembers +
-                "**\nDeafen Members: **" + user.GuildPermissions.DeafenMembers + "**\nKick Members: **" + user.GuildPermissions.KickMembers + "**\nBan Members: **" + user.GuildPermissions.BanMembers +
-                "**\nChange Members Nickname: **" + user.GuildPermissions.ManageNicknames + "**\nMove Members: **" + user.GuildPermissions.MoveMembers+"**";
+            {   if(!Context.IsPrivate)
+                    user = CommandHandler.GetUser(Context.Guild.Users, username);
+                else
+                    user = CommandHandler.GetUser(Context.User.MutualGuilds.ToArray()[0].Users, username);
+            }
+
+
             string msg = "**Level:** " + account.LevelNumber + "\n**XP:** " + account.XP + "\n**Points:** " + account.Points + "\n" +
-                "**IsMuted:** " + account.IsMuted + "\n**Number of Warnings:** " + account.NumberOfWarnings + "\n**Joined At:** " + user.JoinedAt +
-                "\n\n__Roles__\n**" + getRoles(user) +"**"+ permissions; 
+                "**IsMuted:** " + account.IsMuted + "\n**Number of Warnings:** " + account.NumberOfWarnings;
+            if (!Context.IsPrivate)
+            {
+                string permissions = "\n__Permissions__\nAdmin: **" + user.GuildPermissions.Administrator + "**\nManage Roles: **" + user.GuildPermissions.ManageRoles + "**\nMute Members: **" + user.GuildPermissions.MuteMembers +
+                    "**\nDeafen Members: **" + user.GuildPermissions.DeafenMembers + "**\nKick Members: **" + user.GuildPermissions.KickMembers + "**\nBan Members: **" + user.GuildPermissions.BanMembers +
+                    "**\nChange Members Nickname: **" + user.GuildPermissions.ManageNicknames + "**\nMove Members: **" + user.GuildPermissions.MoveMembers + "**";
+
+                string endMsg = "\n\n__Roles__\n**" + getRoles(user) + "**" + permissions;
+                msg += "\n**Joined At:** " + user.JoinedAt + endMsg;
+            }
             //string msg = "XP: " + account.XP + "\nPoints: " + account.Points;
             
 
@@ -1286,6 +1312,85 @@ namespace byscuitBot.Modules
             await PrintEmbedMessage("Steam Account Bans", msg, iconUrl: SteamAccounts.GetAccountObject(id).avatarfull);
         }
 
+        [Command("comparegames")]
+        public async Task CompareGames(SocketUser socketUser)
+        {
+            int appID = 0;
+
+            SteamAccount user = SteamAccounts.GetAccount(Context.User);
+            SteamAccount otherUser = SteamAccounts.GetAccount(socketUser);
+            if (user == null)
+            {
+                await Context.Channel.SendMessageAsync(Context.User.Mention + " You must link your account using the steamlink command!");
+                return;
+            }
+            if (otherUser == null)
+            {
+                await Context.Channel.SendMessageAsync(socketUser + " needs to link their account using the steamlink command!");
+                return;
+            }
+            ulong id = user.SteamID;
+            ulong otherID = otherUser.SteamID;
+
+            SteamAccounts.GameResponse player = SteamAccounts.GetAccountGames(id);
+            SteamAccounts.GameResponse otherPlayer = SteamAccounts.GetAccountGames(otherID);
+            string msg = "";
+            string title = "Steam Games";
+            string imageUrl = SteamAccounts.GetAccountObject(id).avatarfull;
+            msg += "**" + Context.User + " Game Count:** " + player.game_count + "\n";
+            msg += "**" + socketUser + " Game Count:** " + otherPlayer.game_count + "\n\n";
+            int count = 0;
+            for (int i = 0; i < player.games.Count; i++)
+            {
+                string name = player.games[i].name;
+                if (appID == 0)
+                {
+                    for (int x = 0; x < otherPlayer.games.Count; x++)
+                    {
+                        if (otherPlayer.games[x].appid == player.games[i].appid)
+                        {
+                            msg += string.Format("**__{0}__\nappID:** {1}\n", name, player.games[i].appid);
+                            if (player.games[i].playtime_2weeks != null)
+                                msg += string.Format("**{1} Playtime Last 2 Weeks:** {0:N2}hrs\n", player.games[i].playtime_2weeks / 60f, Context.User);
+                            msg += string.Format("**{1} Playtime Total:** {0:N2}hrs\n\n", player.games[i].playtime_forever / 60f, Context.User);
+                            if (otherPlayer.games[i].playtime_2weeks != null)
+                                msg += string.Format("**{1} Playtime Last 2 Weeks:** {0:N2}hrs\n", player.games[i].playtime_2weeks / 60f, socketUser);
+                            msg += string.Format("**{1} Playtime Total:** {0:N2}hrs\n\n", player.games[i].playtime_forever / 60f, socketUser);
+                            //msg += string.Format("**{0} Image Icon Url Hash:** {1}\n", name, player.games[i].img_icon_url);
+                            //msg += string.Format("**{0} Image Logo Url Hash:** {1}\n", name, player.games[i].img_logo_url);
+                            count++;
+                            if (count % 12 == 0 && count > 0)
+                            {
+                                msg += "|";
+                            }
+                        }// end if app ids match
+                    }//end otherplayer game loop
+                }
+                else
+                {
+                    if (player.games[i].appid == appID)
+                    {
+                        title = name;
+                        appID = (int)player.games[i].appid;
+                        msg = string.Format("**appID:** {0}\n", appID);
+                        if (player.games[i].playtime_2weeks != null)
+                            msg += string.Format("**Playtime Last 2 Weeks:** {0:N2}hrs\n", player.games[i].playtime_2weeks / 60f);
+                        msg += string.Format("**Playtime Total:** __{0:N2}hrs__\n", player.games[i].playtime_forever / 60f);
+                        //msg += string.Format("**Image Icon Url Hash:** {0}\n", player.games[i].img_icon_url);
+                        //msg += string.Format("**Image Logo Url Hash:** {0}\n", player.games[i].img_logo_url);
+                        imageUrl = SteamAccounts.gameImgUrl(appID, player.games[i].img_logo_url);
+                        break;
+                    }
+                }
+            }
+            string[] msgs = msg.Split('|');
+            for (int i = 0; i < msgs.Length; i++)
+            {
+                Global.PrintMsg(Context.User.Username, title);
+
+                await PrintEmbedMessage(title, msgs[i], iconUrl: imageUrl);
+            }
+        }
         [Command("steamgames")]
         public async Task SteamGames([Remainder]string text = null)
         {
@@ -2140,35 +2245,71 @@ namespace byscuitBot.Modules
             string[] Symbols = symbols.ToUpper().Split(',');
             string msg = "";
             Dictionary<string, CoinMarketCap.Currency> currencies = CoinMarketCap.GetTokens(symbols);
-            for(int i =0;i<Symbols.Length;i++)
+            for (int i = 0; i < Symbols.Length; i++)
             {
                 if (i > 0)
                     msg += "\n";
                 msg += "\n**Name:** " + currencies[Symbols[i]].name;
                 msg += "\n**Symbol:** " + currencies[Symbols[i]].symbol;
-                msg += "\n**USD Price:** " + string.Format("${0:N2}",currencies[Symbols[i]].quote.USD.price);
+                double price = currencies[Symbols[i]].quote.USD.price;
+                string priceString = string.Format("${0:N2}", price);
+                if (price <= 1.99)
+                    priceString = string.Format("${0:N6}", price);
+                else if (price <= 9.99)
+                    priceString = string.Format("${0:N3}", price);
+                msg += "\n**Rank:** " + string.Format("{0}", currencies[Symbols[i]].cmc_rank);
+                msg += "\n**USD Price:** " + priceString;
                 msg += "\n**Market Cap:** " + string.Format("${0:N2}", currencies[Symbols[i]].quote.USD.market_cap);
                 msg += "\n**Volume 24h:** " + string.Format("${0:N2}", currencies[Symbols[i]].quote.USD.volume_24h);
                 msg += "\n**1h Change:** " + string.Format("{0:N2}%", currencies[Symbols[i]].quote.USD.percent_change_1h);
                 msg += "\n**24h Change:** " + string.Format("{0:N2}%", currencies[Symbols[i]].quote.USD.percent_change_24h);
                 msg += "\n**7d Change:** " + string.Format("{0:N2}%", currencies[Symbols[i]].quote.USD.percent_change_7d);
                 msg += "\n**Circulating Supply:** " + string.Format("{0:N0}", currencies[Symbols[i]].circulating_supply);
-                msg += "\n**Max Supply:** " + string.Format("{0:N0}", currencies[Symbols[i]].max_supply);
+                    string max_supply = "None";
+                if (currencies[Symbols[i]].max_supply != null)
+                    max_supply = "" + currencies[Symbols[i]].max_supply;
+                msg += "\n**Max Supply:** " + max_supply;
             }
             await PrintEmbedMessage("Cyptocurrency " + symbols, msg);
         }
+
+        public static int cInt = 0;
+        [Command("test")]
+        public async Task Test()
+        {
+            DateTimeOffset serverCreated = Context.Message.CreatedAt;
+            DateTime serverBirthday = new DateTime(DateTime.Now.Year, serverCreated.Month, serverCreated.Day);
+            DateTime testDate = new DateTime(1995, serverCreated.Month, serverCreated.Day);
+            //string msg = "Created date: " + serverBirthday.ToString() + "\nTest Date: " + testDate.ToString();
+            //msg += "\nSame Birthday: " + RepeatingTimer.compareDates(serverBirthday, testDate);
+            //RepeatingTimer.generalChannel = Context.Channel;
+            //if (cInt >= Global.Holidays.Length) cInt = 0;
+            double days = DateTimeOffset.Now.Subtract(serverCreated).TotalDays;
+            string msg = String.Format(Global.Holidays[0], Context.Message.Author, days / 365);
+            await Context.Channel.SendMessageAsync(msg);
+            //cInt++;
+        }
+
         [Command("topcrypto")]
         public async Task TopCrypto(int num = 0)
         {
             List<CoinMarketCap.Currency> currencies = CoinMarketCap.GetTop10();
             string msg = "";
             int count = 0;
+            EmbedField[] fields = new EmbedField[(num == 0) ? 10 : num];
             foreach (CoinMarketCap.Currency currency in currencies)
             {
                 msg += "\n\n__" + currency.name + "__";
                 msg += "\n**Symbol:** " + currency.symbol;
                 msg += "\n**Rank:** " + currency.cmc_rank;
-                msg += "\n**Price:** " + string.Format("${0:N2}", currency.quote.USD.price);
+
+                double price = currency.quote.USD.price;
+                string priceString = string.Format("${0:N2}", price);
+                if (price <= 1.99)
+                    priceString = string.Format("${0:N6}", price);
+                else if (price <= 9.99)
+                    priceString = string.Format("${0:N3}", price);
+                msg += "\n**Price:** " + priceString;
                 msg += "\n**Market Cap:** " + string.Format("${0:N2}", currency.quote.USD.market_cap);
                 msg += "\n**Volume 24h:** " + string.Format("${0:N2}", currency.quote.USD.volume_24h);
                 msg += "\n**Change 1h:** " + string.Format("{0:N2}%", currency.quote.USD.percent_change_1h);
@@ -2210,47 +2351,46 @@ namespace byscuitBot.Modules
         {
             List<NanoPool.Amount> amounts = NanoPool.CalculateEth(hashrate);
             string msg = "";
-            string[][] fields = new string[6][];
+            EmbedField[] fields = new EmbedField[6];
             int count = 0;
             int num = 0;
             foreach (NanoPool.Amount amount in amounts)
             {
-                fields[num] = new string[2];
                 switch (num)
                 {
                     case 0:
                         {
-                            fields[0][0] = "__Minute__";
+                            fields[0].name = "__Minute__";
                             //msg += "\n\n__Minute__";
                             break;
                         }
                     case 1:
                         {
-                            fields[1][0] = "__Hour__";
+                            fields[1].name = "__Hour__";
                             //msg += "\n\n__Hour__";
                             break;
                         }
                     case 2:
                         {
-                            fields[2][0] = "__Day__";
+                            fields[2].name = "__Day__";
                             //msg += "\n\n__Day__";
                             break;
                         }
                     case 3:
                         {
-                            fields[3][0] = "__Week__";
+                            fields[3].name = "__Week__";
                             //msg += "\n\n__Week__";
                             break;
                         }
                     case 4:
                         {
-                            fields[4][0] = "__Month__";
+                            fields[4].name = "__Month__";
                             //msg += "\n\n__Month__";
                             break;
                         }
                     case 5:
                         {
-                            fields[5][0] = "__Year__";
+                            fields[5].name = "__Year__";
                             //msg += "\n\n__Month__";
                             break;
                         }
@@ -2260,7 +2400,7 @@ namespace byscuitBot.Modules
                 msg += "\n**Bitcoins:** " + string.Format("{0:N10}", amount.bitcoins);
                 msg += "\n**Euros:** " + string.Format("€{0:N8}", amount.euros);
                 msg += "\n**Pounds:** " + string.Format("£{0:N8}", amount.pounds);
-                fields[num][1] = msg;
+                fields[num].value = msg;
                 num++;
                 count++;
                 if (count >= 6)
@@ -2402,12 +2542,12 @@ namespace byscuitBot.Modules
 
             await PrintEmbedMessage("New \"Console\" Added",string.Format( "**Name:** {3}{0}**CPUKey:** {1}{0}**Time Left:** {2}", "\n", cpukey, totalTime,name));
         }
-
+        /*
         [Command("update")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task Update(string name)
         {
-            /*
+            
             
             //CPUKey generation
             string cpukey = "";
@@ -2451,8 +2591,8 @@ namespace byscuitBot.Modules
                 totalTime = "Expired";
 
             await PrintEmbedMessage("New \"Console\" Added", string.Format("**Name:** {3}{0}**CPUKey:** {1}{0}**Time Left:** {2}", "\n", cpukey, totalTime, name));
-            */
-        }
+            
+        }*/
         #endregion
 
         #region Verification
@@ -2475,10 +2615,16 @@ namespace byscuitBot.Modules
         }
 
         #endregion
-
-        public async Task PrintEmbedMessage(string title = "", string msg = "", string url = "", string iconUrl = "", string[][] fields = null)
+        public struct EmbedField
         {
-            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
+            public string name;
+            public string value;
+        }
+        public async Task PrintEmbedMessage(string title = "", string msg = "", string url = "", string iconUrl = "", EmbedField[] fields = null, IUser author = null)
+        {
+            ServerConfig config = new ServerConfig();
+            if (!Context.IsPrivate)
+                config = ServerConfigs.GetConfig(Context.Guild);
             EmbedBuilder embed = new EmbedBuilder();
             embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
             if (title != "")
@@ -2487,6 +2633,8 @@ namespace byscuitBot.Modules
                 embed.WithFooter(config.FooterText);
             if (msg != "")
                 embed.WithDescription(msg);
+            if (author != null)
+                embed.WithAuthor(author);
             if (url != "")
                 embed.WithUrl(url);
             if (config.TimeStamp)
@@ -2497,17 +2645,22 @@ namespace byscuitBot.Modules
             {
                 for (int i = 0; i < fields.Length; i++)
                 {
-                    embed.AddField(fields[i][0], fields[i][1], true);
+                    embed.AddField(fields[i].name, fields[i].value, true);
                 }
             }
 
             //Console.WriteLine(DateTime.Now + " | " + title + " |\n" + msg);
-            Console.WriteLine(DateTime.Now + " | " + Context.User.Username + " used " + title + " in " + Context.Guild.Name);
+            string username = Context.User.Username + "#" + Context.User.Discriminator;
+            string guildName = "Private Message";
+            if (!Context.IsPrivate) guildName = Context.Guild.Name;
+            string text = DateTime.Now + " | " + username + " used " + title + " in " + guildName;
+            Console.WriteLine(text);
+            Log.AddTextToLog(text);
             await Context.Channel.SendMessageAsync("", false, embed.Build());
 
         }
 
-        public async Task DMEmbedMessage(string title = "", string msg = "", string url = "", string iconUrl = "", string[][] fields = null)
+        public async Task DMEmbedMessage(string title = "", string msg = "", string url = "", string iconUrl = "", EmbedField[] fields = null, IUser author = null)
         {
             ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
             EmbedBuilder embed = new EmbedBuilder();
@@ -2518,6 +2671,8 @@ namespace byscuitBot.Modules
                 embed.WithFooter(config.FooterText);
             if (msg != "")
                 embed.WithDescription(msg);
+            if (author != null)
+                embed.WithAuthor(author);
             if (url != "")
                 embed.WithUrl(url);
             if (config.TimeStamp)
@@ -2528,12 +2683,16 @@ namespace byscuitBot.Modules
             {
                 for (int i = 0; i < fields.Length; i++)
                 {
-                    embed.AddField(fields[i][0], fields[i][1], true);
+                    embed.AddField(fields[i].name, fields[i].value, true);
                 }
             }
-
             //Console.WriteLine(DateTime.Now + " | " + title + " |\n" + msg);
-            Console.WriteLine(DateTime.Now + " | " + Context.User.Username + " used " + title + " in " + Context.Guild.Name);
+            string username = Context.User.Username + "#" + Context.User.Discriminator;
+            string guildName = "Private Message";
+            if (!Context.IsPrivate) guildName = Context.Guild.Name;
+            string text = DateTime.Now + " | " + username + " used " + title + " in " + guildName;
+            Console.WriteLine(text);
+            Log.AddTextToLog(text);
 
             var x = await Context.User.GetOrCreateDMChannelAsync();
             await x.SendMessageAsync("", false, embed.Build());
