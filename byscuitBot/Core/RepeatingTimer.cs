@@ -190,7 +190,7 @@ namespace byscuitBot.Core
                     DateTime _4thJuly = new DateTime(DateTime.Now.Year, 7, 4);
                     if (compareDates(_4thJuly, DateTime.Now))
                     {
-                        await generalChannel.SendMessageAsync(Global.Holidays[1]);
+                        //await generalChannel.SendMessageAsync(Global.Holidays[1]);
                     }
                     //halloween check
                     DateTime HALLOWEEN_CHECK = new DateTime(DateTime.Now.Year, 10, 31);

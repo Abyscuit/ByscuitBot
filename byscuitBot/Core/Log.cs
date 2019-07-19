@@ -11,7 +11,8 @@ namespace byscuitBot.Core
     {
         static string currentFolder = DateTime.Now.ToString("yyyy-M-d");
         static string storageFile = string.Format("Log/{0}/{1}.txt", currentFolder, DateTime.Now.ToString("H-mm-ss"));
-         static List<string> lines = new List<string>();
+        static List<string> lines = new List<string>();
+        static List<string> errors = new List<string>();
         static Log()
         {
             if (!ValidateStorageFile(storageFile)) return;
@@ -29,12 +30,19 @@ namespace byscuitBot.Core
                 string str = DateTime.Now + " | EXCEPTION: " + ex.Message;
                 Console.WriteLine(str);
                 lines.Add(str);
+                errors.Add(str);
             }
         }
 
         public static void AddTextToLog(string text)
         {
             lines.Add(text);
+            SaveData();
+        }
+        public static void LogException(string text)
+        {
+            lines.Add(text);
+            errors.Add(text);
             SaveData();
         }
 
@@ -51,6 +59,7 @@ namespace byscuitBot.Core
                 string str = DateTime.Now + " | EXCEPTION: " + ex.Message;
                 Console.WriteLine(str);
                 lines.Add(str);
+                errors.Add(str);
             }
             return result;
         }

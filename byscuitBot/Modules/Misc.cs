@@ -292,8 +292,8 @@ namespace byscuitBot.Modules
             if (user == null)
                 user = (SocketGuildUser)Context.User;
 
-                account = UserAccounts.GetAccount(user);
-                username = user.Username;
+            account = UserAccounts.GetAccount(user);
+            username = user.Username;
 
             account.XP += amount;
             UserAccounts.SaveAccounts();

@@ -23,7 +23,8 @@ namespace byscuitBot
         CommandService service;
         public static ulong BotID = 510066148285349900;
         public List<IMessage> oldMessage = new List<IMessage>();
-        
+        public int msgCount = 0;
+
         public async Task InitializeAsync(DiscordSocketClient client)
         {
             this.client = client;
@@ -32,21 +33,30 @@ namespace byscuitBot
             this.client.MessageReceived += Client_MessageReceived;
             this.client.UserJoined += Client_UserJoined;
             this.client.UserLeft += Client_UserLeft;
-            this.client.ChannelUpdated += Client_ChannelUpdated;
+            //this.client.ChannelUpdated += Client_ChannelUpdated;
             this.client.UserUnbanned += Client_UserUnbanned;
-            this.client.GuildMemberUpdated += Client_GuildMemberUpdated;
-            this.client.GuildUpdated += Client_GuildUpdated;
+            //this.client.GuildMemberUpdated += Client_GuildMemberUpdated;
+            //this.client.GuildUpdated += Client_GuildUpdated;
             this.client.UserBanned += Client_UserBanned;
-            this.client.UserUpdated += Client_UserUpdated;
-            this.client.RoleCreated += Client_RoleCreated;
-            this.client.MessageDeleted += Client_MessageDeleted;
-            this.client.MessagesBulkDeleted += Client_MessagesBulkDeleted;
+            //this.client.UserUpdated += Client_UserUpdated;
+            //this.client.RoleCreated += Client_RoleCreated;
+            //this.client.MessageDeleted += Client_MessageDeleted;
+            //this.client.LatencyUpdated += Client_LatencyUpdated;
+            //this.client.MessagesBulkDeleted += Client_MessagesBulkDeleted;
+        }
+
+        private Task Client_LatencyUpdated(int arg1, int arg2)
+        {
+            string mes = DateTime.Now + " | ARG1: " + arg1 + "\tARG2: " + arg2;
+            Log.AddTextToLog(mes);
+            Console.WriteLine(mes);
+            return Task.CompletedTask;
         }
 
         #region update Audit log
-        private async Task Client_MessagesBulkDeleted(IReadOnlyCollection<Cacheable<IMessage, ulong>> arg1, ISocketMessageChannel arg2)
+        private Task Client_MessagesBulkDeleted(IReadOnlyCollection<Cacheable<IMessage, ulong>> arg1, ISocketMessageChannel arg2)
         {
-            await RepeatingTimer.UpdateAuditLog();
+            return Task.CompletedTask;
         }
 
         private async Task Client_RoleCreated(SocketRole arg)
@@ -56,6 +66,8 @@ namespace byscuitBot
 
         private async Task Client_UserUpdated(SocketUser arg1, SocketUser arg2)
         {
+            //RepeatingTimer.UpdateAuditLog().GetAwaiter().GetResult();
+            //return Task.CompletedTask;
             await RepeatingTimer.UpdateAuditLog();
         }
 
@@ -74,9 +86,23 @@ namespace byscuitBot
             await RepeatingTimer.UpdateAuditLog();
         }
 
-        private async Task Client_GuildMemberUpdated(SocketGuildUser arg1, SocketGuildUser arg2)
+        private Task Client_GuildMemberUpdated(SocketGuildUser arg1, SocketGuildUser arg2)
         {
-            await RepeatingTimer.UpdateAuditLog();
+
+            if (!userCheck(arg1, arg2)) return Task.CompletedTask;
+            string mes = DateTime.Now + " | ARG1: " + arg1 + "\tARG2: " + arg2;
+            Log.AddTextToLog(mes);
+            Console.WriteLine(mes);
+            RepeatingTimer.UpdateAuditLog().GetAwaiter().GetResult();
+            return Task.CompletedTask;
+        }
+        private bool userCheck(SocketGuildUser user1, SocketGuildUser user2)
+        {
+            bool result = false;
+            if (user1.IsDeafened != user2.IsDeafened) result = true;
+            if (!result && user1.IsMuted != user2.IsMuted) result = true;
+            if (!result && !user1.Roles.Equals(user2.Roles)) result = true;
+            return result;
         }
 
         private async Task Client_UserUnbanned(SocketUser arg1, SocketGuild arg2)
@@ -117,11 +143,43 @@ namespace byscuitBot
             GiveawayManager.LoadGiveaways();
 
             //----------Do Tests--------
-            //if (!context.IsPrivate) await RepeatingTimer.UpdateAuditLog(context.Guild);
+            //if (!context.IsPrivate) await RepeatingTimer.UpdateAuditLog(context.Guild);]
 
             //Mute Check
             userAccount = UserAccounts.GetAccount(context.User);
             spamAccount = Antispam.GetAccount(context.User);
+
+            if (oldMessage.Count > 0)
+            {
+                if (oldMessage[oldMessage.Count - 1].Content == s.Content)
+                {
+                    for (int i = 0; i < oldMessage.Count; i++)
+                    {
+                        if (oldMessage[i].Content == s.Content && oldMessage[i].Embeds.Count == 0)
+                        {
+                            msgCount++;
+                            if(msgCount >= 5)
+                            {
+                                try
+                                {
+                                    await s.DeleteAsync();
+                                }
+                                catch(Exception ex)
+                                {
+                                    string exMsg = DateTime.Now + " | EXCEPTION: " + ex.Message;
+                                    Console.WriteLine(exMsg);
+                                    Log.LogException(exMsg);
+                                }
+                                string mes = DateTime.Now + " | " + context.User + " suspected raid account. Ban request....";
+                                Console.WriteLine(mes);
+                            }
+                        }
+                    }
+                }
+            }
+            if (oldMessage.Count >= 20)
+                oldMessage.RemoveAt(0);
+            oldMessage.Add(s);
             if (!context.IsPrivate)
             {
                 config = ServerConfigs.GetConfig(context.Guild);

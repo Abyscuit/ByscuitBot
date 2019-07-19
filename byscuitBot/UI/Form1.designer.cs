@@ -122,6 +122,12 @@
             this.auditLogCBox = new MetroFramework.Controls.MetroComboBox();
             this.muteBtn = new MetroFramework.Controls.MetroButton();
             this.deafenBtn = new MetroFramework.Controls.MetroButton();
+            this.metroTabPage5 = new MetroFramework.Controls.MetroTabPage();
+            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.metroLabel33 = new MetroFramework.Controls.MetroLabel();
+            this.addWordBtn = new MetroFramework.Controls.MetroButton();
+            this.removeWordBtn = new MetroFramework.Controls.MetroButton();
+            this.metroTextBox1 = new MetroFramework.Controls.MetroTextBox();
             this.configGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.colorPrev)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -130,6 +136,7 @@
             this.metroTabPage4.SuspendLayout();
             this.metroTabPage2.SuspendLayout();
             this.metroTabPage3.SuspendLayout();
+            this.metroTabPage5.SuspendLayout();
             this.SuspendLayout();
             // 
             // serversCBox
@@ -718,10 +725,11 @@
             this.metroTabControl1.Controls.Add(this.metroTabPage1);
             this.metroTabControl1.Controls.Add(this.metroTabPage4);
             this.metroTabControl1.Controls.Add(this.metroTabPage2);
+            this.metroTabControl1.Controls.Add(this.metroTabPage5);
             this.metroTabControl1.Controls.Add(this.metroTabPage3);
             this.metroTabControl1.Location = new System.Drawing.Point(23, 64);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 1;
+            this.metroTabControl1.SelectedIndex = 3;
             this.metroTabControl1.Size = new System.Drawing.Size(751, 568);
             this.metroTabControl1.TabIndex = 15;
             this.metroTabControl1.SelectedIndexChanged += new System.EventHandler(this.metroTabControl1_SelectedIndexChanged);
@@ -741,7 +749,7 @@
             this.metroTabPage1.Name = "metroTabPage1";
             this.metroTabPage1.Size = new System.Drawing.Size(743, 529);
             this.metroTabPage1.TabIndex = 0;
-            this.metroTabPage1.Text = "Server";
+            this.metroTabPage1.Text = "Settings";
             this.metroTabPage1.VerticalScrollbarBarColor = true;
             // 
             // metroLabel21
@@ -1073,6 +1081,61 @@
             this.deafenBtn.Text = "Deafen User";
             this.deafenBtn.Click += new System.EventHandler(this.DeafenBtn_Click);
             // 
+            // metroTabPage5
+            // 
+            this.metroTabPage5.Controls.Add(this.metroTextBox1);
+            this.metroTabPage5.Controls.Add(this.removeWordBtn);
+            this.metroTabPage5.Controls.Add(this.addWordBtn);
+            this.metroTabPage5.Controls.Add(this.metroLabel33);
+            this.metroTabPage5.Controls.Add(this.listBox1);
+            this.metroTabPage5.HorizontalScrollbarBarColor = true;
+            this.metroTabPage5.Location = new System.Drawing.Point(4, 35);
+            this.metroTabPage5.Name = "metroTabPage5";
+            this.metroTabPage5.Size = new System.Drawing.Size(743, 529);
+            this.metroTabPage5.TabIndex = 4;
+            this.metroTabPage5.Text = "Restrictions";
+            this.metroTabPage5.VerticalScrollbarBarColor = true;
+            // 
+            // listBox1
+            // 
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.Location = new System.Drawing.Point(4, 30);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.Size = new System.Drawing.Size(263, 472);
+            this.listBox1.TabIndex = 2;
+            // 
+            // metroLabel33
+            // 
+            this.metroLabel33.AutoSize = true;
+            this.metroLabel33.Location = new System.Drawing.Point(4, 4);
+            this.metroLabel33.Name = "metroLabel33";
+            this.metroLabel33.Size = new System.Drawing.Size(147, 19);
+            this.metroLabel33.TabIndex = 3;
+            this.metroLabel33.Text = "Banned Words/Phrases:";
+            // 
+            // addWordBtn
+            // 
+            this.addWordBtn.Location = new System.Drawing.Point(237, 506);
+            this.addWordBtn.Name = "addWordBtn";
+            this.addWordBtn.Size = new System.Drawing.Size(30, 23);
+            this.addWordBtn.TabIndex = 4;
+            this.addWordBtn.Text = "+";
+            // 
+            // removeWordBtn
+            // 
+            this.removeWordBtn.Location = new System.Drawing.Point(237, 4);
+            this.removeWordBtn.Name = "removeWordBtn";
+            this.removeWordBtn.Size = new System.Drawing.Size(30, 23);
+            this.removeWordBtn.TabIndex = 5;
+            this.removeWordBtn.Text = "-";
+            // 
+            // metroTextBox1
+            // 
+            this.metroTextBox1.Location = new System.Drawing.Point(4, 506);
+            this.metroTextBox1.Name = "metroTextBox1";
+            this.metroTextBox1.Size = new System.Drawing.Size(227, 23);
+            this.metroTextBox1.TabIndex = 6;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1098,6 +1161,8 @@
             this.metroTabPage2.ResumeLayout(false);
             this.metroTabPage3.ResumeLayout(false);
             this.metroTabPage3.PerformLayout();
+            this.metroTabPage5.ResumeLayout(false);
+            this.metroTabPage5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1199,6 +1264,12 @@
         private MetroFramework.Controls.MetroToggle auditLogTog;
         private MetroFramework.Controls.MetroButton deafenBtn;
         private MetroFramework.Controls.MetroButton muteBtn;
+        private MetroFramework.Controls.MetroTabPage metroTabPage5;
+        private MetroFramework.Controls.MetroButton removeWordBtn;
+        private MetroFramework.Controls.MetroButton addWordBtn;
+        private MetroFramework.Controls.MetroLabel metroLabel33;
+        private System.Windows.Forms.ListBox listBox1;
+        private MetroFramework.Controls.MetroTextBox metroTextBox1;
     }
 }
 

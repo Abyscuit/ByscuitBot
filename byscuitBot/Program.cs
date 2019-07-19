@@ -49,6 +49,14 @@ namespace byscuitBot
             Console.WriteLine("GUI cannot be closed while bot is running!");
             e.Cancel = true;
         }
+        public async Task CheckAPIKey(string name, string val)
+        {
+            if(string.IsNullOrEmpty(val))
+            {
+                await consolePrint("Missing "+name+" API Key...");
+                await consolePrint(name+" Commands will not work.");
+            }
+        }
         public async Task StartAsync()
         {
             Console.WriteLine(Utilities.getAlert("abyscuit"));
@@ -60,47 +68,17 @@ namespace byscuitBot
                 Console.ReadKey();
                 return;
             }
-            if (Config.botconf.CMC_API_KEY == "" || Config.botconf.CMC_API_KEY == null)
-            {
-                await consolePrint("Missing CoinMarketCap API Key...");
-                await consolePrint("CoinMarketCap Commands will not work.");
-            }
-            if (Config.botconf.ETH_SCAN_API_KEY == "" || Config.botconf.ETH_SCAN_API_KEY == null)
-            {
-                await consolePrint("Missing EtherScan API Key...");
-                await consolePrint("EtherScan Commands will not work.");
-            }
-            if (Config.botconf.STEAM_API_KEY == "" || Config.botconf.STEAM_API_KEY == null)
-            {
-                await consolePrint("Missing Steam API Key...");
-                await consolePrint("Steam Commands will not work.");
-            }
-            if (Config.botconf.TWITCH_APi_KEY == "" || Config.botconf.TWITCH_APi_KEY == null)
-            {
-                await consolePrint("Missing Twitch API Key...");
-                await consolePrint("Twitch Commands will not work.");
-            }
-            if (Config.botconf.GOOGLE_API_KEY == "" || Config.botconf.GOOGLE_API_KEY == null)
-            {
-                await consolePrint("Missing Google API Key...");
-                await consolePrint("Google Commands will not work.");
-            }
+            await CheckAPIKey("CoinMarketCap", Config.botconf.CMC_API_KEY);
+            await CheckAPIKey("EtherScan", Config.botconf.ETH_SCAN_API_KEY);
+            await CheckAPIKey("Steam", Config.botconf.STEAM_API_KEY);
+            await CheckAPIKey("Twitch", Config.botconf.TWITCH_APi_KEY);
+            await CheckAPIKey("Google", Config.botconf.GOOGLE_API_KEY);
             await SetupClient();
             await Task.Delay(-1);
         }
         delegate void formCloseCallback();
         public async Task SetupClient()
         {
-            //if (t.IsAlive)
-            {
-                //if(form.InvokeRequired)
-                {
-                    //formCloseCallback formCallBack = new formCloseCallback(form.Close);
-                    //form.Invoke(formCallBack);
-                }
-                //else form.Close();
-            }
-            
             client = new DiscordSocketClient(new DiscordSocketConfig
             {
                 LogLevel = Discord.LogSeverity.Debug //change log level if you want
