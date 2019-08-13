@@ -11,11 +11,13 @@ namespace byscuitBot.Core
     {
         static string currentFolder = DateTime.Now.ToString("yyyy-M-d");
         static string storageFile = string.Format("Log/{0}/{1}.txt", currentFolder, DateTime.Now.ToString("H-mm-ss"));
+        static string errorFile = string.Format("Log/{0}/{1}.txt", currentFolder, DateTime.Now.ToString("H-mm-ss") + ".error");
         static List<string> lines = new List<string>();
         static List<string> errors = new List<string>();
         static Log()
         {
             if (!ValidateStorageFile(storageFile)) return;
+            if (!ValidateStorageFile(errorFile)) return;
             //Load Previous Logs?
         }
 
