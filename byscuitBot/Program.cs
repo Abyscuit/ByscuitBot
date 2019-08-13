@@ -104,6 +104,18 @@ namespace byscuitBot
             handler = new CommandHandler();
             await handler.InitializeAsync(client);
         }
+
+        private async void RestartClient()
+        {
+            handler = new CommandHandler();
+            await client.LogoutAsync();
+            await client.StopAsync();
+            await client.SetGameAsync(Config.botconf.botStatus);
+            await client.LoginAsync(Discord.TokenType.Bot, Config.botconf.token);
+            await client.StartAsync();
+            Global.Client = client;
+            await handler.InitializeAsync(client);
+        }
         private void ConfigureServices(IServiceCollection serviceCollection)
         {
             //serviceCollection.AddSingleton(new YouTubeDownloadService());

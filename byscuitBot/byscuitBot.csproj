@@ -270,7 +270,10 @@
     <Compile Include="Core\User Accounts\UserAccounts.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="LevelingSytem.cs" />
+    <Compile Include="Modules\Admin.cs" />
+    <Compile Include="Modules\CryptoCurrency.cs" />
     <Compile Include="Modules\Misc.cs" />
+    <Compile Include="Modules\Security.cs" />
     <Compile Include="Music.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

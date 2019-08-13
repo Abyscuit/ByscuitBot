@@ -19,6 +19,7 @@ namespace byscuitBot
         internal static List<string> vidIDs = new List<string>();
         internal static string[] emojies = { "👌", "💩", ":pepe:", "💯" };
         internal static int selectedEmoji = 0;
+        internal static List<SocketTextChannel> SECURITY_CHANNELS = new List<SocketTextChannel>();
 
         internal static Random rand = new Random();
 
@@ -100,141 +101,10 @@ namespace byscuitBot
             "[Battlefield 3™]","[Battlefield 4™']","[Minecraft: Xbox 360 Edition]","[Iron Brigade]","[Internet Explorer]", "[Xbox Music and Video]", "[NBA 2K14]", "[Rekoil: Liberator]","['NBA 2K16]",
             "[YouTube]","[METAL GEAR SOLID V: THE PHANTOM PAIN]","[Crunchyroll]","[Hitman: Blood Money]","[PAYDAY 2]", "[Hitman: Absolution]","[Counter-Strike: GO]","[Grand Theft Auto IV]","[Terraria – Xbox 360 Edition]" };
         
-        //My method
         public static string getTitle(string title)
         {
             for(int i =0;i<GAME_HEX.Length;i++) if (title == GAME_HEX[i]) return GAME_TITLE[i];
             return "No Game Detected";
         }
-        /* Levi/king? (German fotze) arsch method
-        public static string getTitle(string title)
-        {
-            string game = "No Game Detected";
-            switch (title)
-            {
-                case "FFFE07D1":
-                    game = "[Dashboard]";
-                    break;
-                case "41560855":
-                    game = "[Call of Duty®: WaW]";
-                    break;
-                case "4156081C":
-                    game = "[Black Ops I]";
-                    break;
-                case "415608C3":
-                    game = "[Black Ops II]";
-                    break;
-                case "4156091D":
-                    game = "[Black Ops III]";
-                    break;
-                case "41560929":
-                    game = "[Black Ops III Bundle]";
-                    break;
-                case "415607E6":
-                    game = "[Modern Warfare I]";
-                    break;
-                case "41560817":
-                    game = "[Modern Warfare II]";
-                    break;
-                case "415608CB":
-                    game = "[Modern Warfare III]";
-                    break;
-                case "41560914":
-                    game = "[Advanced Warfare]";
-                    break;
-                case "415608FC":
-                    game = "[Ghosts]";
-                    break;
-                case "545408A7":
-                    game = "[ Grand Theft Auto V]";
-                    break;
-                case "464F0803":
-                    game = "[Sniper Elite 3]";
-                    break;
-                case "425307E6":
-                    game = "[Skyrim]";
-                    break;
-                case "5841149E":
-                    game = "[Minecraft: Story Mode]";
-                    break;
-                case "FFFE07DE":
-                    game = "[Account Creation Tool]";
-                    break;
-                case "41560927":
-                    game = "[Destiny: Legendary Edition]";
-                    break;
-                case "41560928":
-                    game = "[Destiny: Collectors Edition']";
-                    break;
-                case "58411457":
-                    game = "[MONOPOLY PLUS]";
-                    break;
-                case "415608F8":
-                    game = "[Destiny]";
-                    break;
-                case "454108E6":
-                    game = "[Skate 3]";
-                    break;
-                case "545408B8":
-                    game = "[Grand Theft Auto: San Andreas]";
-                    break;
-                case "45410950":
-                    game = "[Battlefield 3™]";
-                    break;
-                case "454109BA":
-                    game = "[Battlefield 4™']";
-                    break;
-                case "584111F7":
-                    game = "[Minecraft: Xbox 360 Edition]";
-                    break;
-                case "58410A95":
-                    game = "[Iron Brigade]";
-                    break;
-                case "58480880":
-                    game = "[Internet Explorer]";
-                    break;
-                case "5848085B":
-                    game = "[Xbox Music and Video]";
-                    break;
-                case "545408B0":
-                    game = "[NBA 2K14]";
-                    break;
-                case "58411420":
-                    game = "[Rekoil: Liberator]";
-                    break;
-                case "315A07D1":
-                    game = "['NBA 2K16]";
-                    break;
-                case "423607D3":
-                    game = "[YouTube]";
-                    break;
-                case "4B4E085E":
-                    game = "[METAL GEAR SOLID V: THE PHANTOM PAIN]";
-                    break;
-                case "4A3707D1":
-                    game = "[Crunchyroll]";
-                    break;
-                case "534307db":
-                    game = "[Hitman: Blood Money]";
-                    break;
-                case "464f0800":
-                    game = "[PAYDAY 2]";
-                    break;
-                case "53510804":
-                    game = "[Hitman: Absolution]";
-                    break;
-                case "5841125A":
-                    game = "[Counter-Strike: GO]";
-                    break;
-                case "545407F2":
-                    game = "[Grand Theft Auto IV]";
-                    break;
-                case "5841128F":
-                    game = "[Terraria – Xbox 360 Edition]";
-                    break;
-            }
-            return game;
-        }
-        */
     }
 }

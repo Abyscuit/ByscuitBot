@@ -698,7 +698,7 @@ namespace byscuitBot.Core.Steam_Accounts
 
             public void createID()
             {
-                id = Misc.MD5Hash(Misc.Base64Encode(rounds + contribution_score + wins + t_wins + ct_wins + kills + deaths + mvps + damage + money_spent + dominations + revenges +
+                id = Security.MD5Hash(Security.Base64Encode(rounds + contribution_score + wins + t_wins + ct_wins + kills + deaths + mvps + damage + money_spent + dominations + revenges +
                     favweapon_shots + favweapon_hits + favweapon_kills + favweapon_name + accuracy + kd + outcome + id));
             }
 
