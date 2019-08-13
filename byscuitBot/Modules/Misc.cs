@@ -29,23 +29,6 @@ namespace byscuitBot.Modules
 {
     public class Misc : ModuleBase<SocketCommandContext>
     {
-        string[] cmds = { "-------------Server Stuff-------------" ,"roles", "kick", "ban", "unban", "addrole", "addroles", "removerole", "removeallroles",
-            "mute", "unmute", "move", "stats", "level", "addxp","subxp", "warn", "pointshop", "serverstats", "invlink", "nickname", "invite", "giveaway", "clear",
-            "\n\n------------Media Stuff--------------", "youtube", "select", "meme", "creatememe", "urban", "\n\n--------Steam Commands-----------",
-        "resolve", "steaminfo", "steambans", "steamgames", "linksteam", "steamaccts", "csgostats", "csgolastmatch", "csgolastmatches", "csgowepstats"};
-    string[] desc = { "", "Displays your roles or others roles with @username", "Kick @username 'reason'", "ban @username days 'reason'", "unban @username",
-            "adds a role to a user | addrole @username role_name", "adds roles to a user | addrole @username role_name, role_name, role_name", "remove a role from a user", "removes all roles from a user",
-            "Mutes a user", "Unmute a user", "Move a user to a Voice Channel", "Get stats of a user", "Get account level of user", "Add XP to a user",
-            "Remove XP to a user", "Warn a user", "Lists all the items in the pointshop", "Displays server the servers currents stats", "Get the invite link",
-            "Change nickname of a user", "Get an Invite Link for the server", "Create a giveaway | Usage: giveaway <9d23h59m,Item to give>", "Clear messages in bulk | Usage: clear <number>",
-            "", "Search YouTube for a keyword", "Select an option displayed",
-            "Post a random or specific meme | Usage: meme <optional> keyword",
-            "Create a meme using a members avatar | Usage: creatememe @user <top text,bottom text>", "Gets a definition from Urban Dictionary", "", "Resolve steam URL or username to SteamID64",
-            "Get Account Summary of your linked account or a steam user", "Get steam account bans (VAC, community, economy)", "Get All steam games or time played for a specific game",
-            "Link steam account to Discord Account", "Get all steam accounts linked to Discord users", "Get relevant CS:GO stats (totals, last match)",
-            "Get CS:GO last match info", "Get CS:GO info for up to 10 games of your last matches saved", "Get CS:GO weapon stats of all weapons or a specific weapon"
-            };
-
         string invLink = "https://discord.gg/VYMph8k";
         public Random rand = new Random();
 
@@ -53,65 +36,13 @@ namespace byscuitBot.Modules
         int[] price = { 200, 400, 800, 1600, 3200, 6000, 6500 };
 
 
-        #region admin
-
-        [Command("shutdown")]
-        [RequireUserPermission(GuildPermission.Administrator)]
-        [RequireBotPermission(GuildPermission.Administrator)]
-        public async Task Shutdown()
-        {
-            await Context.Channel.SendMessageAsync("Shutting down...");
-            System.Environment.Exit(0);
-            await Context.Channel.SendMessageAsync("Shut down failed.");
-        }
-
-        #endregion
-
-
         #region users
 
 
-        [Command("stats")]
-        public async Task Stats(SocketGuildUser user = null)
-        {
-            UserAccount account = UserAccounts.GetAccount(Context.User);
-            string username = Context.User.Username;
-
-            if (user != null)
-            {
-
-                account = UserAccounts.GetAccount(user);
-                username = user.Username;
-            }
-            else
-            {   if(!Context.IsPrivate)
-                    user = CommandHandler.GetUser(Context.Guild.Users, username);
-                else
-                    user = CommandHandler.GetUser(Context.User.MutualGuilds.ToArray()[0].Users, username);
-            }
-
-
-            string msg = "**Level:** " + account.LevelNumber + "\n**XP:** " + account.XP + "\n**Points:** " + account.Points + "\n" +
-                "**IsMuted:** " + account.IsMuted + "\n**Number of Warnings:** " + account.NumberOfWarnings;
-            if (!Context.IsPrivate)
-            {
-                string permissions = "\n__Permissions__\nAdmin: **" + user.GuildPermissions.Administrator + "**\nManage Roles: **" + user.GuildPermissions.ManageRoles + "**\nMute Members: **" + user.GuildPermissions.MuteMembers +
-                    "**\nDeafen Members: **" + user.GuildPermissions.DeafenMembers + "**\nKick Members: **" + user.GuildPermissions.KickMembers + "**\nBan Members: **" + user.GuildPermissions.BanMembers +
-                    "**\nChange Members Nickname: **" + user.GuildPermissions.ManageNicknames + "**\nMove Members: **" + user.GuildPermissions.MoveMembers + "**";
-
-                string endMsg = "\n\n__Roles__\n**" + getRoles(user) + "**" + permissions;
-                msg += "\n**Joined At:** " + user.JoinedAt + endMsg;
-            }
-            //string msg = "XP: " + account.XP + "\nPoints: " + account.Points;
-            
-
-
-            
-            await PrintEmbedMessage("Stats for " + username, msg, iconUrl: user.GetAvatarUrl());
-        }
-
         //giveaway <time> <winners> <Item>
         [Command("giveaway")]
+        [Summary("Create a giveaway - {0}giveaway <dhm>,<prize>")]
+        [RequireUserPermission(GuildPermission.MoveMembers)]
         public async Task Giveaway([Remainder]string text)
         {
             await Context.Message.DeleteAsync();
@@ -176,28 +107,7 @@ namespace byscuitBot.Modules
             GiveawayManager.MakeGiveaway(Context.User, item, message, endTime);
             //Global.MessageIdToTrack = message.Id;
         }
-
-        [Command("timer")]
-        public async Task Timer(int minutes)
-        {
-            await Context.Message.DeleteAsync();
-
-            var embed = new EmbedBuilder();
-            DateTime time = DateTime.Now;
-            time = time.AddMinutes(minutes);
-            RepeatingTimer.minutes = minutes;
-            RepeatingTimer.channel = (SocketTextChannel)Context.Channel;
-            RepeatingTimer.timeToStop = time;
-            RepeatingTimer.startTimer = true;
-            embed.WithTitle("Timer Ends " + time.ToShortDateString() + " " +time.ToShortTimeString() + "!");
-            embed.WithColor(100, 150, 255);
-            embed.WithFooter("Created by Abyscuit");
-
-
-
-            await Context.Channel.SendMessageAsync("", false, embed.Build());
-        }
-
+        /*
         [Command("react")]
         public async Task React([Remainder]string msg)
         {
@@ -227,8 +137,10 @@ namespace byscuitBot.Modules
             RestUserMessage message = await Context.Channel.SendMessageAsync("", false, embed.Build());
             Global.MessageIdToTrack = message.Id;
         }
+        */
 
         [Command("level")]
+        [Summary("Get the level of a user - Usage: {0}level <optional:@user>")]
         public async Task Level(SocketGuildUser user = null)
         {
             UserAccount account;
@@ -245,83 +157,6 @@ namespace byscuitBot.Modules
             string msg = account.LevelNumber.ToString();
             
             await PrintEmbedMessage("Level for " + username , msg, iconUrl: user.GetAvatarUrl());
-        }
-
-        [Command("serverstats")]
-        public async Task ServerStats()
-        {
-            int memberCount = Context.Guild.MemberCount;
-            DateTimeOffset date = Context.Guild.CreatedAt;
-            string name = Context.Guild.Name;
-            string owner = Context.Guild.Owner.Username;
-
-            ServerConfig serverConfig = ServerConfigs.GetConfig(Context.Guild);
-            bool reqV = serverConfig.RequiresVerification;
-            string verification = string.Format("\nRequires Verification: **{0}**", reqV);
-            if(reqV)
-            {
-                SocketRole vRole = Context.Guild.GetRole(serverConfig.VerificationRoleID);
-                verification += string.Format("\nVerified Role: **{0}**", vRole.Name);
-            }
-            string configs = "\nBot Prefix: **"+ serverConfig.Prefix +"**" + verification + "\nAFK Channel: **" +Context.Guild.GetVoiceChannel(serverConfig.AFKChannelID).Name +
-                "**\nAFK Timeout: **" + serverConfig.AFKTimeout + "**\nAntispam Mute Time: **"+serverConfig.AntiSpamTime+"**\nAntispam Warn Ban: **"+serverConfig.AntiSpamWarn;
-            string msg = "Server Name: **" + name + "**\nOwner: **"+ owner + "**\nMember Count: **" + memberCount + "**\nDate Created: **" + date.ToString("MM/dd/yyyy hh:mm:ss") +"**"+ configs +
-                "**\n\n__Roles__\n**" + getAllRoles((SocketGuildUser)Context.User)+"**";
-            
-
-            var result = from s in Context.Guild.VoiceChannels
-                         where s.Name.Contains("Member Count")
-                         select s;
-
-            
-            await PrintEmbedMessage("Server Stats", msg, iconUrl: Context.Guild.IconUrl);
-            SocketVoiceChannel memberChan = result.FirstOrDefault();
-            await memberChan.ModifyAsync(m => { m.Name = "Member Count: " + Context.Guild.MemberCount; });
-            DataStorage.AddPairToStorage(memberChan.Guild.Name + " MemberChannel", memberChan.Id.ToString());
-
-        }
-
-        [Command("addxp")]
-        [RequireUserPermission(GuildPermission.Administrator)]
-        [RequireBotPermission(GuildPermission.Administrator)]
-        public async Task AddXP(uint amount, SocketGuildUser user = null)
-        {
-            UserAccount account;
-            string username = "";
-
-            if (user == null)
-                user = (SocketGuildUser)Context.User;
-
-            account = UserAccounts.GetAccount(user);
-            username = user.Username;
-
-            account.XP += amount;
-            UserAccounts.SaveAccounts();
-            string msg = "Added **" + amount + "XP** to **" + username +
-                "**\nTotal XP: **" + account.XP + "**";
-            
-            await PrintEmbedMessage("XP Added " + username, msg, iconUrl: user.GetAvatarUrl());
-        }
-        [Command("subxp")]
-        [RequireUserPermission(GuildPermission.Administrator)]
-        [RequireBotPermission(GuildPermission.Administrator)]
-        public async Task SubXP(uint amount, SocketGuildUser user = null)
-        {
-            UserAccount account;
-            string username = "";
-            if (user == null)
-                user = (SocketGuildUser)Context.User;
-            account = UserAccounts.GetAccount(user);
-            username = user.Username;
-            if (account.XP <= amount)
-                account.XP = 0;
-            else
-                account.XP -= amount;
-            UserAccounts.SaveAccounts();
-            string msg = "Subtracted **" + amount + "XP** from **" + username +
-                "**\nTotal XP:**" + account.XP + "**";
-
-            await PrintEmbedMessage("XP Subtracted " + username, msg, iconUrl: user.GetAvatarUrl());
         }
 
         /*
@@ -383,6 +218,7 @@ namespace byscuitBot.Modules
         [Command("youtube")]
         [RequireUserPermission(GuildPermission.EmbedLinks)]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
+        [Summary("Searches youtube for videos - Usage: {0}youtube <search terms>")]
         public async Task Youtube([Remainder]string keyword)
         {
             YouTubeService youtube = new YouTubeService(new BaseClientService.Initializer()
@@ -425,6 +261,7 @@ namespace byscuitBot.Modules
         [Command("select")]
         [RequireUserPermission(GuildPermission.EmbedLinks)]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
+        [Summary("Use this to make a selection - Usage: {0}select <int>")]
         public async Task Select(int num)
         {
             if (selectvid)
@@ -482,365 +319,115 @@ namespace byscuitBot.Modules
             }
         }
 
-        [Command("move")]
-        [RequireUserPermission(GuildPermission.MoveMembers)]
-        [RequireBotPermission(GuildPermission.MoveMembers)]
-        public async Task Move(SocketGuildUser user, [Remainder]string voiceChannel)
-        {
-            if (user.VoiceChannel != null)
-            {
-                SocketVoiceChannel chan = CommandHandler.GetVChannel(user.Guild.VoiceChannels, voiceChannel);
-                await user.ModifyAsync(m => { m.Channel = chan; });
-                
-                await PrintEmbedMessage("Moved User", user.Mention + " Move to " + chan.Name);
-            }
-            else
-            {
-                await PrintEmbedMessage("Failed to Move User", user.Mention + " is not in a voice channel");
-            }
-        }
-
-        [Command("echo")]
-        public async Task Echo([Remainder]string msg)
-        {
-            msg = "**" + msg + "**";
-            await PrintEmbedMessage("Echoed Message", msg);
-            await Context.Message.DeleteAsync();
-        }
-
+        
         [Command("help")]
         public async Task Help()
         {
+            if(Context.IsPrivate)
+            {
+                await Context.Channel.SendMessageAsync("`This command is only available in the server!`");
+                return;
+            }
             ServerConfig serverConfig = ServerConfigs.GetConfig(Context.Guild); 
             string msg = "Use the '" + serverConfig.Prefix + "' prefix to send a command.\n";
-            for (int i = 0; i < cmds.Length; i++)
+            List<CommandInfo> cmds = CommandHandler.GetCommands();
+            string userCmds = "";
+            string adminCmds = "";
+            string ownerCmds = "";
+            int x = 0;
+            int y = 0;
+            SocketGuildUser user = Context.User as SocketGuildUser;
+            foreach (CommandInfo cmd in cmds)
             {
-                if (Context.Guild.Name != "Da Byscuits" && cmds[i] == "invlink") continue;
-                if (Context.Guild.Name != "Da Byscuits" && cmds[i] == "pointshop") continue;
-
-                if (cmds[i].Contains("Server Stuff"))
-                    msg += "__Server Stuff__\n";
-                else if (cmds[i].Contains("Media Stuff"))
-                    msg += "\n__Media Stuff__\n";
-                else if (cmds[i].Contains("Steam Commands"))
-                    msg += "%\n__Steam Commands__\n";
-                else
-                    msg += "**" + cmds[i] + "**: " + desc[i] + "\n";
-                    
-            }
-
-
-            string[] split = msg.Split('%');
-            for (int i = 0; i < split.Length; i++)
-                await DMEmbedMessage("Help/Commands", split[i]);
-            SocketGuildUser user = (SocketGuildUser)Context.User;
-            var role = from r in user.Roles
-                       where r.Permissions.Administrator
-                       select r;
-            SocketRole r1 = role.FirstOrDefault();
-            if (user.Roles.Contains(r1))
-            {
-                msg = "\n\n__Server Configuration__\n";
-                for (int i = 0; i < configCMDs.Length; i++)
+                if (cmd.Name.ToLower() == "help") continue;
+                if (cmd.Preconditions.Count > 0)
                 {
-                    msg += "**" + configCMDs[i] + "**: " + configDesc[i] + "\n";
+                    foreach (PreconditionAttribute precondition in cmd.Preconditions)
+                    {
+                        if (precondition is RequireBotPermissionAttribute)
+                        {
+                            RequireBotPermissionAttribute attribute = precondition as RequireBotPermissionAttribute;
+                            //msg += "*Requires Bot Permission: " + attribute.GuildPermission + "*\n";
+                        }
+                        else if (precondition is RequireUserPermissionAttribute)
+                        {
+                            RequireUserPermissionAttribute attribute = precondition as RequireUserPermissionAttribute;
+                            //msg += "*Requires User Permission: " + attribute.GuildPermission + "*\n";
+                            if (!user.GuildPermissions.Has(attribute.GuildPermission.Value) || !attribute.GuildPermission.HasValue) continue;
+                            if (Admin.AdminAttribute(attribute))
+                            {
+                                adminCmds += "**__" + cmd.Name + "__**\n";
+                                if (!string.IsNullOrEmpty(cmd.Summary))
+                                    adminCmds += "*" + cmd.Summary + "*\n";
+                                y++;
+                            }
+                            else
+                            {
+                                userCmds += "**__" + cmd.Name + "__**\n";
+                                if (!string.IsNullOrEmpty(cmd.Summary))
+                                    userCmds += "*" + cmd.Summary + "*\n";
+                                x++;
+                            }
+                        }
+                        else if (precondition is RequireOwnerAttribute)
+                        {
+                            RequireOwnerAttribute attribute = precondition as RequireOwnerAttribute;
+                            ownerCmds += "**__" + cmd.Name + "__**\n";
+                            if (!string.IsNullOrEmpty(cmd.Summary))
+                                ownerCmds += "*" + cmd.Summary + "*\n";
+                        }
+                    }
+                }
+                else
+                {
+                    userCmds += "**__" + cmd.Name + "__**\n";
+                    if (!string.IsNullOrEmpty(cmd.Summary))
+                        userCmds += "*" + cmd.Summary + "*\n";
+                    x++;
+                }
+
+                if (y > 20)
+                {
+                    adminCmds += "|";
+                    y = 0;
+                }
+                if (x > 16)
+                {
+                    userCmds += "|";
+                    x = 0;
                 }
             }
-            else msg = "";
-            msg += "\n__Cryptocurrency Commands__\n";
-            for (int i = 0; i < miningCmds.Length; i++)
-            {
-                msg += "**" + miningCmds[i] + "**: " + miningDesc[i] + "\n";
-            }
-            msg += "\n__Twitch Commands__\n";
-            for (int i = 0; i < twitchCMDs.Length; i++)
-            {
-                msg += "**" + twitchCMDs[i] + "**: " + twitchDesc[i] + "\n";
-            }
-            await DMEmbedMessage("Help/Commands", msg);
-        }
-        
 
-        [Command("roles")]
-        public async Task Roles(SocketGuildUser user = null)
-        {
-            string roles = "";
-            if (user != null)
-            {
-                roles = getRoles(user);
-            }
-            else
-            {
-                user = (SocketGuildUser)Context.User;
-                roles = getRoles(user);
-            }
-            
-            string msg = "**" + roles + "**";
-            
-            await PrintEmbedMessage("Roles for " + user.Username, msg, iconUrl: user.GetAvatarUrl());
+            string prefix = "/";
+            ServerConfig config = null;
+            if (!Context.IsPrivate) config = ServerConfigs.GetConfig(Context.Guild);
+            if (config != null) prefix = config.Prefix;
+            foreach (string s in SplitMessage(userCmds, '|'))
+                if (!string.IsNullOrEmpty(s))
+                    await DMEmbedMessage("Commands", string.Format(s, prefix));
+            foreach (string s in SplitMessage(adminCmds, '|'))
+                if (!string.IsNullOrEmpty(s))
+                    await DMEmbedMessage("Admin Commands", string.Format(s, prefix));
+            if(user.GuildPermissions.Administrator)
+                await DMEmbedMessage("Owner Commands", string.Format(ownerCmds, prefix));
         }
 
-        [Command("kick")]
-        [RequireUserPermission(GuildPermission.KickMembers)]
-        [RequireBotPermission(GuildPermission.KickMembers)]
-        public async Task Kick(IGuildUser user, [Remainder]string reason = "No reason provided.")
+        private string[] SplitMessage(string text, char delimiter)
         {
-            await user.KickAsync(reason);
-            string msg = "__" + user.Username + "__\nReason: **" + reason + "**";
-            
-            await PrintEmbedMessage("Kicked", msg, iconUrl: user.GetAvatarUrl());
+            return text.Split(delimiter);
         }
 
-        [Command("ban")]
-        [RequireUserPermission(GuildPermission.BanMembers)]
-        [RequireBotPermission(GuildPermission.BanMembers)]
-        public async Task Ban(IGuildUser user, int days, [Remainder]string reason = "No reason provided.")
-        {
-            await user.Guild.AddBanAsync(user, days, reason);
-            
-            string msg = "__" + user.Username + "__\nReason: **" + reason + "**";
-            Global.PrintMsg(Context.User.Username, msg);
-            
-            await PrintEmbedMessage("Banned", msg, iconUrl: user.GetAvatarUrl());
-        }
-
-        [Command("unban")]
-        [RequireUserPermission(GuildPermission.BanMembers)]
-        [RequireBotPermission(GuildPermission.BanMembers)]
-        public async Task Unban(IGuildUser user)
-        {
-            await user.Guild.RemoveBanAsync(user);
-            
-            string msg = "**Congrats " + user.Username + "**\n__You're unbanned!__";
-            
-            await PrintEmbedMessage("Unbanned " + user.Username, msg, iconUrl: user.GetAvatarUrl());
-        }
 
         [Command("invlink")]
-        [RequireUserPermission(GuildPermission.CreateInstantInvite)]
-        [RequireBotPermission(GuildPermission.CreateInstantInvite)]
+        [Summary("Gets the invite link for the ByscuitBros")]
         public async Task InviteLink()
         {
             Global.PrintMsg(Context.User.Username, "Posting Invite Link");
             await Context.Channel.SendMessageAsync(Context.User.Mention + " "+ invLink, false);
         }
 
-        [Command("mute")]
-        [RequireUserPermission(GuildPermission.MuteMembers)]
-        [RequireBotPermission(GuildPermission.MuteMembers)]
-        public async Task Mute(SocketGuildUser user, [Remainder]string reason = "No reason provided.")
-        {
-            UserAccount account = UserAccounts.GetAccount(user);
-            await user.ModifyAsync(m => { m.Mute = true; });
-            account.IsMuted = true;
-            UserAccounts.SaveAccounts();
-
-            string msg = "__" + user.Username + "__\nReason: **" + reason + "**";
-            
-            await PrintEmbedMessage("Muted", msg, iconUrl: user.GetAvatarUrl());
-        }
-
-        [Command("unmute")]
-        [RequireUserPermission(GuildPermission.MuteMembers)]
-        [RequireBotPermission(GuildPermission.MuteMembers)]
-        public async Task Unmute(SocketGuildUser user)
-        {
-            UserAccount account = UserAccounts.GetAccount(user);
-            await user.ModifyAsync(m => { m.Mute = false; });
-            account.IsMuted = false;
-            UserAccounts.SaveAccounts();
-            
-            string msg = "**" + user.Username + "** is now unmuted!";
-            
-            await PrintEmbedMessage("Unmuted", msg, iconUrl: user.GetAvatarUrl());
-        }
-
-        [Command("addrole")]
-        [RequireUserPermission(GuildPermission.ManageRoles)]
-        [RequireBotPermission(GuildPermission.ManageRoles)]
-        public async Task AddRole(IGuildUser user, [Remainder]string role)
-        {
-            IRole[] r = user.Guild.Roles.ToArray();
-            IRole addrole = null;
-            for (int i = 0; i < r.Length; i++)
-            {
-                if (r[i].Name.ToLower() == role.ToLower())
-                {
-                    addrole = r[i];
-                    break;
-                }
-            }
-            if (addrole != null)
-                await user.AddRoleAsync(addrole);
-           
-            string msg = "__" + user.Username + "__\nAdded role **" + addrole + "**";
-            
-            await PrintEmbedMessage("Role Added", msg, iconUrl: user.GetAvatarUrl());
-        }
-
-        [Command("addroles")]
-        [RequireUserPermission(GuildPermission.ManageRoles)]
-        [RequireBotPermission(GuildPermission.ManageRoles)]
-        public async Task AddRoles(IGuildUser user, [Remainder]string roles)
-        {
-            roles = roles.Replace(", ", "/");
-            string[] split = roles.Split('/');
-            IRole[] r = user.Guild.Roles.ToArray();
-            List<IRole> addrole = new List<IRole>();
-            string roleNames = "";
-            for (int s = 0; s < split.Length; s++)
-            {
-                for (int i = 0; i < r.Length; i++)
-                {
-                    if (r[i].Name.ToLower() == split[s].ToLower())
-                    {
-                        addrole.Add(r[i]);
-                        roleNames += r[i].Name + "\n";
-                    }
-                }
-            }
-            if (addrole != null)
-                await user.AddRolesAsync(addrole);
-            
-            string msg = "__" + user.Username + "__\nAdded roles\n**" + roleNames + "**";
-            
-            await PrintEmbedMessage("Roles Added", msg, iconUrl: user.GetAvatarUrl());
-        }
-
-        [Command("removerole")]
-        [RequireUserPermission(GuildPermission.ManageRoles)]
-        [RequireBotPermission(GuildPermission.ManageRoles)]
-        public async Task RemoveRole(IGuildUser user, [Remainder]string role)
-        {
-            IRole[] r = user.Guild.Roles.ToArray();
-            IRole addrole = null;
-            for (int i = 0; i < r.Length; i++)
-            {
-                if (r[i].Name.ToLower() == role.ToLower())
-                {
-                    addrole = r[i];
-                    break;
-                }
-            }
-            if (addrole != null)
-                await user.RemoveRoleAsync(addrole);
-            
-            string msg = "__" + user.Username + "__\nRemoved role **" + addrole + "**";
-            
-            await PrintEmbedMessage("Role Removed", msg, iconUrl: user.GetAvatarUrl());
-        }
-
-        [Command("removeallroles")]
-        [RequireUserPermission(GuildPermission.ManageRoles)]
-        [RequireBotPermission(GuildPermission.ManageRoles)]
-        public async Task RemoveRoles(IGuildUser user)
-        {
-            IRole[] r = user.Guild.Roles.ToArray();
-            string oldRoles = "";
-            for (int i = 0; i < r.Length; i++)
-            {
-                oldRoles += r[i].Name + "\n";
-            }
-            await user.RemoveRolesAsync(r);
-            
-            string msg = "__" + user.Username + "__\nRemoved roles \n**" + oldRoles + "**";
-            
-            await PrintEmbedMessage("Role Removed", msg, iconUrl: user.GetAvatarUrl());
-        }
-
-        
-        [Command("nickname")]
-        [RequireUserPermission(GuildPermission.ChangeNickname)]
-        [RequireBotPermission(GuildPermission.ChangeNickname)]
-        public async Task Nickname(SocketGuildUser user, [Remainder]string nickname)
-        {
-
-            await user.ModifyAsync( m => { m.Nickname = nickname; });
-
-            string msg = "**" + user.Mention + " is now " + nickname + "**";
-            
-            await PrintEmbedMessage("Nickname Set", msg, iconUrl:user.GetAvatarUrl());
-
-        }
-        
-        [Command("data")]
-        public async Task GetData()
-        {
-            int count = DataStorage.GetPairCount() + SteamData.GetCount() + SteamAccounts.GetAllAccounts().Length + NanoPool.GetCount();
-            string msg = "Total Data storage contains " + count + " pairs";
-            
-            await PrintEmbedMessage("Data Pairs", msg);
-            DataStorage.AddPairToStorage("pairCount", DataStorage.GetPairCount().ToString());
-        }
-        
-        
-
-        [Command("warn")]
-        [RequireUserPermission(GuildPermission.BanMembers)]
-        [RequireBotPermission(GuildPermission.BanMembers)]
-        public async Task Warn(SocketGuildUser user, [Remainder]string reason = "No reason provided.")
-        {
-            UserAccount account = UserAccounts.GetAccount(user);
-            account.NumberOfWarnings++;
-            UserAccounts.SaveAccounts();
-            uint maxwarnings = 5;
-            float warnpercent = (float)account.NumberOfWarnings / (float)maxwarnings * 100f;
-            if (account.NumberOfWarnings >= maxwarnings)
-            {
-                await user.Guild.AddBanAsync(user, 1, reason);
-                
-                string msg = "**" + user.Mention + " Banned for 1 day.**\nReason: __" + reason + "__";
-                
-                await PrintEmbedMessage("Banned ", msg, iconUrl: user.GetAvatarUrl());
-            }
-            else
-            {
-                string msg = "**" + user.Mention + "**\n**Reason:** __" + reason + "__\n" +
-                    "**Warn Percent:** " + warnpercent +"";
-                
-                await PrintEmbedMessage("Warning", msg, iconUrl: user.GetAvatarUrl());
-            }
-        }
-
-        public bool IsAuthorized(SocketGuildUser user)
-        {
-            string roleName = "Fresh Byscuit";
-            var result = from r in user.Guild.Roles
-                         where r.Name == roleName
-                         select r.Id;
-            ulong roleID = result.FirstOrDefault();
-            if (roleID == 0) return false;
-
-            var targetRole = user.Guild.GetRole(roleID);
-            return user.Roles.Contains(targetRole);
-        }
-
-        public string getRoles(SocketGuildUser user)
-        {
-            string roles = "";
-            foreach (SocketRole role in user.Roles)
-            {
-                if (!role.IsEveryone)
-                    roles += role.Name + "\n";
-            }
-
-            return roles;
-        }
-
-        public string getAllRoles(SocketGuildUser user)
-        {
-            string roles = "";
-            foreach (SocketRole role in user.Guild.Roles)
-            {
-                if(!role.IsEveryone)
-                roles += role.Name + "\n";
-            }
-
-            return roles;
-        }
-
-
         [Command("pointshop")]
+        [Summary("Opens up the pointshop")]
         public async Task PointShop()
         {
                    
@@ -857,6 +444,7 @@ namespace byscuitBot.Modules
 
         #region Server Stuff
         [Command("invite")]
+        [Summary("Gets an invite link for the server")]
         public async Task Invite()
         {
             IReadOnlyCollection<RestInviteMetadata> x = await Context.Guild.GetInvitesAsync();
@@ -885,16 +473,17 @@ namespace byscuitBot.Modules
         }
 
         [Command("clear")]
+        [Summary("Deletes a specified amount of messages in the channel - Usage: {0}clear <number>")]
         [RequireUserPermission(GuildPermission.ManageMessages)]
         [RequireBotPermission(GuildPermission.ManageMessages)]
         public async Task Clear(int num)
         {
             await Context.Message.DeleteAsync();
-            IAsyncEnumerable<IReadOnlyCollection<IMessage>> x =  Context.Channel.GetMessagesAsync((num));
+            IAsyncEnumerable<IReadOnlyCollection<IMessage>> x = Context.Channel.GetMessagesAsync((num));
             IAsyncEnumerator<IReadOnlyCollection<IMessage>> index = x.GetEnumerator();
-            while(await index.MoveNext())
+            while (await index.MoveNext())
             {
-                foreach(IMessage msg in index.Current)
+                foreach (IMessage msg in index.Current)
                 {
                     await msg.DeleteAsync();
                 }
@@ -902,14 +491,32 @@ namespace byscuitBot.Modules
             RepeatingTimer.channel = (SocketTextChannel)Context.Channel;
             RepeatingTimer.clrMsg = true;
             RepeatingTimer.clrMsgTime = DateTime.Now.AddSeconds(5);
-            RestUserMessage m = await Context.Channel.SendMessageAsync("Cleared "+ num +" messages!");
+            RestUserMessage m = await Context.Channel.SendMessageAsync("Cleared " + num + " messages!");
             Global.MessageIdToTrack = m.Id;
+        }
+
+        [Command("status")]
+        [Summary("Gets the status of the bot")]
+        public async Task Status()
+        {
+            int latency = Context.Client.Latency;
+            string activity = Context.Client.Activity.Name;
+            string user = "" + Context.Client.CurrentUser;
+            List<SocketGuild> guilds = Context.Client.Guilds.ToList();
+            string msg = string.Format("**Latency**: {0}ms\n", latency);
+            msg += "**Activity**: " + activity + "\n";
+            msg += "**User**: " + user + "\n";
+            msg += "**Guilds**:\n";
+            foreach (SocketGuild guild in guilds)
+                msg += string.Format("*{0}*{1}", guild.Name, "\n");
+            await PrintEmbedMessage("Bot Status", msg);
         }
 
         #endregion
 
         #region media
         [Command("meme")]
+        [Summary("Posts a meme")]
         [RequireUserPermission(GuildPermission.AttachFiles)]
         [RequireBotPermission(GuildPermission.AttachFiles)]
         public async Task Meme([Remainder]string text = null)
@@ -953,6 +560,7 @@ namespace byscuitBot.Modules
         }
 
         [Command("creatememe")]
+        [Summary("Create a meme using an attachment or a user\'s profile picture - Usage: {0}creatememe <@user> <top text, bottom text>")]
         [RequireUserPermission(GuildPermission.AttachFiles)]
         [RequireBotPermission(GuildPermission.AttachFiles)]
         public async Task CreateMeme(SocketUser user = null, [Remainder] string text = null)
@@ -985,6 +593,7 @@ namespace byscuitBot.Modules
         }
 
         [Command("creatememe")]
+        [Summary("Create a meme using an attachment - Usage: {0}creatememe <blank_space> <top text, bottom text>")]
         [RequireUserPermission(GuildPermission.AttachFiles)]
         [RequireBotPermission(GuildPermission.AttachFiles)]
         public async Task CreateMeme([Remainder] string text = null)
@@ -1012,6 +621,7 @@ namespace byscuitBot.Modules
         }
 
         [Command("upload")]
+        [Summary("Upload a picture to the meme folder - Usage: {0}upload <name> <tags,tags,tags>")]
         [RequireUserPermission(GuildPermission.Administrator)]
         [RequireBotPermission(GuildPermission.Administrator)]
         public async Task Upload(string name = "", [Remainder]string tags = "")
@@ -1044,128 +654,17 @@ namespace byscuitBot.Modules
         }
 
         [Command("urban")]
+        [Summary("Searches the Urban Dictionary for the specified term - Usage: {0}urban <search term(s)>")]
         public async Task Urban([Remainder]string word)
         {
             word = char.ToUpper(word[0]) + word.Substring(1);
-            Console.WriteLine("Encoded word: " + EncodeURL(word) + "\n");
-            string msg = UrbanDictionary.GetDefinition(EncodeURL(word));
+            Console.WriteLine("Encoded word: " + Security.EncodeURL(word) + "\n");
+            string msg = UrbanDictionary.GetDefinition(Security.EncodeURL(word));
 
             await PrintEmbedMessage(word + " - Urban Dictionary", msg);
         }
         #endregion
 
-        #region encode/decode
-
-        [Command("urlencode")]
-        public async Task UrlEncode([Remainder]string text)
-        {
-            await Context.Channel.SendMessageAsync("```" + EncodeURL(text) + "```");
-            await Context.Message.DeleteAsync();
-        }
-
-        [Command("sha1")]
-        public async Task Sha1([Remainder]string text)
-        {
-            await Context.Channel.SendMessageAsync("```" + Sha1Hash(text) + "```");
-            await Context.Message.DeleteAsync();
-        }
-
-        [Command("sha256")]
-        public async Task Sha256([Remainder]string text)
-        {
-            await Context.Channel.SendMessageAsync("```" + sha256(text) + "```");
-            await Context.Message.DeleteAsync();
-        }
-        [Command("sha512")]
-        public async Task Sha512([Remainder]string text)
-        {
-            await Context.Channel.SendMessageAsync("```" + Sha512Hash(text) + "```");
-            await Context.Message.DeleteAsync();
-        }
-        [Command("md5")]
-        public async Task MD5([Remainder]string text)
-        {
-            await Context.Channel.SendMessageAsync("```" + MD5Hash(text) + "```");
-            await Context.Message.DeleteAsync();
-        }
-
-        [Command("base64encode")]
-        public async Task EncodeBase64([Remainder]string text)
-        {
-            await Context.Channel.SendMessageAsync("```" + Base64Encode(text) + "```");
-            await Context.Message.DeleteAsync();
-        }
-        [Command("base64decode")]
-        public async Task DecodeBase64([Remainder]string text)
-        {
-            await Context.Channel.SendMessageAsync("```" + Base64Decode(text) + "```");
-            await Context.Message.DeleteAsync();
-        }
-        public static string EncodeURL(string url)
-        {
-            url = WebUtility.UrlEncode(url);
-            return url;
-        }
-        public static string DecodeUrl(string url)
-        {
-            url = WebUtility.UrlDecode(url);
-            return url;
-        }
-        public static string Base64Encode(string plainText)
-        {
-            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-            return System.Convert.ToBase64String(plainTextBytes);
-        }
-
-        public static string Base64Decode(string base64EncodedData)
-        {
-            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
-            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-        }
-
-        public static string Sha1Hash(string input)
-        {
-            var hash = (new SHA1Managed()).ComputeHash(Encoding.UTF8.GetBytes(input));
-            return string.Join("", hash.Select(b => b.ToString("X2")).ToArray());
-        }
-
-        public static string Sha512Hash(string input)
-        {
-            var hash = (new SHA512Managed()).ComputeHash(Encoding.UTF8.GetBytes(input));
-            return string.Join("", hash.Select(b => b.ToString("X2")).ToArray());
-        }
-
-        public static string MD5Hash(string input)
-        {
-            // Use input string to calculate MD5 hash
-            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
-            {
-                byte[] inputBytes = System.Text.Encoding.UTF8.GetBytes(input);
-                byte[] hashBytes = md5.ComputeHash(inputBytes);
-
-                // Convert the byte array to hexadecimal string
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < hashBytes.Length; i++)
-                {
-                    sb.Append(hashBytes[i].ToString("X2"));
-                }
-                return sb.ToString();
-            }
-        }
-
-        public static string sha256(string randomString)
-        {
-            var crypt = new System.Security.Cryptography.SHA256Managed();
-            var hash = new System.Text.StringBuilder();
-            byte[] crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(randomString));
-            foreach (byte theByte in crypto)
-            {
-                hash.Append(theByte.ToString("X2"));
-            }
-            return hash.ToString();
-        }
-
-        #endregion
 
         #region SteamAPI
         //------SteamAPI----------
@@ -1182,6 +681,7 @@ namespace byscuitBot.Modules
         */
 
         [Command("resolve")]
+        [Summary("Resolve Steam URL or Username to SteamID64 - Usage: {0}resolve <URL/Username>")]
         public async Task Resolve([Remainder]string text)
         {
             string username = "";
@@ -1209,6 +709,7 @@ namespace byscuitBot.Modules
         }
 
         [Command("steaminfo")]
+        [Summary("Get Account Summary of your linked account or a steam user - Usage: {0}steaminfo <optional:ID> <optional:URL/Username>")]
         public async Task SteamInfo(ulong id = 0, [Remainder]string text = null)
         {
             string username = "";
@@ -1271,6 +772,7 @@ namespace byscuitBot.Modules
         }
         */
         [Command("steambans")]
+        [Summary("Get steam account bans (VAC, community, economy) - Usage: {0}steambans <optional:ID> <optional:URL/Username>")]
         public async Task SteamBans(ulong id = 0, [Remainder]string text = null)
         {
             string username = "";
@@ -1313,6 +815,7 @@ namespace byscuitBot.Modules
         }
 
         [Command("comparegames")]
+        [Summary("Get all Steam games in common with other user - Usage: {0}comparegames <@user>")]
         public async Task CompareGames(SocketUser socketUser)
         {
             int appID = 0;
@@ -1392,6 +895,7 @@ namespace byscuitBot.Modules
             }
         }
         [Command("steamgames")]
+        [Summary("Get all Steam games or time played for a specific game - Usage: {0}steamgames <optional:Game_Name>")]
         public async Task SteamGames([Remainder]string text = null)
         {
             int appID = 0;
@@ -1458,6 +962,7 @@ namespace byscuitBot.Modules
         }
 
         [Command("linksteam")]
+        [Summary("Link a Steam account to your Discord Account - Usage: {0}linksteam <optional:ID> <optional:URL/Username>")]
         public async Task LinkSteam(ulong id = 0, [Remainder]string text = null)
         {
             string username = "";
@@ -1511,6 +1016,7 @@ namespace byscuitBot.Modules
         }
 
         [Command("steamaccts")]
+        [Summary("Get all Steam accounts linked to Discord users - Usage: {0}steamaccts")]
         public async Task GetSteamAccounts()
         {
             SteamAccount[] steamAccts = SteamAccounts.GetAllAccounts();
@@ -1532,6 +1038,7 @@ namespace byscuitBot.Modules
 
 
         [Command("csgostats")]
+        [Summary("Get relevant CS:GO stats (totals, last match) - Usage: {0}csgostats <optional:ID> <optional:URL/Username>")]
         public async Task CsgoStats(ulong id = 0, [Remainder]string text = null)
         {
             string username = "";
@@ -1603,6 +1110,7 @@ namespace byscuitBot.Modules
         }
 
         [Command("csgolastmatch")]
+        [Summary("Get the info of the CS:GO last match - Usage: {0}csgolastmatch <optional:ID> <optional:URL/Username>")]
         public async Task CsgoLastMatch(ulong id = 0, [Remainder]string text = null)
         {
             string username = "";
@@ -1638,6 +1146,7 @@ namespace byscuitBot.Modules
         }
 
         [Command("csgolastmatches")]
+        [Summary("Get CS:GO info for up to 10 games of your last matches saved - Usage: {0}csgolastmatches <optional:number>")]
         public async Task CsgoLastMatches(uint num = 0)
         {
             if (num == 0)
@@ -1704,6 +1213,7 @@ namespace byscuitBot.Modules
 
 
         [Command("csgowepstats")]
+        [Summary("Get CS:GO weapon stats of all weapons or a specific weapon - Usage: {0}csgowepstats <optional:weapon_name>")]
         public async Task CsgoWeaponStats([Remainder]string text = null)
         {
             string weaponName = text;
@@ -1808,623 +1318,12 @@ namespace byscuitBot.Modules
         }
         #endregion
 
-        #region Server Config
-
-
-        string[] configCMDs = { "prefix", "color", "footer", "servername", "timestamp", "afkchannel", "afktimeout", "cmdblacklist", "memeblacklist", "miningwhitelist",
-        "verifyrole", "verification", "spamthreshold", "spamwarnamt", "spammutetime", "allowads"};
-        string[] configDesc = { "Set the Prefix for the bot", "Set the color of the embed message using 0-255. Usage: color <r> <g> <b>", "Set the footer text of the embed message",
-        "Change the server's name", "Enable or disable timestamp on the embed messages", "Set the afk channel for the server",
-            "Set the time in minutes (1, 5, 15, 30, 60) of inactivity for users to be moved to the AFK channel", "Add a channel to the blacklist for the bot commands", "Add a channel to the meme blacklist",
-        "Add a channel to the mining whitelist", "Set the default role for verified members | Usage: verifyrole <@role>", "Enable/Disable Verification when a user joins | Usage: verification <true|false>",
-        "Spam warnings before being banned | Usage: spamthreshold 5", "Amount of spam to be muted | Usage: spamwarnamt 3", "Spam beginning mute time in mins, scales by 2 | Usage: spammutetime 5",
-        "Allow users to @ everyone with discord link | Usage: allowads <true|false>"};
-
-        [Command("prefix")]
-        [RequireUserPermission(GuildPermission.Administrator)]
-        [RequireBotPermission(GuildPermission.Administrator)]
-        public async Task Prefix(string prefix)
-        {
-            if (prefix == " " || prefix == "")
-            {
-                await Context.Channel.SendMessageAsync("Usage: prefix <char>\nExample: @ByscuitBot prefix -");
-                return;
-            }
-            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
-            config.Prefix = prefix;
-            ServerConfigs.UpdateServerConfig(Context.Guild, config);
-            await PrintEmbedMessage("Prefix Set", "Prefix has been set to " + prefix +
-                ".\nYou can now use " + prefix + "help for the list of commands.", iconUrl : config.IconURL);
-        }
-
-        [Command("color")]
-        [RequireUserPermission(GuildPermission.Administrator)]
-        [RequireBotPermission(GuildPermission.Administrator)]
-        public async Task Color(int red, int green, int blue)
-        {
-            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
-            config.EmbedColorRed = red;
-            config.EmbedColorGreen = green;
-            config.EmbedColorBlue = blue;
-            ServerConfigs.UpdateServerConfig(Context.Guild, config);
-            await PrintEmbedMessage("Color Set", string.Format("**Red**: {0}\n**Green**: {1}\n**Blue**: {2}", red, green, blue), iconUrl: config.IconURL);
-        }
-
-        [Command("footer")]
-        [RequireUserPermission(GuildPermission.Administrator)]
-        [RequireBotPermission(GuildPermission.Administrator)]
-        public async Task FooterText([Remainder] string text)
-        {
-            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
-            if (text == null || text == "")
-            {
-                await Context.Channel.SendMessageAsync(string.Format("Usage: {0}footer <text>\nExample: {0}footer Created By Abyscuit", config.Prefix));
-            }
-            config.FooterText = text;
-            ServerConfigs.UpdateServerConfig(Context.Guild, config);
-            await PrintEmbedMessage("Footer Text Set", string.Format("New footer text set to:\n{0}", text), iconUrl: config.IconURL);
-        }
-
-        [Command("servername")]
-        [RequireUserPermission(GuildPermission.Administrator)]
-        [RequireBotPermission(GuildPermission.Administrator)]
-        public async Task ServerName([Remainder] string text)
-        {
-            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
-            if (text == null || text == "")
-            {
-                await Context.Channel.SendMessageAsync(string.Format("Usage: {0}servername <name>\nExample: {0}servername Da Byscuits", config.Prefix));
-            }
-            await Context.Guild.ModifyAsync(m => { m.Name = text; });
-            config.DiscordServerName = text;
-            ServerConfigs.UpdateServerConfig(Context.Guild, config);
-            await PrintEmbedMessage("Footer Text Set", string.Format("New footer text set to:\n{0}", text), iconUrl: config.IconURL);
-        }
-
-        [Command("timestamp")]
-        [RequireUserPermission(GuildPermission.Administrator)]
-        [RequireBotPermission(GuildPermission.Administrator)]
-        public async Task Timestamp(string text)
-        {
-            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
-            if (text == null || text == "")
-            {
-                await Context.Channel.SendMessageAsync(string.Format("Usage: {0}timestamp <true|false>", config.Prefix));
-            }
-            else
-            {
-                if (text.ToLower().Contains("enable") || text.ToLower().Contains("yes") || text.ToLower().Contains("on"))
-                {
-                    text = "true";
-                }
-                if (text.ToLower().Contains("disable") || text.ToLower().Contains("no") || text.ToLower().Contains("off"))
-                {
-                    text = "false";
-                }
-            }
-            bool b = false;
-            bool result = false;
-            result = bool.TryParse(text, out b);
-            if (result)
-                config.TimeStamp = b;
-            else
-                await Context.Channel.SendMessageAsync(string.Format("Usage: {0}timestamp <true|false>", config.Prefix));
-            ServerConfigs.UpdateServerConfig(Context.Guild, config);
-            await PrintEmbedMessage("Timestamp Configured", string.Format("Timestamp for embed set to **{0}**", text), iconUrl: config.IconURL);
-        }
-
-        [Command("afkchannel")]
-        [RequireUserPermission(GuildPermission.Administrator)]
-        [RequireBotPermission(GuildPermission.Administrator)]
-        public async Task AFKChannel([Remainder] string chanName)
-        {
-            IReadOnlyCollection<SocketVoiceChannel> vChans = Context.Guild.VoiceChannels;
-            SocketVoiceChannel selectedChan = null;
-            foreach (SocketVoiceChannel chan in vChans)
-            {
-                if (chan.Name.ToLower() == chanName.ToLower())
-                {
-                    selectedChan = chan;
-                    break;
-                }
-            }
-            if (selectedChan == null)
-            {
-                await Context.Channel.SendMessageAsync("Voice channel does not exist! Make sure you type it out correctly!\n(not case sensitive)");
-            }
-            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
-            config.AFKChannelID = selectedChan.Id;
-            config.AFKChannelName = selectedChan.Name;
-            await Context.Guild.ModifyAsync(m => { m.AfkChannel = selectedChan; });
-            ServerConfigs.UpdateServerConfig(Context.Guild, config);
-            await PrintEmbedMessage("AFK Channel Set", string.Format("**{0}** is now the AFK Channel!\nUsers will be sent there after **{1}mins**", selectedChan.Name, config.AFKTimeout / 60), iconUrl: config.IconURL);
-        }
-
-        [Command("afktimeout")]
-        [RequireUserPermission(GuildPermission.Administrator)]
-        [RequireBotPermission(GuildPermission.Administrator)]
-        public async Task AFKTimeout(int time)
-        {
-            time = time * 60;
-            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
-            config.AFKTimeout = time;
-            await Context.Guild.ModifyAsync(m => { m.AfkTimeout = time; });
-            ServerConfigs.UpdateServerConfig(Context.Guild, config);
-            await PrintEmbedMessage("AFK Timeout Set", string.Format("Users will be sent to {0} after **{1} minutes** of no activity!", config.AFKChannelName, config.AFKTimeout / 60), iconUrl: config.IconURL);
-        }
-
-        [Command("verifyrole")]
-        [RequireUserPermission(GuildPermission.Administrator)]
-        [RequireBotPermission(GuildPermission.Administrator)]
-        public async Task VerifyRole(SocketRole role)
-        {
-            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
-            config.VerificationRoleID = role.Id;
-            ServerConfigs.UpdateServerConfig(Context.Guild, config);
-            await PrintEmbedMessage("Verification Role Set", string.Format("Users will be added to the **{0}** role after verification!", role.Name), iconUrl: config.IconURL);
-        }
-
-        [Command("verification")]
-        [RequireUserPermission(GuildPermission.Administrator)]
-        [RequireBotPermission(GuildPermission.Administrator)]
-        public async Task Verification(bool b)
-        {
-            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
-            config.RequiresVerification = b;
-            ServerConfigs.UpdateServerConfig(Context.Guild, config);
-            await PrintEmbedMessage("Verification Set", string.Format("Verification set to {0}!", b), iconUrl: config.IconURL);
-        }
-        [Command("spamthreshold")]
-        [RequireUserPermission(GuildPermission.Administrator)]
-        [RequireBotPermission(GuildPermission.Administrator)]
-        public async Task SpamThreshold(int amt)
-        {
-            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
-            config.AntiSpamThreshold = amt;
-            ServerConfigs.UpdateServerConfig(Context.Guild, config);
-            await PrintEmbedMessage("Spam Threshold Set", string.Format("Threshold set to {0}!", amt), iconUrl: config.IconURL);
-        }
-        [Command("spamwarnamt")]
-        [RequireUserPermission(GuildPermission.Administrator)]
-        [RequireBotPermission(GuildPermission.Administrator)]
-        public async Task SpamWarnAmt(int amt)
-        {
-            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
-            config.AntiSpamWarn = amt;
-            ServerConfigs.UpdateServerConfig(Context.Guild, config);
-            await PrintEmbedMessage("Spam Warn Set", string.Format("Spam warnings set to {0}!", amt), iconUrl: config.IconURL);
-        }
-        [Command("spammutetime")]
-        [RequireUserPermission(GuildPermission.Administrator)]
-        [RequireBotPermission(GuildPermission.Administrator)]
-        public async Task SpamMuteTime(int mins)
-        {
-            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
-            config.AntiSpamTime = mins;
-            ServerConfigs.UpdateServerConfig(Context.Guild, config);
-            await PrintEmbedMessage("Spam Mute Time Set", string.Format("Spam mute time set to {0}!", mins), iconUrl: config.IconURL);
-        }
-
-        [Command("allowads")]
-        [RequireUserPermission(GuildPermission.Administrator)]
-        [RequireBotPermission(GuildPermission.Administrator)]
-        public async Task AllowAds(bool b)
-        {
-            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
-            config.AllowAdvertising = b;
-            ServerConfigs.UpdateServerConfig(Context.Guild, config);
-            await PrintEmbedMessage("Advertising Set", string.Format("Advertising set to {0}!", b), iconUrl: config.IconURL);
-        }
-
-        #endregion
-
-        #region CryptoCurrency
-        public static string[] miningCmds = { "nanopool", "linketh", "ethbal", "topcrypto", "calceth", "ethtokens", "crypto" };
-        string[] miningDesc = { "Get NanoPool general account info | Usage: nanopool <optional:address>", "Link an ETH address to your discord account | Usage: linketh <address>",
-        "Get the balance of an address or yours | Usage: ethbal <optional:address>", "Get the top 10 cryptocurrencies by market cap", "Calculate how much ETH you can mine using your Mh/s",
-        "Get ERC-20 Tokens linked to Ethereum address | Usage: ethtokens <optional:address>", "Get basic price info of one or more coins use commas to separate | Usage: crypto btc,eth,bch"};
-
-        public string GetNanoPoolInfo(string address, SocketUser user)
-        {
-            NanoPool.Account account = NanoPool.GetAccount(address, user);
-            string msg = "";
-            if (account == null)
-            {
-                msg = "Account **" + address + "**\nNot Found!";
-                return msg;
-            }
-
-
-            msg += "**Account:** " + account.account;
-            msg += "\n**Unconfirmed Balance:** " + account.unconfirmed_balance;
-            msg += "\n**Balance:** " + account.balance;
-            double balance = double.Parse(account.balance);
-            NanoPool.Prices prices = NanoPool.GetPrices();
-            double usdBal = prices.price_usd * balance;
-            double btcBal = prices.price_btc * balance;
-            double gbpBal = prices.price_gbp * balance;
-            double eurBal = prices.price_eur * balance;
-            msg += "\n**USD Value:** " + string.Format("${0:N2}", usdBal);
-            msg += "\n**BTC Value:** " + string.Format("{0:N8} BTC", btcBal);
-            msg += "\n**Hashrate:** " + account.hashrate + " Mh/s";
-            msg += "\n\n__Average Hashrate__";
-            msg += "\n**1 Hour:** " + account.avgHashrate["h1"] + " Mh/s";
-            msg += "\n**3 Hours:** " + account.avgHashrate["h3"] + " Mh/s";
-            msg += "\n**6 Hours:** " + account.avgHashrate["h6"] + " Mh/s";
-            msg += "\n**12 Hours:** " + account.avgHashrate["h12"] + " Mh/s";
-            msg += "\n**24 Hours:** " + account.avgHashrate["h24"] + " Mh/s";
-            msg += "\n\n__Workers__";
-            for (int i = 0; i < account.workers.Count; i++)
-            {
-                if (i > 0)
-                    msg += "\n";
-                msg += "\n**ID:** " + account.workers[i].id;
-                msg += "\n**UID:** " + account.workers[i].uid;
-                msg += "\n**Hashrate:** " + account.workers[i].hashrate + " Mh/s";
-                msg += "\n**Last Share:** " + SteamAccounts.UnixTimeStampToDateTime(account.workers[i].lastshare);
-                msg += "\n**Rating:** " + account.workers[i].rating;
-                /*
-                msg += "\n**1hr Avg Hashrate:** " + account.workers[i].h1 + " Mh/s";
-                msg += "\n**3hr Avg Hashrate:** " + account.workers[i].h3 + " Mh/s";
-                msg += "\n**6hr Avg Hashrate:** " + account.workers[i].h6 + " Mh/s";
-                msg += "\n**12hr Avg Hashrate:** " + account.workers[i].h12 + " Mh/s";
-                msg += "\n**24hr Avg Hashrate:** " + account.workers[i].h24 + " Mh/s";
-                */
-            }
-            return msg;
-        }
-
-        [Command("nanopool")]
-        public async Task Nanopool(SocketUser user)
-        {
-            NanoPool.UserAccount userAccount = NanoPool.GetUser(user);
-            string address = userAccount.address;
-
-            await PrintEmbedMessage("NanoPool Account", GetNanoPoolInfo(address,user));
-        }
-        [Command("nanopool")]
-        public async Task Nanopool([Remainder]string address = null)
-        {
-            await PrintEmbedMessage("NanoPool Account", GetNanoPoolInfo(address,Context.User));
-        }
-
-        [Command("linketh")]
-        public async Task LinkEth([Remainder]string address)
-        {
-            NanoPool.UserAccount account = NanoPool.GetUser(Context.User, address);
-            string msg = "";
-            if (account == null)
-            {
-                msg = "Account **" + address + "**\nNot Found!";
-                await PrintEmbedMessage("ETH Link Failed", msg);
-                return;
-            }
-            if (account.discordID != Context.User.Id)
-            {
-                msg += "**Address:** " + account.address;
-                msg += "\n**Already Linked:** " + account.discordUsername;
-            }
-            else
-            {
-                msg += "**Address:** " + account.address;
-                msg += "\n**Now Linked:** " + account.discordUsername;
-            }
-
-            await PrintEmbedMessage("ETH Address Linked", msg);
-
-            //await Context.Channel.SendMessageAsync(msg);
-        }
-
-
-        [Command("ethbal")]
-        public async Task Ethbal([Remainder]string address = null)
-        {
-            NanoPool.UserAccount account = NanoPool.GetUser(Context.User, address);
-            string msg = "";
-            if (account == null)
-            {
-                msg = "Account **" + address + "**\nNot Found! Please use linketh cmd or enter an address to link!";
-                await PrintEmbedMessage("Account Retrieval Failed", msg);
-                return;
-            }
-            if (address == null)
-                address = account.address;
-
-
-            double balance = double.Parse(EtherScan.GetBalance(address)) / 1000000000000000000d;
-            NanoPool.Prices prices = NanoPool.GetPrices();
-            double usdBal = prices.price_usd * balance;
-            double btcBal = prices.price_btc * balance;
-            double gbpBal = prices.price_gbp * balance;
-            double eurBal = prices.price_eur * balance;
-            msg += "**Account:** " + address;
-            msg += "\n**Balance:** " + string.Format("{0:N15} ETH", balance);
-            msg += "\n**USD Value:** " + string.Format("${0:N2}", usdBal);
-            msg += "\n**BTC Value:** " + string.Format("{0:N8} BTC", btcBal);
-
-            await PrintEmbedMessage("Ethereum Balance", msg);
-
-            //await Context.Channel.SendMessageAsync(msg);
-        }
-
-        [Command("ethtokens")]
-        public async Task EthTokens([Remainder]string address = null)
-        {
-            NanoPool.UserAccount account = NanoPool.GetUser(Context.User, address);
-            string msg = "";
-            if (account == null)
-            {
-                msg = "Account **" + address + "**\nNot Found! Please use linketh cmd or enter an address to link!";
-                await PrintEmbedMessage("Account Retrieval Failed", msg);
-                return;
-            }
-            if (address == null)
-                address = account.address;
-            List<EtherScan.Token> tokens = EtherScan.GetTokens(address);
-            string symbols = "";
-            int count = 0;
-            foreach (EtherScan.Token token in tokens)
-            {
-                if (token.tokenSymbol != "" && !token.tokenName.ToLower().Contains("promo"))
-                {
-                    if (count == 1)
-                    {
-                        symbols += ",";
-                        count = 0;
-                    }
-                    symbols += token.tokenSymbol;
-                    count++;
-                }
-            }
-
-            Dictionary<string, CoinMarketCap.Currency> currencies = CoinMarketCap.GetTokens(symbols);
-            count = 0;
-            int num = 0;
-            msg += "**Account:** " + address;
-            double totalValue = 0;
-            foreach (EtherScan.Token token in tokens)
-            {
-                int decPlace = 0;
-                if (token.tokenDecimal != "0" && token.tokenDecimal != "")
-                    decPlace = int.Parse(token.tokenDecimal);
-                double div = 1;
-                for (int i = 0; i < decPlace; i++)
-                {
-                    div *= 10d;
-                }
-                double balance = double.Parse(token.value) / div;
-                if (currencies.ContainsKey(token.tokenSymbol))
-                    totalValue += currencies[token.tokenSymbol].quote.USD.price * balance;
-            }
-            msg += string.Format("\n**Total Value:** ${0:N5}", totalValue);
-            foreach (EtherScan.Token token in tokens)
-            {
-                int decPlace = 0;
-                if (token.tokenDecimal != "0" && token.tokenDecimal != "")
-                    decPlace = int.Parse(token.tokenDecimal);
-                double div = 1;
-                for (int i = 0; i < decPlace; i++)
-                {
-                    div *= 10d;
-                }
-                msg += "\n\n**Name:** " + token.tokenName;
-                msg += "\n**Symbol:** " + token.tokenSymbol;
-                double balance = double.Parse(token.value) / div;
-                if (decPlace == 0)
-                    msg += "\n**Balance:** " + string.Format("{0:N0} " + token.tokenSymbol, balance);
-                if (decPlace == 8)
-                    msg += "\n**Balance:** " + string.Format("{0:N8} " + token.tokenSymbol, balance);
-                if (decPlace == 18)
-                    msg += "\n**Balance:** " + string.Format("{0:N15} " + token.tokenSymbol, balance);
-                if (currencies.ContainsKey(token.tokenSymbol))
-                    msg += string.Format("\n**USD Value:** ${0:N15}", currencies[token.tokenSymbol].quote.USD.price * balance);
-                msg += "\n**Date:** " + SteamAccounts.UnixTimeStampToDateTime(double.Parse(token.timeStamp));
-                msg += "\n**Confirmations:** " + string.Format("{0:N0}", ulong.Parse(token.confirmations));
-                if (count > 8)
-                {
-                    msg += "|";
-                    count = 0;
-                }
-                count++;
-                num++;
-            }
-            string[] split = msg.Split('|');
-            for (int i = 0; i < split.Length; i++)
-            {
-                await PrintEmbedMessage("ETH Tokens", split[i]);
-            }
-
-
-            //await Context.Channel.SendMessageAsync(msg);
-        }
-
-        [Command("crypto")]
-        public async Task Crypto([Remainder]string symbols)
-        {
-            symbols = symbols.ToUpper();
-            string[] Symbols = symbols.ToUpper().Split(',');
-            string msg = "";
-            Dictionary<string, CoinMarketCap.Currency> currencies = CoinMarketCap.GetTokens(symbols);
-            for (int i = 0; i < Symbols.Length; i++)
-            {
-                if (i > 0)
-                    msg += "\n";
-                msg += "\n**Name:** " + currencies[Symbols[i]].name;
-                msg += "\n**Symbol:** " + currencies[Symbols[i]].symbol;
-                double price = currencies[Symbols[i]].quote.USD.price;
-                string priceString = string.Format("${0:N2}", price);
-                if (price <= 1.99)
-                    priceString = string.Format("${0:N6}", price);
-                else if (price <= 9.99)
-                    priceString = string.Format("${0:N3}", price);
-                msg += "\n**Rank:** " + string.Format("{0}", currencies[Symbols[i]].cmc_rank);
-                msg += "\n**USD Price:** " + priceString;
-                msg += "\n**Market Cap:** " + string.Format("${0:N2}", currencies[Symbols[i]].quote.USD.market_cap);
-                msg += "\n**Volume 24h:** " + string.Format("${0:N2}", currencies[Symbols[i]].quote.USD.volume_24h);
-                msg += "\n**1h Change:** " + string.Format("{0:N2}%", currencies[Symbols[i]].quote.USD.percent_change_1h);
-                msg += "\n**24h Change:** " + string.Format("{0:N2}%", currencies[Symbols[i]].quote.USD.percent_change_24h);
-                msg += "\n**7d Change:** " + string.Format("{0:N2}%", currencies[Symbols[i]].quote.USD.percent_change_7d);
-                msg += "\n**Circulating Supply:** " + string.Format("{0:N0}", currencies[Symbols[i]].circulating_supply);
-                    string max_supply = "None";
-                if (currencies[Symbols[i]].max_supply != null)
-                    max_supply = "" + currencies[Symbols[i]].max_supply;
-                msg += "\n**Max Supply:** " + max_supply;
-            }
-            await PrintEmbedMessage("Cyptocurrency " + symbols, msg);
-        }
-
-        public static int cInt = 0;
-        [Command("test")]
-        public async Task Test()
-        {
-            DateTimeOffset serverCreated = Context.Message.CreatedAt;
-            DateTime serverBirthday = new DateTime(DateTime.Now.Year, serverCreated.Month, serverCreated.Day);
-            DateTime testDate = new DateTime(1995, serverCreated.Month, serverCreated.Day);
-            //string msg = "Created date: " + serverBirthday.ToString() + "\nTest Date: " + testDate.ToString();
-            //msg += "\nSame Birthday: " + RepeatingTimer.compareDates(serverBirthday, testDate);
-            //RepeatingTimer.generalChannel = Context.Channel;
-            //if (cInt >= Global.Holidays.Length) cInt = 0;
-            double days = DateTimeOffset.Now.Subtract(serverCreated).TotalDays;
-            string msg = String.Format(Global.Holidays[0], Context.Message.Author, days / 365);
-            await Context.Channel.SendMessageAsync(msg);
-            //cInt++;
-        }
-
-        [Command("topcrypto")]
-        public async Task TopCrypto(int num = 0)
-        {
-            List<CoinMarketCap.Currency> currencies = CoinMarketCap.GetTop10();
-            string msg = "";
-            int count = 0;
-            EmbedField[] fields = new EmbedField[(num == 0) ? 10 : num];
-            foreach (CoinMarketCap.Currency currency in currencies)
-            {
-                msg += "\n\n__" + currency.name + "__";
-                msg += "\n**Symbol:** " + currency.symbol;
-                msg += "\n**Rank:** " + currency.cmc_rank;
-
-                double price = currency.quote.USD.price;
-                string priceString = string.Format("${0:N2}", price);
-                if (price <= 1.99)
-                    priceString = string.Format("${0:N6}", price);
-                else if (price <= 9.99)
-                    priceString = string.Format("${0:N3}", price);
-                msg += "\n**Price:** " + priceString;
-                msg += "\n**Market Cap:** " + string.Format("${0:N2}", currency.quote.USD.market_cap);
-                msg += "\n**Volume 24h:** " + string.Format("${0:N2}", currency.quote.USD.volume_24h);
-                msg += "\n**Change 1h:** " + string.Format("{0:N2}%", currency.quote.USD.percent_change_1h);
-                msg += "\n**Change 24h:** " + string.Format("{0:N2}%", currency.quote.USD.percent_change_24h);
-                msg += "\n**Change 7d:** " + string.Format("{0:N2}%", currency.quote.USD.percent_change_7d);
-                msg += "\n**Circulating Supply:** " + currency.circulating_supply;
-                string max_supply = "None";
-                if (currency.max_supply != null)
-                    max_supply = "" + currency.max_supply;
-                msg += "\n**Max Supply:** " + max_supply;
-                if (num != 0)
-                {
-                    num--;
-                    if (num <= 0)
-                        break;
-                }
-                count++;
-                if (count >= 6)
-                {
-                    msg += "|";
-                    count = 0;
-                }
-            }
-
-            string[] split = msg.Split('|');
-            for (int i = 0; i < split.Length; i++)
-            {
-                string title = "Top 10 Crypto";
-                if (num != 0)
-                    title = "Top " + num + " Crypto";
-                await PrintEmbedMessage("Top Crypto", split[i]);
-            }
-
-            //await Context.Channel.SendMessageAsync(msg);
-        }
-
-        [Command("calceth")]
-        public async Task CalcETH(float hashrate)
-        {
-            List<NanoPool.Amount> amounts = NanoPool.CalculateEth(hashrate);
-            string msg = "";
-            EmbedField[] fields = new EmbedField[6];
-            int count = 0;
-            int num = 0;
-            foreach (NanoPool.Amount amount in amounts)
-            {
-                switch (num)
-                {
-                    case 0:
-                        {
-                            fields[0].name = "__Minute__";
-                            //msg += "\n\n__Minute__";
-                            break;
-                        }
-                    case 1:
-                        {
-                            fields[1].name = "__Hour__";
-                            //msg += "\n\n__Hour__";
-                            break;
-                        }
-                    case 2:
-                        {
-                            fields[2].name = "__Day__";
-                            //msg += "\n\n__Day__";
-                            break;
-                        }
-                    case 3:
-                        {
-                            fields[3].name = "__Week__";
-                            //msg += "\n\n__Week__";
-                            break;
-                        }
-                    case 4:
-                        {
-                            fields[4].name = "__Month__";
-                            //msg += "\n\n__Month__";
-                            break;
-                        }
-                    case 5:
-                        {
-                            fields[5].name = "__Year__";
-                            //msg += "\n\n__Month__";
-                            break;
-                        }
-                }
-                msg = "**Coins:** " + string.Format("{0:N10}", amount.coins);
-                msg += "\n**Dollars:** " + string.Format("${0:N8}", amount.dollars);
-                msg += "\n**Bitcoins:** " + string.Format("{0:N10}", amount.bitcoins);
-                msg += "\n**Euros:** " + string.Format("€{0:N8}", amount.euros);
-                msg += "\n**Pounds:** " + string.Format("£{0:N8}", amount.pounds);
-                fields[num].value = msg;
-                num++;
-                count++;
-                if (count >= 6)
-                {
-                    //msg += "|";
-                    count = 0;
-                }
-            }
-
-            //string[] split = msg.Split('|');
-            //for (int i = 0; i < split.Length; i++)
-            {
-                await PrintEmbedMessage("ETH Calculator "+ hashrate + " Mh/s", fields:fields);
-            }
-
-            //await Context.Channel.SendMessageAsync(msg);
-        }
-
-        #endregion
 
         #region Twitch
         string[] twitchCMDs = { "twitchuser", "twitchfollowers" };
         string[] twitchDesc = { "Get Twitch user details by user name | Usage: twitchuser <username>", "Get followers from a Twitch user by ID | Usage: twitchfollowers <id>" };
         [Command("twitchuser")]
+        [Summary("Get the details of a Twitch user - Usage: {0}twitchuser <username>")]
         public async Task TwitchUser([Remainder]string user = null)
         {
             Twitch.TwitchUser User = Twitch.GetUser(user);
@@ -2445,6 +1344,7 @@ namespace byscuitBot.Modules
         }
 
         [Command("twitchfollowers")]
+        [Summary("Get followers of a Twitch user by ID - Usage: {0}twitchfollowers <id>")]
         public async Task TwitchFollowers(string id)
         {
             Twitch.TwitchUser User = Twitch.GetUserByID(id);
@@ -2477,6 +1377,7 @@ namespace byscuitBot.Modules
 
         #region Xbox calls
         [Command("clientinfo")]
+        [Summary("Get the info of a user by CPU Key - Usage: {0}clientinfo <CPU_Key>")]
         public async Task clientInfo(string CPUKey)
         {
             string result = "";
@@ -2494,8 +1395,10 @@ namespace byscuitBot.Modules
             await PrintEmbedMessage("ID: " + xbox.ID + " | " + xbox.Gamertag, result);
             //await Context.Channel.SendMessageAsync(result);
         }
+
         string[] hexDig = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F" };
         [Command("insert")]
+        [Summary("Creates a fake entry for debugging - Usage: {0}insert <name>")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task Insert(string name)
         {
@@ -2595,26 +1498,6 @@ namespace byscuitBot.Modules
         }*/
         #endregion
 
-        #region Verification
-
-        [Command("verify")]
-        public async Task Verify([Remainder]string captcha = null)
-        {
-            ServerConfig config = ServerConfigs.GetConfig(Context.Guild);
-            SocketGuildUser user = (SocketGuildUser)Context.User;
-            SocketRole role = Context.Guild.GetRole(config.VerificationRoleID);
-            if (user.Roles.Contains(role))
-            {
-                await Context.Channel.SendMessageAsync(Context.User.Mention + " is already verified!");
-                await Context.Message.DeleteAsync();
-                return;
-            }
-            await user.AddRoleAsync(role);
-            await Context.Channel.SendMessageAsync(Context.User.Mention + " Verified!");
-            await Context.Message.DeleteAsync();
-        }
-
-        #endregion
         public struct EmbedField
         {
             public string name;
