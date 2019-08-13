@@ -47,7 +47,19 @@ namespace byscuitBot.Core
             };
             loopingTimer.Elapsed += OnTimerTicked;
             loopingTimer.Start();
-            await UpdateAuditLog();
+            //await UpdateAuditLog();
+
+            foreach (SocketGuild guild in Program.client.Guilds)
+            {
+                foreach (SocketTextChannel chan in guild.TextChannels)
+                {
+                    if (chan.Name.ToLower().Contains("security"))
+                    {
+                        ConsolePrint("Security channel found in " + guild.Name);
+                        Global.SECURITY_CHANNELS.Add(chan);
+                    }
+                }
+            }
             await Task.CompletedTask;
         }
 
@@ -159,6 +171,7 @@ namespace byscuitBot.Core
 
 
             //---------Timer for events--------
+            /*
             SocketGuild[] guilds = Program.client.Guilds.ToArray();
 
             for (int i = 0; i < guilds.Length; i++)
@@ -207,6 +220,7 @@ namespace byscuitBot.Core
                     Console.WriteLine(DateTime.Now + " | Events checked for " + guilds[i].Name);
                 }
             }
+            */
 
         }
         public static bool compareDates(DateTime first, DateTime second)
@@ -231,6 +245,7 @@ namespace byscuitBot.Core
             {
                 foreach (SocketGuild Guild in Program.client.Guilds)
                 {
+                    ConsolePrint("Running audit for " + Guild.Name);
                     await AuditUpdate(Guild);
                 }
             }
@@ -242,7 +257,7 @@ namespace byscuitBot.Core
             {
                 if (chan.Name.ToLower().Contains("security"))
                 {
-                    //Console.WriteLine("Security channel found in " + guild.Name);
+                    ConsolePrint("Security channel found in " + guild.Name);
                     IAsyncEnumerable<IReadOnlyCollection<RestAuditLogEntry>> auditLog = guild.GetAuditLogsAsync(10);
                     List<IReadOnlyCollection<RestAuditLogEntry>> auditList = await auditLog.ToList();
                     IAsyncEnumerable<IReadOnlyCollection<IMessage>> messages = chan.GetMessagesAsync(1);
@@ -398,17 +413,25 @@ namespace byscuitBot.Core
                         }
                         else
                         {
-                            Console.WriteLine("LE_Action: " + logEntry.Action + "; LE_Data: " + logEntry.Data.ToString() + "; ");
+                            ConsolePrint("LE_Action: " + logEntry.Action + "; LE_Data: " + logEntry.Data.ToString() + "; ");
                         }
                         embed.WithAuthor(title,logEntry.User.GetAvatarUrl());
                         embed.WithDescription(msg);
                         embed.WithFooter(logEntry.Id.ToString());
                         if (send) await chan.SendMessageAsync("", false, embed.Build());
-                        //if (send) Console.WriteLine("Sent " + embed.Description);
+                        if (send) ConsolePrint("Sent " + embed.Description);
                     }//end restAuditLog loop
+                    ConsolePrint("Finished Audit Log for " + guild.Name);
                     break;
                 }// end if security channel
             }// end for each text channel in guild
+        }
+
+        public static void ConsolePrint(string msg)
+        {
+            msg = DateTime.Now + " | " + msg;
+            Console.WriteLine(msg);
+            Log.AddTextToLog(msg);
         }
     }
 }
