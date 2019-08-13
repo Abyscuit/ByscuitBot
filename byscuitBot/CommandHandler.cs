@@ -20,7 +20,7 @@ namespace byscuitBot
     public class CommandHandler
     {
         DiscordSocketClient client;
-        CommandService service;
+        static CommandService service;
         public static ulong BotID = 510066148285349900;
         public List<IMessage> oldMessage = new List<IMessage>();
         public int msgCount = 0;
@@ -40,9 +40,16 @@ namespace byscuitBot
             this.client.UserBanned += Client_UserBanned;
             //this.client.UserUpdated += Client_UserUpdated;
             //this.client.RoleCreated += Client_RoleCreated;
-            //this.client.MessageDeleted += Client_MessageDeleted;
+            this.client.MessageDeleted += Client_MessageDeleted;
             //this.client.LatencyUpdated += Client_LatencyUpdated;
             //this.client.MessagesBulkDeleted += Client_MessagesBulkDeleted;
+            
+        }
+
+        public static List<CommandInfo> GetCommands()
+        {
+            
+            return service.Commands.ToList();
         }
 
         private Task Client_LatencyUpdated(int arg1, int arg2)
@@ -71,14 +78,49 @@ namespace byscuitBot
             await RepeatingTimer.UpdateAuditLog();
         }
 
-        private async Task Client_UserBanned(SocketUser arg1, SocketGuild arg2)
+        private async Task Client_UserBanned(SocketUser user, SocketGuild guild)
         {
-            await RepeatingTimer.UpdateAuditLog();
+            RestBan ban = await guild.GetBanAsync(user);
+            RestAuditLogEntry logEntry = await GetAuditLogEntry(guild);
+            if (logEntry.Action != ActionType.Ban) return;
+            BanAuditLogData data = (BanAuditLogData)logEntry.Data;
+            string targetUsername = "**" + user + "** _(" + user.Id + ")_";
+            string adminUsername = "**" + logEntry.User + "**";
+            string msg = targetUsername + " was banned by " + adminUsername +
+                "\nReason: " + (string.IsNullOrEmpty(ban.Reason) ? "No reason provided." : ban.Reason);
+
+            foreach (SocketTextChannel channel in Global.SECURITY_CHANNELS)
+            {
+                if (channel.Guild.Id == guild.Id)
+                {
+                    await SendSecurityLog(msg, new Color(255, 0, 0), channel, logEntry.Id.ToString(), logEntry.User.GetAvatarUrl());
+                    break;
+                }
+            }
         }
 
-        private async Task Client_MessageDeleted(Cacheable<IMessage, ulong> arg1, ISocketMessageChannel arg2)
+        private async Task Client_MessageDeleted(Cacheable<IMessage, ulong> message, ISocketMessageChannel channel)
         {
-            await RepeatingTimer.UpdateAuditLog();
+            SocketTextChannel textChannel = channel as SocketTextChannel;
+            RestAuditLogEntry logEntry = await GetAuditLogEntry(textChannel.Guild);
+            if (logEntry.Action != ActionType.MessageDeleted) return;
+            MessageDeleteAuditLogData data = (MessageDeleteAuditLogData)logEntry.Data;
+            IUser user = await channel.GetUserAsync(data.AuthorId);
+            string targetUsername = "**" + user + "** _(" + data.AuthorId + ")_";
+            string adminUsername = "**" + logEntry.User + "**";
+            
+            string msg = adminUsername + " deleted _" + data.MessageCount + "_ messages by " + targetUsername + 
+                " in **#" + channel.Name + "** channel";
+
+            foreach (SocketTextChannel chan in Global.SECURITY_CHANNELS)
+            {
+                if (chan.Guild.Id == textChannel.Guild.Id)
+                {
+                    if (!CheckPosted(logEntry, chan))
+                        await SendSecurityLog(msg, new Color(255, 190, 0), chan, logEntry.Id.ToString(), logEntry.User.GetAvatarUrl());
+                    break;
+                }
+            }
         }
 
         private async Task Client_GuildUpdated(SocketGuild arg1, SocketGuild arg2)
@@ -86,15 +128,33 @@ namespace byscuitBot
             await RepeatingTimer.UpdateAuditLog();
         }
 
-        private Task Client_GuildMemberUpdated(SocketGuildUser arg1, SocketGuildUser arg2)
+        private async Task Client_GuildMemberUpdated(SocketGuildUser arg1, SocketGuildUser arg2)
         {
+            /*
+            if (!userCheck(arg1, arg2)) await Task.CompletedTask;
 
-            if (!userCheck(arg1, arg2)) return Task.CompletedTask;
-            string mes = DateTime.Now + " | ARG1: " + arg1 + "\tARG2: " + arg2;
-            Log.AddTextToLog(mes);
-            Console.WriteLine(mes);
-            RepeatingTimer.UpdateAuditLog().GetAwaiter().GetResult();
-            return Task.CompletedTask;
+            string targetUsername = "**" + arg1.Username + "** _(" + arg1.Id + ")_";
+            string msg = "";
+            if (arg1.IsDeafened != arg2.IsDeafened)
+                msg += string.Format("{0} is now {1}\n", targetUsername, (arg2.IsDeafened) ? "deafened" : "undeafened");
+
+            if (arg1.IsMuted != arg2.IsMuted)
+                msg += string.Format("{0} is now {1}\n", targetUsername, (arg2.IsMuted) ? "muted" : "unmuted");
+
+
+            if (arg1.Nickname != arg2.Nickname)
+                msg += string.Format(adminUsername + " changed {0}'s nickname from *{1}* to *{2}*\n", targetUsername,
+                    (string.IsNullOrEmpty(arg1.Nickname)) ? arg1.Username : arg1.Nickname,
+                    (data.After.Nickname == null) ? data.Target.Username : data.After.Nickname);
+
+            Console.WriteLine(msg);
+            embed.WithColor(255, 255, 0);
+            embed.WithAuthor(title, logEntry.User.GetAvatarUrl());
+            embed.WithDescription(msg);
+            embed.WithFooter(logEntry.Id.ToString());
+            await chan.SendMessageAsync("", false, embed.Build());
+            */
+            await Task.CompletedTask;
         }
         private bool userCheck(SocketGuildUser user1, SocketGuildUser user2)
         {
@@ -105,22 +165,71 @@ namespace byscuitBot
             return result;
         }
 
-        private async Task Client_UserUnbanned(SocketUser arg1, SocketGuild arg2)
+        private async Task Client_UserUnbanned(SocketUser user, SocketGuild guild)
         {
-            await RepeatingTimer.UpdateAuditLog();
+            RestAuditLogEntry logEntry = await GetAuditLogEntry(guild);
+            if (logEntry.Action != ActionType.Unban) return;
+            UnbanAuditLogData data = (UnbanAuditLogData)logEntry.Data;
+            string targetUsername = "**" + user + "** _(" + user.Id + ")_";
+            string adminUsername = "**" + logEntry.User + "**";
+            string msg = targetUsername + " was unbanned by " + adminUsername +
+                "\nReason: " + (string.IsNullOrEmpty(logEntry.Reason) ? "No reason provided." : logEntry.Reason);
+
+            foreach (SocketTextChannel channel in Global.SECURITY_CHANNELS)
+            {
+                if (channel.Guild.Id == guild.Id)
+                {
+                    await SendSecurityLog(msg, new Color(255, 0, 0), channel, logEntry.Id.ToString(), logEntry.User.GetAvatarUrl());
+                    break;
+                }
+            }
         }
 
         private async Task Client_ChannelUpdated(SocketChannel channel, SocketChannel socketChannel)
         {
             await RepeatingTimer.UpdateAuditLog();
         }
+        private async Task<RestAuditLogEntry> GetAuditLogEntry(SocketGuild guild)
+        {
+            IAsyncEnumerable<IReadOnlyCollection<RestAuditLogEntry>> auditLog = guild.GetAuditLogsAsync(1);
+            List<IReadOnlyCollection<RestAuditLogEntry>> auditList = await auditLog.ToList();
+            RestAuditLogEntry[] restAuditLogs = auditList[0].ToArray();
+            RestAuditLogEntry logEntry = restAuditLogs[0];
+            return logEntry;
+        }
+
+        private bool CheckPosted(RestAuditLogEntry entry, SocketTextChannel securityChannel)
+        {
+            IAsyncEnumerable<IReadOnlyCollection<IMessage>> messages = securityChannel.GetMessagesAsync(1);
+            List<IReadOnlyCollection<IMessage>> msgList = messages.ToList().GetAwaiter().GetResult();
+            IMessage mesg = null;
+            if (msgList[1].Count > 0) mesg = msgList[1].ToArray()[0];// Newest Message
+            else return false;
+
+            if (mesg.Embeds.Count == 0) return false;
+            else
+            {
+                if (mesg.Embeds.ToArray()[0].Footer == null) return false;
+                if (mesg.Embeds.ToArray()[0].Footer.Value.Text == entry.Id.ToString())  return true;
+                else return false;
+            }
+        }
+
+        private async Task SendSecurityLog(string msg, Color color, SocketTextChannel channel, string footer, string authorURL = "")
+        {
+            EmbedBuilder embed = new EmbedBuilder();
+            string title = "Server Report";
+            embed.WithTimestamp(DateTimeOffset.Now);
+            embed.WithColor(color);
+            embed.WithAuthor(title, string.IsNullOrEmpty(authorURL) ? client.CurrentUser.GetAvatarUrl() : authorURL);
+            embed.WithDescription(msg);
+            embed.WithFooter(footer);
+            await channel.SendMessageAsync("", false, embed.Build());
+        }
         #endregion
 
         public static ulong tsMemberChannel = 512514458065567755;
         public static ulong memberChannel = 512515705036472320;
-        //ulong welcomeChannel = 0;
-        ulong general = 246718514214338560; //replace with default welcome
-                                            //ulong test = 512047865917603852;
 
         List<SocketGuild> updated = new List<SocketGuild>();
         private async Task Client_MessageReceived(SocketMessage s)
@@ -368,37 +477,37 @@ namespace byscuitBot
                 else
                     config = ServerConfigs.GetConfig(context.Guild);
                 IResult result = null;
-                    result = await service.ExecuteAsync(context, argPos, null);
-                    if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
+                result = await service.ExecuteAsync(context, argPos, null);
+                if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
+                {
+                    bool errorCheck = true;
+                    if (context.Message.Content.Contains("creatememe") && context.Message.Attachments.Count > 0)
                     {
-                        bool errorCheck = true;
-                        if(context.Message.Content.Contains("creatememe") && context.Message.Attachments.Count > 0)
+                        if (result.ErrorReason.Contains("User not found"))
                         {
-                            if(result.ErrorReason.Contains("User not found"))
-                            {
-                                errorCheck = false;
-                            }
-                        }
-                        if (errorCheck)
-                        {
-                            string message = "Error when running this command\n**" + result.ErrorReason + "**\n\nView console for more info";
-                            var embed = new EmbedBuilder();
-                            embed.WithTitle("Command Error");
-                            embed.WithDescription(message);
-                            embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
-                            if (config.FooterText != "")
-                                embed.WithFooter(config.FooterText);
-                            if (config.TimeStamp)
-                                embed.WithCurrentTimestamp();
-
-                                await context.Channel.SendMessageAsync("", false, embed.Build());
-                            Console.WriteLine(result.ErrorReason);
-                            Console.WriteLine(result.Error);
+                            errorCheck = false;
                         }
                     }
+                    if (errorCheck)
+                    {
+                        string message = "Error when running this command\n**" + result.ErrorReason + "**\n\nView console for more info";
+                        var embed = new EmbedBuilder();
+                        embed.WithTitle("Command Error");
+                        embed.WithDescription(message);
+                        embed.WithColor(config.EmbedColorRed, config.EmbedColorGreen, config.EmbedColorBlue);
+                        if (config.FooterText != "")
+                            embed.WithFooter(config.FooterText);
+                        if (config.TimeStamp)
+                            embed.WithCurrentTimestamp();
+
+                        await context.Channel.SendMessageAsync("", false, embed.Build());
+                        Console.WriteLine(result.ErrorReason);
+                        Console.WriteLine(result.Error);
+                        Log.LogException(result.ErrorReason);
+                        Log.LogException(result.Error.Value.ToString());
+                    }
+                }
             }
-            GetAllVoiceChannels(context.Guild.VoiceChannels);
-            GetAllTextChannels(context.Guild.TextChannels);
         }
 
 
@@ -515,27 +624,6 @@ namespace byscuitBot
             }
         }
 
-        public static ulong GetCurrentGuild(SocketTextChannel channel)
-        {
-            var result = from s in channel.Guild.VoiceChannels
-                         where s.Name.Contains("Member Count")
-                         select s;
-
-
-            SocketVoiceChannel memberChan = result.FirstOrDefault();
-            foreach (var pair in DataStorage.pairs)
-            {
-                if (pair.Key.Contains("MemberChannel"))
-                {
-                    if (pair.Value == memberChan.Id.ToString())
-                    {
-                        return ulong.Parse(pair.Value);
-                    }
-                }
-            }
-            GetTChannel(channel.Guild.TextChannels, "welcome");
-            return memberChan.Id;
-        }
 
         public static SocketVoiceChannel GetVChannel(IEnumerable<SocketVoiceChannel> channels, string channelName)
         {
@@ -558,7 +646,6 @@ namespace byscuitBot
             {
                 if (channel.Name.ToLower().Contains(channelName.ToLower()))
                 {
-
                     DataStorage.AddPairToStorage(channel.Guild.Name + " | " + channel.Name, channel.Id.ToString());
                     return channel;
                 }
@@ -566,24 +653,6 @@ namespace byscuitBot
             return null;
         }
 
-
-        public static void GetAllVoiceChannels(IEnumerable<SocketVoiceChannel> channels)
-        {
-            foreach (var channel in channels)
-            {
-                string channelName = channel.Name;
-                if (!channelName.Contains("Member Count") && !channelName.Contains("User Count") && !channelName.Contains("Bot Count"))
-                    DataStorage.AddPairToStorage(channel.Guild.Name + " | " + channelName, channel.Id.ToString());
-            }
-        }
-        public static void GetAllTextChannels(IEnumerable<SocketTextChannel> channels)
-        {
-            foreach (var channel in channels)
-            {
-                string channelName = channel.Name;
-                DataStorage.AddPairToStorage(channel.Guild.Name + " | " + channelName, channel.Id.ToString());
-            }
-        }
 
 
 
@@ -601,6 +670,30 @@ namespace byscuitBot
 
         public static async Task updMemberChan(SocketGuild guild)
         {
+            bool updateChan = false;
+            SocketVoiceChannel MemberChan = null;
+            SocketVoiceChannel UserChan = null;
+            SocketVoiceChannel BotChan = null;
+            foreach (SocketVoiceChannel chan in guild.VoiceChannels)
+            {
+                if (chan.Name.Contains("User Count"))
+                {
+                    UserChan = chan;
+                }
+                else if (chan.Name.Contains("Bot Count"))
+                {
+                    BotChan = chan;
+                }
+                else if (chan.Name.Contains("Member Count"))
+                {
+                    MemberChan = chan;
+                    int members = int.Parse(chan.Name.Split(':')[1]);
+                    if (members != chan.Guild.Users.Count)
+                        updateChan = true;
+                    if (!updateChan) break;
+                }
+            }
+            if (!updateChan) return;
             int botcount = 0;
             IReadOnlyCollection<SocketGuildUser> users = guild.Users;
             foreach (SocketGuildUser u in users)
@@ -608,40 +701,11 @@ namespace byscuitBot
                 if (u.IsBot)
                     botcount++;
             }
-            bool updateChan = false;
-            foreach (SocketVoiceChannel chan in guild.VoiceChannels)
-            {
-                if (chan.Name.Contains("Member Count"))
-                {
-                    if (!updateChan)
-                    {
-                        int members = int.Parse(chan.Name.Split(':')[1]);
-                        if (members != chan.Guild.Users.Count)
-                        {
-                            updateChan = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            foreach (SocketVoiceChannel chan in guild.VoiceChannels)
-            {
-                if(chan.Name.Contains("Member Count") && updateChan)
-                {
-                        await chan.ModifyAsync(m => { m.Name = "Member Count: " + chan.Guild.MemberCount; });
-                        DataStorage.AddPairToStorage(chan.Guild.Name + " MemberChannel", chan.Id.ToString());
-                }
-                if (chan.Name.Contains("User Count") && updateChan)
-                {
-                    await chan.ModifyAsync(m => { m.Name = "User Count: " + (chan.Guild.MemberCount - botcount); });
-                    DataStorage.AddPairToStorage(chan.Guild.Name + " UserChannel", chan.Id.ToString());
-                }
-                if (chan.Name.Contains("Bot Count") && updateChan)
-                {
-                    await chan.ModifyAsync(m => { m.Name = "Bot Count: " + botcount; });
-                    DataStorage.AddPairToStorage(chan.Guild.Name + " BotChannel", chan.Id.ToString());
-                }
-            }
+            int memberCount = MemberChan.Guild.MemberCount;
+            await MemberChan.ModifyAsync(m => { m.Name = "Member Count: " + memberCount; });
+            await UserChan.ModifyAsync(m => { m.Name = "User Count: " + (memberCount - botcount); });
+            await BotChan.ModifyAsync(m => { m.Name = "Bot Count: " + botcount; });
+
         }
 
         public static async void SendMessage(string msg, string title, Color color,SocketTextChannel channel, SocketGuildUser user)
