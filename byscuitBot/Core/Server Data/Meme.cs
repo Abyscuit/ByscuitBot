@@ -90,9 +90,9 @@ namespace byscuitBot.Core.Server_Data
             DirectoryInfo d = new DirectoryInfo(@"Memes\");//Assuming Test is your Folder
             if (!Directory.Exists(d.FullName))
                 Directory.CreateDirectory(d.FullName);
-            Console.WriteLine("Scanning Directory: " + d.FullName);
+            Console.WriteLine(DateTime.Now + " | Scanning Directory: " + d.FullName);
             FileInfo[] Files = d.GetFiles(); //Getting Text files
-            Console.WriteLine("Found Files: " + Files.Length);
+            Console.WriteLine(DateTime.Now + " | Found Files: " + Files.Length);
             int fileMax = Files.Length;
             string[] filePath = new string[fileMax];
             for (int i = 0; i < fileMax; i++)
