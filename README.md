@@ -39,9 +39,6 @@
   <li>Better Security</li>
 </ul>
 <br>
-<h4>Setup:</h4>
-Put token and Command prefix in the Resources/config.json<br>
-Build in VS and run EXE<br>
 
 <h4>Commands</h4>
 <b><i>Server Stuff</i></b><br>
@@ -130,3 +127,11 @@ sha1<br>
 <br>
   <h1>Testing</h1>
   If you would like to help test new features please join my test server https://discord.gg/cPDxJpP
+  <br>
+  <h1>Setup</h1>
+Clone repo in visual studio or download a Release.<br>
+Open the Resources folder and edit config.json<br>
+Put your API Keys and Discord Token in config.json<br>
+Put any images in the Memes folder to use the meme command or use the upload command to upload them automatically<br>
+Build in visual studio if you cloned the source<br>
+Run the executable!
